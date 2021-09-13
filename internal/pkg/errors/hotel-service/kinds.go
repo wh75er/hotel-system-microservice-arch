@@ -24,6 +24,7 @@ const (
 	ReviewTextValidationErr = errors.Kind("Text cannot be more than 1500 characters")
 	ReviewNotFoundErr = errors.Kind("Review not found")
 	ReviewUuidValidationErr = errors.Kind("Review UUID is not valid")
+	UserUuidValidationErr = errors.Kind("User UUID is not valid")
 	ReviewFailedToPatch = errors.Kind("Failed to patch review")
 )
 
@@ -35,4 +36,8 @@ const (
 	RoomNightPriceValidationErr = errors.Kind("Room night price should be > 0")
 	RoomTypeValidationErr = errors.Kind("Room type cannot be empty and cannot be more than 250 characters")
 	RoomFailedToPatch = errors.Kind("Room failed to patch")
+)
+
+const (
+	PhotoUuidValidationErr = errors.Kind("Photo uuid is not valid")
 )

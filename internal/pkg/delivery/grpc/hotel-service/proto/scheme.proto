@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto";
+
+package proto;
+
+service HotelService {
+  rpc AddHotel (Hotel) returns (Empty) {}
+  rpc GetHotel (UUID) returns (Hotel) {}
+  rpc GetHotels (Empty) returns (HotelsResponse) {}
+  rpc PatchHotel (Hotel) returns (Empty) {}
+  rpc DeleteHotel (UUID) returns (Empty) {}
+
+  rpc AddReview (Review) returns (Empty) {}
+  rpc GetReview (UUID) returns (Review) {}
+  rpc GetReviews (UUID) returns (ReviewsResponse) {}
+  rpc PatchReview (Review) returns (Empty) {}
+  rpc DeleteReview (UUID) returns (Empty) {}
+
+  rpc AddRoom (Room) returns (Empty) {}
+  rpc GetRooms (UUID) returns (RoomsResponse) {}
+  rpc PatchRoom (Room) returns (Empty) {}
+  rpc DeleteRoom (UUID) returns (Empty) {}
+}
+
+message Empty {
+
+}
+
+message UUID {
+  string Value = 1;
+}
+
+message Room {
+  string RoomType = 1;
+  int64 Amount = 2;
+  int64 Beds = 3;
+  string hotelUuid = 4;
+  string roomUuid = 5;
+  int64 CreationDate = 6;
+  repeated string Offers = 7;
+  int64 NightPrice = 8;
+}
+
+message Review {
+  string UserUuid = 1;
+  string HotelUuid = 2;
+  string ReviewUuid = 3;
+  string Text = 4;
+  bool IsAnonymous = 5;
+  repeated string Photos = 6;
+  int64 CreationDate = 7;
+}
+
+message Hotel {
+  string Name = 1;
+  string HotelUuid = 2;
+  repeated string Photos = 3;
+  string Description = 4;
+  string Country = 5;
+  string City = 6;
+  string Address = 7;
+  bool IsReady = 8;
+  int64 CreationDate = 9;
+  repeated Room rooms = 10;
+  repeated Review Reviews = 11;
+}
+
+message HotelsResponse {
+  repeated Hotel Hotels = 1;
+}
+
+message ReviewsResponse {
+  repeated Review Reviews = 1;
+}
+
+message RoomsResponse {
+  repeated Room Rooms = 1;
+}
