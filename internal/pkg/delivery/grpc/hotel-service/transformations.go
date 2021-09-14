@@ -9,19 +9,19 @@ import (
 	"time"
 )
 
-func ReviewToProto(r *models.Review) *proto.Review {
-	return &proto.Review {
-		UserUuid: r.UserUuid.String(),
-		HotelUuid: r.HotelUuid.String(),
-		ReviewUuid: r.ReviewUuid.String(),
-		Text: r.Text,
-		IsAnonymous: r.IsAnonymous,
-		Photos: r.Photos,
+func (s *HotelServer) ReviewToProto(r *models.Review) *proto.Review {
+	return &proto.Review{
+		UserUuid:     r.UserUuid.String(),
+		HotelUuid:    r.HotelUuid.String(),
+		ReviewUuid:   r.ReviewUuid.String(),
+		Text:         r.Text,
+		IsAnonymous:  r.IsAnonymous,
+		Photos:       r.Photos,
 		CreationDate: r.CreationDate.Unix(),
 	}
 }
 
-func RoomToProto(r *models.Room) *proto.Room {
+func (s *HotelServer) RoomToProto(r *models.Room) *proto.Room {
 	return &proto.Room{
 		RoomType:     r.RoomType,
 		Amount:       int64(r.Amount),
@@ -34,9 +34,9 @@ func RoomToProto(r *models.Room) *proto.Room {
 	}
 }
 
-func HotelToProto(h *models.Hotel) *proto.Hotel {
-	return &proto.Hotel {
-		Name: h.Name,
+func (s *HotelServer) HotelToProto(h *models.Hotel) *proto.Hotel {
+	return &proto.Hotel{
+		Name:      h.Name,
 		HotelUuid: h.HotelUuid.String(),
 		Photos: func() []string {
 			var r []string
@@ -45,16 +45,16 @@ func HotelToProto(h *models.Hotel) *proto.Hotel {
 			}
 			return r
 		}(),
-		Description: h.Description,
-		Country: h.Country,
-		City: h.City,
-		Address: h.Address,
-		IsReady: h.IsReady,
+		Description:  h.Description,
+		Country:      h.Country,
+		City:         h.City,
+		Address:      h.Address,
+		IsReady:      h.IsReady,
 		CreationDate: h.CreationDate.Unix(),
 		Reviews: func() []*proto.Review {
 			var r []*proto.Review
 			for _, v := range h.Reviews {
-				r = append(r, ReviewToProto(&v))
+				r = append(r, s.ReviewToProto(&v))
 			}
 
 			return r
@@ -62,7 +62,7 @@ func HotelToProto(h *models.Hotel) *proto.Hotel {
 		Rooms: func() []*proto.Room {
 			var r []*proto.Room
 			for _, v := range h.Rooms {
-				r = append(r, RoomToProto(&v))
+				r = append(r, s.RoomToProto(&v))
 			}
 
 			return r
@@ -70,81 +70,81 @@ func HotelToProto(h *models.Hotel) *proto.Hotel {
 	}
 }
 
-func ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
+func (s *HotelServer) ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 	var opError errors.Op = "hotel-service.ProtoToRoom"
 
 	validRoomUuid, e := uuid.Parse(pr.RoomUuid)
 	if e != nil {
 		e = errors.E(opError, kinds.RoomUuidValidationErr, e)
-		//u.Logger.Error("Usecase error: ", e)
+		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
 	validHotelUuid, e := uuid.Parse(pr.HotelUuid)
 	if e != nil {
 		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
-		//u.Logger.Error("Usecase error: ", e)
+		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
-	r = &models.Room {
-		RoomType: pr.RoomType,
-		Amount: int(pr.Amount),
-		Beds: int(pr.Beds),
-		HotelUuid: validHotelUuid,
-		RoomUuid: validRoomUuid,
+	r = &models.Room{
+		RoomType:     pr.RoomType,
+		Amount:       int(pr.Amount),
+		Beds:         int(pr.Beds),
+		HotelUuid:    validHotelUuid,
+		RoomUuid:     validRoomUuid,
 		CreationDate: time.Unix(pr.CreationDate, 0),
-		Offers: pr.Offers,
-		NightPrice: int(pr.NightPrice),
+		Offers:       pr.Offers,
+		NightPrice:   int(pr.NightPrice),
 	}
 
 	return
 }
 
-func ProtoToReview(pr *proto.Review) (r *models.Review, e error) {
+func (s *HotelServer) ProtoToReview(pr *proto.Review) (r *models.Review, e error) {
 	var opError errors.Op = "hotel-service.ProtoToReview"
 
 	validReviewUuid, e := uuid.Parse(pr.ReviewUuid)
 	if e != nil {
 		e = errors.E(opError, kinds.ReviewUuidValidationErr, e)
-		//u.Logger.Error("Usecase error: ", e)
+		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
 	validUserUuid, e := uuid.Parse(pr.UserUuid)
 	if e != nil {
 		e = errors.E(opError, kinds.UserUuidValidationErr, e)
-		//u.Logger.Error("Usecase error: ", e)
+		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
 	validHotelUuid, e := uuid.Parse(pr.HotelUuid)
 	if e != nil {
 		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
-		//u.Logger.Error("Usecase error: ", e)
+		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
 	r = &models.Review{
-		UserUuid: validUserUuid,
-		HotelUuid: validHotelUuid,
-		ReviewUuid: validReviewUuid,
-		Text: pr.Text,
-		IsAnonymous: pr.IsAnonymous,
-		Photos: pr.Photos,
+		UserUuid:     validUserUuid,
+		HotelUuid:    validHotelUuid,
+		ReviewUuid:   validReviewUuid,
+		Text:         pr.Text,
+		IsAnonymous:  pr.IsAnonymous,
+		Photos:       pr.Photos,
 		CreationDate: time.Unix(pr.CreationDate, 0),
 	}
 
 	return
 }
 
-func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
+func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 	var opError errors.Op = "hotel-service.ProtoToHotel"
 
 	validHotelUuid, e := uuid.Parse(pr.HotelUuid)
 	if e != nil {
 		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
-		//u.Logger.Error("Usecase error: ", e)
+		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
@@ -153,7 +153,7 @@ func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 		validPhotoUuid, e := uuid.Parse(v)
 		if e != nil {
 			e = errors.E(opError, kinds.PhotoUuidValidationErr, e)
-			//u.Logger.Error("Usecase error: ", e)
+			s.Logger.Error("Grpc error: ", e)
 			return
 		}
 		photos = append(photos, validPhotoUuid)
@@ -161,7 +161,7 @@ func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 
 	var reviews []models.Review
 	for _, v := range pr.Reviews {
-		validReview, e := ProtoToReview(v)
+		validReview, e := s.ProtoToReview(v)
 		if e != nil {
 			return
 		}
@@ -171,7 +171,7 @@ func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 
 	var rooms []models.Room
 	for _, v := range pr.Rooms {
-		validRoom, e := ProtoToRoom(v)
+		validRoom, e := s.ProtoToRoom(v)
 		if e != nil {
 			return
 		}
@@ -179,19 +179,52 @@ func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 		rooms = append(rooms, *validRoom)
 	}
 
-	r = &models.Hotel {
-		Name: pr.Name,
-		HotelUuid: validHotelUuid,
-		Photos: photos,
-		Description: pr.Description,
-		Country: pr.Country,
-		City: pr.City,
-		Address: pr.Address,
-		IsReady: pr.IsReady,
+	r = &models.Hotel{
+		Name:         pr.Name,
+		HotelUuid:    validHotelUuid,
+		Photos:       photos,
+		Description:  pr.Description,
+		Country:      pr.Country,
+		City:         pr.City,
+		Address:      pr.Address,
+		IsReady:      pr.IsReady,
 		CreationDate: time.Unix(pr.CreationDate, 0),
-		Rooms: rooms,
-		Reviews: reviews,
+		Rooms:        rooms,
+		Reviews:      reviews,
 	}
 
 	return
+}
+
+func (s *HotelServer) HotelsToProto(h []models.Hotel) *proto.HotelsResponse {
+	var protoHotels []*proto.Hotel
+	for _, v := range h {
+		protoHotels = append(protoHotels, s.HotelToProto(&v))
+	}
+
+	return &proto.HotelsResponse{
+		Hotels: protoHotels,
+	}
+}
+
+func (s *HotelServer) ReviewsToProto(r []models.Review) *proto.ReviewsResponse {
+	var protoReviews []*proto.Review
+	for _, v := range r {
+		protoReviews = append(protoReviews, s.ReviewToProto(&v))
+	}
+
+	return &proto.ReviewsResponse{
+		Reviews: protoReviews,
+	}
+}
+
+func (s *HotelServer) RoomsToProto(r []models.Room) *proto.RoomsResponse {
+	var protoRooms []*proto.Room
+	for _, v := range r {
+		protoRooms = append(protoRooms, s.RoomToProto(&v))
+	}
+
+	return &proto.RoomsResponse{
+		Rooms: protoRooms,
+	}
 }

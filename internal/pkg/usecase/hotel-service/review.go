@@ -11,9 +11,9 @@ import (
 )
 
 type ReviewUsecase struct {
-	HotelRepository models.HotelRepositoryI
+	HotelRepository  models.HotelRepositoryI
 	ReviewRepository models.ReviewRepositoryI
-	Logger *logrus.Logger
+	Logger           *logrus.Logger
 }
 
 func NewReviewUsecase(hotelR models.HotelRepositoryI, reviewR models.ReviewRepositoryI, logger *logrus.Logger) models.ReviewUsecaseI {

@@ -3,7 +3,7 @@ package hotel_service
 import "github.com/BurntSushi/toml"
 
 type config struct {
-	Server Server
+	Server  Server
 	Storage Storage
 }
 
@@ -12,16 +12,16 @@ type Server struct {
 }
 
 type Storage struct {
-	Url string
+	Url         string
 	MaxPoolConn int
 }
 
 func newConfig() *config {
-	return &config {
+	return &config{
 		Server{
 			3000,
 		},
-		Storage {
+		Storage{
 			"postgresql://postgres:postgres@localhost:5432/postgres",
 			30,
 		},
@@ -29,6 +29,6 @@ func newConfig() *config {
 }
 
 func (c *config) loadFromToml(tomlData string) (e error) {
-	_, e = toml.DecodeFile("configs/" + tomlData, c)
+	_, e = toml.DecodeFile("configs/"+tomlData, c)
 	return
 }

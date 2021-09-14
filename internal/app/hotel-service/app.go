@@ -8,15 +8,15 @@ import (
 )
 
 type App struct {
-	db *sqlx.DB
-	conf *config
+	db         *sqlx.DB
+	conf       *config
 	configName string
-	server *echo.Echo
-	logger logs.LoggerInterface
+	server     *echo.Echo
+	logger     logs.LoggerInterface
 }
 
 func New() *App {
-	return &App {
+	return &App{
 		nil,
 		newConfig(),
 		"",
@@ -30,11 +30,11 @@ func (a *App) Run(configFilename string) {
 	a.setupApp()
 	a.setupStorage()
 
-//	a.server.Use(middleware.Logger())
-//
-//	if err := a.server.Start(":" + strconv.Itoa(a.conf.Server.Port)); err == http.ErrServerClosed {
-//		a.logger.Fatal(err)
-//	}
+	//	a.server.Use(middleware.Logger())
+	//
+	//	if err := a.server.Start(":" + strconv.Itoa(a.conf.Server.Port)); err == http.ErrServerClosed {
+	//		a.logger.Fatal(err)
+	//	}
 }
 
 func (a *App) setupStorage() {

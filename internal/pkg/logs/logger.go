@@ -18,7 +18,7 @@ type LogrusInstance struct {
 }
 
 func NewLogrus() LoggerInterface {
-	return &LogrusInstance {
+	return &LogrusInstance{
 		logrus.New(),
 	}
 }

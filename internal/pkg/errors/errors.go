@@ -5,9 +5,9 @@ type Kind string
 type Op string
 
 type Error struct {
-	Op Op
+	Op   Op
 	Kind Kind
-	Err error
+	Err  error
 }
 
 func (e Error) Error() string {
@@ -53,4 +53,15 @@ func GetKind(err error) Kind {
 	}
 
 	return e.Kind
+}
+
+func Contains(s []Kind, k Kind) bool {
+	isMember := false
+	for _, v := range s {
+		if k == v {
+			isMember = true
+		}
+	}
+
+	return isMember
 }

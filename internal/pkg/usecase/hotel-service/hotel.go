@@ -11,10 +11,10 @@ import (
 )
 
 type HotelUsecase struct {
-	HotelRepository models.HotelRepositoryI
-	RoomRepository models.RoomRepositoryI
+	HotelRepository  models.HotelRepositoryI
+	RoomRepository   models.RoomRepositoryI
 	ReviewRepository models.ReviewRepositoryI
-	Logger *logrus.Logger
+	Logger           *logrus.Logger
 }
 
 func NewHotelUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, reviewR models.ReviewRepositoryI, logger *logrus.Logger) models.HotelUsecaseI {

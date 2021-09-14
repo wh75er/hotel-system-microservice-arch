@@ -10,18 +10,18 @@ import (
 )
 
 type ReviewRepository struct {
-	Db *sqlx.DB
+	Db     *sqlx.DB
 	Logger *logrus.Logger
 }
 
 func NewReviewRepository(db *sqlx.DB, logger *logrus.Logger) models.ReviewRepositoryI {
-	return &ReviewRepository{db, logger }
+	return &ReviewRepository{db, logger}
 }
 
 func (r *ReviewRepository) GetReview(reviewUuid uuid.UUID) (rev models.Review, e error) {
 	var opError errors.Op = "postgres.GetReview"
 
-	e = r.Db.Get(&rev, "SELECT userUuid, hotelUuid, reviewUuid, text, isAnonymous, photos " +
+	e = r.Db.Get(&rev, "SELECT userUuid, hotelUuid, reviewUuid, text, isAnonymous, photos "+
 		"FROM review WHERE reviewUuid = $1", reviewUuid)
 	if e == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, e)
@@ -40,7 +40,7 @@ func (r *ReviewRepository) GetReview(reviewUuid uuid.UUID) (rev models.Review, e
 func (r *ReviewRepository) GetReviews(hotelUuid uuid.UUID) (rev []models.Review, e error) {
 	var opError errors.Op = "postgres.GetReviews"
 
-	e = r.Db.Select(&rev, "SELECT userUuid, hotelUuid, reviewUuid, text, isAnonymous, photos " +
+	e = r.Db.Select(&rev, "SELECT userUuid, hotelUuid, reviewUuid, text, isAnonymous, photos "+
 		"FROM review WHERE hotelUuid = $1", hotelUuid)
 	if e == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, e)
@@ -59,8 +59,8 @@ func (r *ReviewRepository) GetReviews(hotelUuid uuid.UUID) (rev []models.Review,
 func (r *ReviewRepository) AddReview(rev *models.Review) (e error) {
 	var opError errors.Op = "postgres.AddReview"
 
-	_, e = r.Db.Exec("INSERT INTO " +
-		"reviews(userUuid, hotelUuid, reviewUuid, text, isAnonymous, photos) " +
+	_, e = r.Db.Exec("INSERT INTO "+
+		"reviews(userUuid, hotelUuid, reviewUuid, text, isAnonymous, photos) "+
 		"VALUES ($1, $2, $3, $4, $5, $6)",
 		rev.UserUuid, rev.HotelUuid, rev.ReviewUuid, rev.Text, rev.IsAnonymous, rev.Photos)
 	if e == sql.ErrConnDone {

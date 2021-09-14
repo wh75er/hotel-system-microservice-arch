@@ -10,18 +10,18 @@ import (
 )
 
 type RoomRepository struct {
-	Db *sqlx.DB
+	Db     *sqlx.DB
 	Logger *logrus.Logger
 }
 
 func NewRoomRepository(db *sqlx.DB, logger *logrus.Logger) models.RoomRepositoryI {
-	return &RoomRepository{db, logger }
+	return &RoomRepository{db, logger}
 }
 
 func (r *RoomRepository) GetRoom(roomUuid uuid.UUID) (room models.Room, e error) {
 	var opError errors.Op = "postgres.GetRoom"
 
-	e = r.Db.Select(&room, "SELECT roomType, amount, beds, hotelUuid, roomUuid, creationDate, " +
+	e = r.Db.Select(&room, "SELECT roomType, amount, beds, hotelUuid, roomUuid, creationDate, "+
 		"offers, nightPrice WHERE roomUuid = $1", roomUuid)
 	if e == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, e)
@@ -40,7 +40,7 @@ func (r *RoomRepository) GetRoom(roomUuid uuid.UUID) (room models.Room, e error)
 func (r *RoomRepository) GetRooms(hotelUuid uuid.UUID) (rooms []models.Room, e error) {
 	var opError errors.Op = "postgres.GetRooms"
 
-	e = r.Db.Select(&rooms, "SELECT roomType, amount, beds, hotelUuid, roomUuid, creationDate, " +
+	e = r.Db.Select(&rooms, "SELECT roomType, amount, beds, hotelUuid, roomUuid, creationDate, "+
 		"offers, nightPrice WHERE hotelUuid = $1", hotelUuid)
 	if e == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, e)
@@ -56,11 +56,11 @@ func (r *RoomRepository) GetRooms(hotelUuid uuid.UUID) (rooms []models.Room, e e
 	return
 }
 
-func (r *RoomRepository) AddRoom(room *models.Room)  (e error) {
+func (r *RoomRepository) AddRoom(room *models.Room) (e error) {
 	var opError errors.Op = "postgres.AddRoom"
 
-	_, e = r.Db.Exec("INSERT INTO " +
-		"rooms(roomType, amount, beds, hotelUuid, roomUuid, creationDate, offers, nightPrice) " +
+	_, e = r.Db.Exec("INSERT INTO "+
+		"rooms(roomType, amount, beds, hotelUuid, roomUuid, creationDate, offers, nightPrice) "+
 		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
 		room.RoomType, room.Amount, room.Beds, room.HotelUuid, room.RoomUuid, room.CreationDate, room.Offers, room.NightPrice)
 	if e == sql.ErrConnDone {
@@ -77,7 +77,7 @@ func (r *RoomRepository) AddRoom(room *models.Room)  (e error) {
 func (r *RoomRepository) PatchRoom(room *models.Room) (e error) {
 	var opError errors.Op = "postgres.PatchRoom"
 
-	_, e = r.Db.Exec("UPDATE rooms SET roomType = $1, Amount = $2, Beds = $3, Offers = $4, NightPrice = $5 " +
+	_, e = r.Db.Exec("UPDATE rooms SET roomType = $1, Amount = $2, Beds = $3, Offers = $4, NightPrice = $5 "+
 		"WHERE roomUuid = $6", room.RoomType, room.Amount, room.Beds, room.Offers, room.NightPrice, room.RoomUuid)
 	if e == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, e)

@@ -13,8 +13,8 @@ import (
 
 type RoomUsecase struct {
 	HotelRepository models.HotelRepositoryI
-	RoomRepository models.RoomRepositoryI
-	Logger *logrus.Logger
+	RoomRepository  models.RoomRepositoryI
+	Logger          *logrus.Logger
 }
 
 func NewRoomUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, logger *logrus.Logger) models.RoomUsecaseI {
