@@ -2,7 +2,7 @@ package hotel_service
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/repository/postgres"
 )
@@ -11,7 +11,7 @@ type App struct {
 	db         *sqlx.DB
 	conf       *config
 	configName string
-	server     *echo.Echo
+	server     *grpc.Server
 	logger     logs.LoggerInterface
 }
 
@@ -20,7 +20,7 @@ func New() *App {
 		nil,
 		newConfig(),
 		"",
-		echo.New(),
+		grpc.NewServer(),
 		logs.NewLogrus(),
 	}
 }
