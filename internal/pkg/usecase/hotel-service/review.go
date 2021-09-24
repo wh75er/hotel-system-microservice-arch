@@ -3,9 +3,9 @@ package hotel_service
 import (
 	"github.com/aglyzov/go-patch"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"hotel-booking-system/internal/pkg/errors"
 	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
+	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"time"
 )
@@ -13,10 +13,10 @@ import (
 type ReviewUsecase struct {
 	HotelRepository  models.HotelRepositoryI
 	ReviewRepository models.ReviewRepositoryI
-	Logger           *logrus.Logger
+	Logger           logs.LoggerInterface
 }
 
-func NewReviewUsecase(hotelR models.HotelRepositoryI, reviewR models.ReviewRepositoryI, logger *logrus.Logger) models.ReviewUsecaseI {
+func NewReviewUsecase(hotelR models.HotelRepositoryI, reviewR models.ReviewRepositoryI, logger logs.LoggerInterface) models.ReviewUsecaseI {
 	return &ReviewUsecase{hotelR, reviewR, logger}
 }
 

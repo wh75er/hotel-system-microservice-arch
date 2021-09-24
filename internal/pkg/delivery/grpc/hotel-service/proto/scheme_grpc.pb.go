@@ -18,6 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HotelServiceClient interface {
+	GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error)
 	AddHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*Empty, error)
 	GetHotel(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Hotel, error)
 	GetHotels(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HotelsResponse, error)
@@ -40,6 +41,15 @@ type hotelServiceClient struct {
 
 func NewHotelServiceClient(cc grpc.ClientConnInterface) HotelServiceClient {
 	return &hotelServiceClient{cc}
+}
+
+func (c *hotelServiceClient) GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/proto.HotelService/GetToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *hotelServiceClient) AddHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*Empty, error) {
@@ -172,6 +182,7 @@ func (c *hotelServiceClient) DeleteRoom(ctx context.Context, in *UUID, opts ...g
 // All implementations must embed UnimplementedHotelServiceServer
 // for forward compatibility
 type HotelServiceServer interface {
+	GetToken(context.Context, *Credentials) (*Token, error)
 	AddHotel(context.Context, *Hotel) (*Empty, error)
 	GetHotel(context.Context, *UUID) (*Hotel, error)
 	GetHotels(context.Context, *Empty) (*HotelsResponse, error)
@@ -193,6 +204,9 @@ type HotelServiceServer interface {
 type UnimplementedHotelServiceServer struct {
 }
 
+func (UnimplementedHotelServiceServer) GetToken(context.Context, *Credentials) (*Token, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
+}
 func (UnimplementedHotelServiceServer) AddHotel(context.Context, *Hotel) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddHotel not implemented")
 }
@@ -246,6 +260,24 @@ type UnsafeHotelServiceServer interface {
 
 func RegisterHotelServiceServer(s grpc.ServiceRegistrar, srv HotelServiceServer) {
 	s.RegisterService(&HotelService_ServiceDesc, srv)
+}
+
+func _HotelService_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Credentials)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotelServiceServer).GetToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.HotelService/GetToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotelServiceServer).GetToken(ctx, req.(*Credentials))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _HotelService_AddHotel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -508,6 +540,10 @@ var HotelService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*HotelServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetToken",
+			Handler:    _HotelService_GetToken_Handler,
+		},
+		{
 			MethodName: "AddHotel",
 			Handler:    _HotelService_AddHotel_Handler,
 		},
@@ -565,5 +601,5 @@ var HotelService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "scheme.proto",
+	Metadata: "internal/pkg/delivery/grpc/hotel-service/proto/scheme.proto",
 }

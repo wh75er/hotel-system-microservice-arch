@@ -2,29 +2,63 @@ package hotel_service
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
+	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
+	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 )
 
 type HotelServer struct {
 	proto.UnimplementedHotelServiceServer
-	HotelUsecase  models.HotelUsecaseI
-	ReviewUsecase models.ReviewUsecaseI
-	RoomUsecase   models.RoomUsecaseI
-	Logger        *logrus.Logger
+	HotelUsecase      models.HotelUsecaseI
+	ReviewUsecase     models.ReviewUsecaseI
+	RoomUsecase       models.RoomUsecaseI
+	AdminCredsUsecase models.CredentialsUsecaseI
+	TokenManager      *jwt_manager.JWTManager
+	Logger            logs.LoggerInterface
 }
 
-func NewHotelServer(hotelU models.HotelUsecaseI, reviewU models.ReviewUsecaseI, roomU models.RoomUsecaseI, logger *logrus.Logger) proto.HotelServiceServer {
+func NewHotelServer(
+	hotelU models.HotelUsecaseI,
+	reviewU models.ReviewUsecaseI,
+	roomU models.RoomUsecaseI,
+	aCredsU models.CredentialsUsecaseI,
+	jwtManager *jwt_manager.JWTManager,
+	logger logs.LoggerInterface,
+) proto.HotelServiceServer {
 	return &HotelServer{
-		HotelUsecase:  hotelU,
-		ReviewUsecase: reviewU,
-		RoomUsecase:   roomU,
-		Logger:        logger,
+		HotelUsecase:      hotelU,
+		ReviewUsecase:     reviewU,
+		RoomUsecase:       roomU,
+		AdminCredsUsecase: aCredsU,
+		TokenManager:      jwtManager,
+		Logger:            logger,
 	}
+}
+
+func (s *HotelServer) GetToken(ctx context.Context, pc *proto.Credentials) (*proto.Token, error) {
+	c := s.ProtoToCredentials(pc)
+
+	err := s.AdminCredsUsecase.Login(c)
+	if err != nil {
+		s.Logger.Error("Grpc error: ", err)
+		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		return nil, err
+	}
+
+	token, err := s.TokenManager.Generate(models.SERVICE)
+	if err != nil {
+		s.Logger.Error("Grpc error: ", err)
+		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		return nil, err
+	}
+
+	pt := s.TokenToProto(&token)
+
+	return pt, nil
 }
 
 func (s *HotelServer) AddHotel(ctx context.Context, ph *proto.Hotel) (*proto.Empty, error) {

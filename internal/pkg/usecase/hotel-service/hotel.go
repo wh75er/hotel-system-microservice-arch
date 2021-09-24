@@ -3,9 +3,9 @@ package hotel_service
 import (
 	"github.com/aglyzov/go-patch"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"hotel-booking-system/internal/pkg/errors"
 	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
+	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"time"
 )
@@ -14,10 +14,10 @@ type HotelUsecase struct {
 	HotelRepository  models.HotelRepositoryI
 	RoomRepository   models.RoomRepositoryI
 	ReviewRepository models.ReviewRepositoryI
-	Logger           *logrus.Logger
+	Logger           logs.LoggerInterface
 }
 
-func NewHotelUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, reviewR models.ReviewRepositoryI, logger *logrus.Logger) models.HotelUsecaseI {
+func NewHotelUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, reviewR models.ReviewRepositoryI, logger logs.LoggerInterface) models.HotelUsecaseI {
 	return &HotelUsecase{hotelR, roomR, reviewR, logger}
 }
 
@@ -196,4 +196,6 @@ func (u *HotelUsecase) validateHotel(opError errors.Op, h *models.Hotel) (e erro
 		e = errors.E(opError, kinds.HotelAddressValidationError, e)
 		return
 	}
+
+	return
 }

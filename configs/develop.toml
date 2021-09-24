@@ -1,5 +1,6 @@
 [server]
 port = 3000
+tokenDuration = "24h"
 
 [storage]
 url = "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"

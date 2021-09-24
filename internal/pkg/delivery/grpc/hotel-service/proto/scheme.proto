@@ -5,6 +5,8 @@ option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/hotel-servi
 package proto;
 
 service HotelService {
+  rpc GetToken (Credentials) returns (Token) {}
+
   rpc AddHotel (Hotel) returns (Empty) {}
   rpc GetHotel (UUID) returns (Hotel) {}
   rpc GetHotels (Empty) returns (HotelsResponse) {}
@@ -28,6 +30,15 @@ message Empty {
 }
 
 message UUID {
+  string Value = 1;
+}
+
+message Credentials {
+  string id = 1;
+  string secret = 2;
+}
+
+message Token {
   string Value = 1;
 }
 

@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/aglyzov/go-patch v0.0.0-20181012082005-108ca2ba9cdf // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/golang-migrate/migrate/v4 v4.14.1 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect

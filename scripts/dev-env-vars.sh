@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export JWT_KEY="DEVELOP_KEY"
+export ADMIN_ID="DEVELOP_ID"
+export ADMIN_SECRET="DEVELOP_SECRET"

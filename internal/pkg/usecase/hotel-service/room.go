@@ -1,12 +1,11 @@
 package hotel_service
 
 import (
-	"database/sql"
 	"github.com/aglyzov/go-patch"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"hotel-booking-system/internal/pkg/errors"
 	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
+	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"time"
 )
@@ -14,10 +13,10 @@ import (
 type RoomUsecase struct {
 	HotelRepository models.HotelRepositoryI
 	RoomRepository  models.RoomRepositoryI
-	Logger          *logrus.Logger
+	Logger          logs.LoggerInterface
 }
 
-func NewRoomUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, logger *logrus.Logger) models.RoomUsecaseI {
+func NewRoomUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, logger logs.LoggerInterface) models.RoomUsecaseI {
 	return &RoomUsecase{hotelR, roomR, logger}
 }
 

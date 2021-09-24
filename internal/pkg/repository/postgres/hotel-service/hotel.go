@@ -4,17 +4,17 @@ import (
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"github.com/sirupsen/logrus"
 	"hotel-booking-system/internal/pkg/errors"
+	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 )
 
 type HotelRepository struct {
 	Db     *sqlx.DB
-	Logger *logrus.Logger
+	Logger logs.LoggerInterface
 }
 
-func NewHotelRepository(db *sqlx.DB, logger *logrus.Logger) models.HotelRepositoryI {
+func NewHotelRepository(db *sqlx.DB, logger logs.LoggerInterface) models.HotelRepositoryI {
 	return &HotelRepository{db, logger}
 }
 

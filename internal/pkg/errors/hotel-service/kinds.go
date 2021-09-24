@@ -46,6 +46,8 @@ const (
 )
 
 func GetHttpError(err error) int {
+	result := errors.GetHttpError(err)
+
 	notFoundErrors := []errors.Kind{
 		RoomNotFoundErr,
 		HotelNotFoundErr,
@@ -77,25 +79,21 @@ func GetHttpError(err error) int {
 		RepositoryHotelErr,
 		RepositoryReviewErr,
 		RepositoryRoomErr,
-		errors.RepositoryDownErr,
-		errors.RepositoryQueryErr,
-		errors.RepositoryNoRows,
-		errors.UnexpectedErr,
 	}
 
 	kind := errors.GetKind(err)
 
 	if errors.Contains(notFoundErrors, kind) {
-		return http.StatusNotFound
+		result = http.StatusNotFound
 	}
 
 	if errors.Contains(badRequestErrors, kind) {
-		return http.StatusBadRequest
+		result = http.StatusBadRequest
 	}
 
 	if errors.Contains(internalError, kind) {
-		return http.StatusInternalServerError
+		result = http.StatusInternalServerError
 	}
 
-	return http.StatusInternalServerError
+	return result
 }

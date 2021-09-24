@@ -150,8 +150,8 @@ func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 
 	var photos []uuid.UUID
 	for _, v := range pr.Photos {
-		validPhotoUuid, e := uuid.Parse(v)
-		if e != nil {
+		validPhotoUuid, err := uuid.Parse(v)
+		if err != nil {
 			e = errors.E(opError, kinds.PhotoUuidValidationErr, e)
 			s.Logger.Error("Grpc error: ", e)
 			return
@@ -161,8 +161,9 @@ func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 
 	var reviews []models.Review
 	for _, v := range pr.Reviews {
-		validReview, e := s.ProtoToReview(v)
-		if e != nil {
+		validReview, err := s.ProtoToReview(v)
+		if err != nil {
+			e = err
 			return
 		}
 
@@ -171,8 +172,9 @@ func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 
 	var rooms []models.Room
 	for _, v := range pr.Rooms {
-		validRoom, e := s.ProtoToRoom(v)
-		if e != nil {
+		validRoom, err := s.ProtoToRoom(v)
+		if err != nil {
+			e = err
 			return
 		}
 
@@ -226,5 +228,30 @@ func (s *HotelServer) RoomsToProto(r []models.Room) *proto.RoomsResponse {
 
 	return &proto.RoomsResponse{
 		Rooms: protoRooms,
+	}
+}
+
+func (s *HotelServer) ProtoToCredentials(c *proto.Credentials) *models.Credentials {
+	return &models.Credentials{
+		Id:     c.Id,
+		Secret: c.Secret,
+	}
+}
+
+func (s *HotelServer) CredentialsToProto(c *models.Credentials) *proto.Credentials {
+	return &proto.Credentials{
+		Id:     c.Id,
+		Secret: c.Secret,
+	}
+}
+
+func (s *HotelServer) ProtoToToken(t *proto.Token) *models.Token {
+	_token := models.Token(t.Value)
+	return &_token
+}
+
+func (s *HotelServer) TokenToProto(t *models.Token) *proto.Token {
+	return &proto.Token{
+		Value: string(*t),
 	}
 }
