@@ -8,29 +8,26 @@ import (
 	"google.golang.org/grpc/status"
 	"hotel-booking-system/internal/pkg/errors"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
+	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"log"
 )
 
-//func AuthInterceptor(
-//	ctx context.Context,
-//	req interface{},
-//	info *grpc.UnaryServerInfo,
-//	handler grpc.UnaryHandler,
-//) (interface{}, error) {
-//	log.Println("--> unary interceptor: ", info.FullMethod)
-//	return handler(ctx, req)
-//}
-
 type ServerAdminAuthInterceptor struct {
 	JwtManager      *jwt_manager.JWTManager
-	AccessiblePaths map[string][]models.Role
+	ApplyMethods map[string][]models.Role
+	logger logs.LoggerInterface
 }
 
-func NewServerAdminAuthInterceptor(jwtManager *jwt_manager.JWTManager) *ServerAdminAuthInterceptor {
+func NewServerAdminAuthInterceptor(
+	jwtManager *jwt_manager.JWTManager,
+	applyMethods map[string][]models.Role,
+	logger logs.LoggerInterface,
+) *ServerAdminAuthInterceptor {
 	return &ServerAdminAuthInterceptor{
 		jwtManager,
-		accessibleRoles(),
+		applyMethods,
+		logger,
 	}
 }
 
@@ -55,54 +52,41 @@ func (i *ServerAdminAuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 func (i *ServerAdminAuthInterceptor) authorize(ctx context.Context, method string) error {
 	var opError errors.Op = "jwt-manager.authorize"
 
-	accessiblePaths, ok := i.AccessiblePaths[method]
+	accessiblePaths, ok := i.ApplyMethods[method]
 	if !ok {
 		// everyone can access
 		return nil
 	}
 
+	i.logger.Infof("Authorization middleware on method: %v", method)
+
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
+		i.logger.Error("Failed to obtain metadata from method's context")
 		return errors.E(opError, errors.InvalidCredentials)
 	}
 
 	values := md["authorization"]
 	if len(values) == 0 {
+		i.logger.Error("Failed to find authorization data in metadata")
 		return errors.E(opError, errors.InvalidCredentials)
 	}
 
 	accessToken := values[0]
 	claims, err := i.JwtManager.Verify(accessToken)
 	if err != nil {
+		i.logger.Error("Failed to verify token")
 		return errors.E(opError, errors.InvalidCredentials, err)
 	}
 
 	for _, role := range accessiblePaths {
 		if role == claims.Role {
+			i.logger.Info("Successfully authorized")
 			return nil
 		}
 	}
 
+	i.logger.Errorf("Permission denied - invalid request role: %v", claims.Role)
+
 	return errors.E(opError, errors.PermissionDenied)
-}
-
-func accessibleRoles() map[string][]models.Role {
-	const hotelServicePath = "/proto.HotelService/"
-
-	return map[string][]models.Role{
-		hotelServicePath + "AddHotel":     {models.SERVICE},
-		hotelServicePath + "GetHotel":     {models.SERVICE},
-		hotelServicePath + "GetHotels":    {models.SERVICE},
-		hotelServicePath + "PatchHotel":   {models.SERVICE},
-		hotelServicePath + "DeleteHotel":  {models.SERVICE},
-		hotelServicePath + "AddReview":    {models.SERVICE},
-		hotelServicePath + "GetReview":    {models.SERVICE},
-		hotelServicePath + "GetReviews":   {models.SERVICE},
-		hotelServicePath + "PatchReview":  {models.SERVICE},
-		hotelServicePath + "DeleteReview": {models.SERVICE},
-		hotelServicePath + "AddRoom":      {models.SERVICE},
-		hotelServicePath + "GetRooms":     {models.SERVICE},
-		hotelServicePath + "PatchRoom":    {models.SERVICE},
-		hotelServicePath + "DeleteRoom":   {models.SERVICE},
-	}
 }

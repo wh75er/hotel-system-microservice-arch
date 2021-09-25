@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc"
-	hotel_server "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
+	hotelServer "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
 	pb "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
-	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
+	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/repository/postgres"
-	hotel_repositories "hotel-booking-system/internal/pkg/repository/postgres/hotel-service"
-	hotel_usecases "hotel-booking-system/internal/pkg/usecase/hotel-service"
+	hotelRepositories "hotel-booking-system/internal/pkg/repository/postgres/hotel-service"
+	"hotel-booking-system/internal/pkg/usecase"
+	hotelUsecases "hotel-booking-system/internal/pkg/usecase/hotel-service"
 	"net"
 )
 
@@ -38,24 +39,28 @@ func (a *App) Run(configFilename string) {
 	a.setupApp()
 	a.setupStorage()
 
-	jwtTokenManager := jwt_manager.NewJWTManager(a.conf.Server.JWTSecret, a.conf.Server.TokenDuration.Duration)
+	jwtTokenManager := jwtManager.NewJWTManager(a.conf.Server.JWTSecret, a.conf.Server.TokenDuration.Duration)
 
 	a.server = grpc.NewServer(
 		grpc.UnaryInterceptor(
-			interceptors.NewServerAdminAuthInterceptor(jwtTokenManager).Unary(),
+			interceptors.NewServerAdminAuthInterceptor(
+				jwtTokenManager,
+				hotelServer.AccessibleHotelServicePaths(),
+				a.logger,
+			).Unary(),
 		),
 	)
 
-	hotelRepository := hotel_repositories.NewHotelRepository(a.db, a.logger)
-	roomRepository := hotel_repositories.NewRoomRepository(a.db, a.logger)
-	reviewRepository := hotel_repositories.NewReviewRepository(a.db, a.logger)
+	hotelRepository := hotelRepositories.NewHotelRepository(a.db, a.logger)
+	roomRepository := hotelRepositories.NewRoomRepository(a.db, a.logger)
+	reviewRepository := hotelRepositories.NewReviewRepository(a.db, a.logger)
 
-	hotelUsecase := hotel_usecases.NewHotelUsecase(hotelRepository, roomRepository, reviewRepository, a.logger)
-	roomUsecase := hotel_usecases.NewRoomUsecase(hotelRepository, roomRepository, a.logger)
-	reviewUsecase := hotel_usecases.NewReviewUsecase(hotelRepository, reviewRepository, a.logger)
-	adminCredsUsecase := hotel_usecases.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
+	hotelUsecase := hotelUsecases.NewHotelUsecase(hotelRepository, roomRepository, reviewRepository, a.logger)
+	roomUsecase := hotelUsecases.NewRoomUsecase(hotelRepository, roomRepository, a.logger)
+	reviewUsecase := hotelUsecases.NewReviewUsecase(hotelRepository, reviewRepository, a.logger)
+	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
 
-	hotelServer := hotel_server.NewHotelServer(
+	hotelS := hotelServer.NewHotelServer(
 		hotelUsecase,
 		reviewUsecase,
 		roomUsecase,
@@ -64,7 +69,7 @@ func (a *App) Run(configFilename string) {
 		a.logger,
 	)
 
-	pb.RegisterHotelServiceServer(a.server, hotelServer)
+	pb.RegisterHotelServiceServer(a.server, hotelS)
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)

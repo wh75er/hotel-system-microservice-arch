@@ -46,6 +46,15 @@ func Ops(e *Error) []Op {
 	return res
 }
 
+func SourceDetails(err error) string {
+	e, ok := err.(*Error)
+	if !ok {
+		return "without details"
+	}
+
+	return e.Err.Error()
+}
+
 func GetKind(err error) Kind {
 	e, ok := err.(*Error)
 	if !ok {

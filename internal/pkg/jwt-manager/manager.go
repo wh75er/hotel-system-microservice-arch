@@ -1,6 +1,7 @@
 package jwt_manager
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/models"
@@ -31,10 +32,10 @@ func (m *JWTManager) Generate(r models.Role) (models.Token, error) {
 		Role: r,
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(m.secret))
 	if err != nil {
-		return "", errors.E(opError, errors.JWTVerificationErr, err)
+		return "", errors.E(opError, errors.JWTSigningErr, err)
 	}
 
 	tokenType := models.Token(signedToken)
@@ -49,7 +50,7 @@ func (m *JWTManager) Verify(tokenString string) (*UserClaims, error) {
 		tokenString,
 		&UserClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			_, ok := token.Method.(*jwt.SigningMethodRSA)
+			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
 				return nil, errors.E(opError, errors.JWTVerificationSigningMethodErr)
 			}
@@ -67,4 +68,22 @@ func (m *JWTManager) Verify(tokenString string) (*UserClaims, error) {
 	}
 
 	return claims, nil
+}
+
+// UntilExp Return Duration until token expiration date
+func (m *JWTManager) UntilExp(tokenString string) (time.Duration, error) {
+	var opError errors.Op = "jwt-manager.TimeLeft"
+
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, &UserClaims{})
+	if err != nil {
+		return 0, errors.E(opError, errors.JWTVerificationErr, err)
+	}
+
+	userClaims, ok := token.Claims.(*UserClaims)
+	if !ok {
+		return 0, errors.E(opError, errors.JWTVerificationErr, fmt.Errorf("failed to extract payload from token"))
+	}
+
+	expTime := userClaims.StandardClaims.ExpiresAt
+	return time.Until(time.Unix(expTime, 0)), nil
 }

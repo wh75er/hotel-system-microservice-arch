@@ -1,4 +1,4 @@
-package hotel_service
+package usecase
 
 import (
 	"hotel-booking-system/internal/pkg/errors"

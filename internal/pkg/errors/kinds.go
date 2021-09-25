@@ -6,6 +6,7 @@ const (
 	JWTGenerationErr                = Kind("Failed to generate JWT access token")
 	JWTVerificationSigningMethodErr = Kind("Unexpected token signing method")
 	JWTVerificationErr              = Kind("Invalid token")
+	JWTSigningErr                   = Kind("Failed to sign token")
 	JWTTokenClaimsErr               = Kind("Invalid token claims")
 	InvalidCredentials              = Kind("Invalid credentials")
 	ExpiredToken                    = Kind("Expired token")
@@ -21,6 +22,7 @@ func GetHttpError(err error) int {
 		JWTVerificationSigningMethodErr,
 		JWTVerificationErr,
 		JWTTokenClaimsErr,
+		JWTSigningErr,
 	}
 
 	UnauthorizedErrors := []Kind{
