@@ -34,7 +34,8 @@ func (u *HotelUsecase) GetHotel(hotelUuid string) (h models.Hotel, e error) {
 	h, e = u.HotelRepository.GetHotel(validHotelUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = nil
+			e = errors.E(opError, kinds.HotelNotFoundErr, e)
+			u.Logger.Error("Usecase error: ", e)
 			return
 		}
 		e = errors.E(opError, kinds.RepositoryHotelErr, e)
@@ -97,7 +98,7 @@ func (u *HotelUsecase) AddHotel(h *models.Hotel) (e error) {
 	}
 
 	h.HotelUuid = uuid.New()
-	h.CreationDate = time.Now().UTC()
+	h.CreationDate = time.Now()
 
 	e = u.HotelRepository.AddHotel(h)
 	if e != nil {

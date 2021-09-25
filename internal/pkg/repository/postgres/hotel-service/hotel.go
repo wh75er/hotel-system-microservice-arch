@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -11,7 +12,7 @@ import (
 
 type HotelRepository struct {
 	Db     *sqlx.DB
-	Logger logs.LoggerInterface
+	logger logs.LoggerInterface
 }
 
 func NewHotelRepository(db *sqlx.DB, logger logs.LoggerInterface) models.HotelRepositoryI {
@@ -21,17 +22,26 @@ func NewHotelRepository(db *sqlx.DB, logger logs.LoggerInterface) models.HotelRe
 func (r *HotelRepository) GetHotel(hotelUuid uuid.UUID) (h models.Hotel, e error) {
 	var opError errors.Op = "postgres.GetHotel"
 
-	e = r.Db.Get(&h, "SELECT name, hotelUuid, photos, description, country, city, "+
-		"address, isReady FROM hotels WHERE hotelUuid = $1", hotelUuid)
-	if e == sql.ErrConnDone {
-		e = errors.E(opError, errors.RepositoryDownErr, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e == sql.ErrNoRows {
-		e = errors.E(opError, errors.RepositoryNoRows, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e != nil {
-		e = errors.E(opError, errors.RepositoryQueryErr)
-		r.Logger.Error("Database error: ", e)
+	err := r.Db.QueryRowx("SELECT name, hotelUuid, photos, description, country, city, address, "+
+		"isReady FROM hotels WHERE hotelUuid = $1", hotelUuid).Scan(
+			&h.Name,
+			&h.HotelUuid,
+			pq.Array(&h.Photos),
+			&h.Description,
+			&h.Country,
+			&h.City,
+			&h.Address,
+			&h.IsReady,
+		)
+	if err == sql.ErrConnDone {
+		e = errors.E(opError, errors.RepositoryDownErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	} else if err == sql.ErrNoRows {
+		e = errors.E(opError, errors.RepositoryNoRows, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	} else if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
 	}
 
 	return
@@ -40,17 +50,40 @@ func (r *HotelRepository) GetHotel(hotelUuid uuid.UUID) (h models.Hotel, e error
 func (r *HotelRepository) GetHotels() (h []models.Hotel, e error) {
 	var opError errors.Op = "postgres.GetHotels"
 
-	e = r.Db.Select(&h, "SELECT name, hotelUuid, photos, description, country, city, address, "+
+	rows, err := r.Db.Queryx("SELECT name, hotelUuid, photos, description, country, city, address, "+
 		"isReady FROM hotels")
-	if e == sql.ErrConnDone {
-		e = errors.E(opError, errors.RepositoryDownErr, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e == sql.ErrNoRows {
-		e = errors.E(opError, errors.RepositoryNoRows, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e != nil {
-		e = errors.E(opError, errors.RepositoryQueryErr)
-		r.Logger.Error("Database error: ", e)
+	if err == sql.ErrConnDone {
+		e = errors.E(opError, errors.RepositoryDownErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+		return
+	} else if err == sql.ErrNoRows {
+		e = errors.E(opError, errors.RepositoryNoRows, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+		return
+	} else if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+		return
+	}
+
+	for rows.Next() {
+		var v models.Hotel
+		err = rows.Scan(
+			&v.Name,
+			&v.HotelUuid,
+			pq.Array(&v.Photos),
+			&v.Description,
+			&v.Country,
+			&v.City,
+			&v.Address,
+			&v.IsReady,
+		)
+		if err != nil {
+			e = errors.E(opError, errors.RepositoryQueryErr, err)
+			r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+			return
+		}
+		h = append(h, v)
 	}
 
 	return
@@ -59,16 +92,16 @@ func (r *HotelRepository) GetHotels() (h []models.Hotel, e error) {
 func (r *HotelRepository) AddHotel(h *models.Hotel) (e error) {
 	var opError errors.Op = "postgres.AddHotel"
 
-	_, e = r.Db.Exec("INSERT INTO "+
+	_, err := r.Db.Exec("INSERT INTO "+
 		"hotels(name, hotelUuid, photos, description, country, city, address, isReady, creationDate) "+
-		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
-		h.Name, h.HotelUuid, h.Photos, h.Description, h.Country, h.City, h.Address, h.IsReady, h.CreationDate)
-	if e == sql.ErrConnDone {
-		e = errors.E(opError, errors.RepositoryDownErr, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e != nil {
-		e = errors.E(opError, errors.RepositoryQueryErr, e)
-		r.Logger.Error("Database error: ", e)
+		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+		h.Name, h.HotelUuid, pq.Array(h.Photos), h.Description, h.Country, h.City, h.Address, h.IsReady, h.CreationDate)
+	if err == sql.ErrConnDone {
+		e = errors.E(opError, errors.RepositoryDownErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	} else if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
 	}
 
 	return
@@ -77,15 +110,15 @@ func (r *HotelRepository) AddHotel(h *models.Hotel) (e error) {
 func (r *HotelRepository) PatchHotel(h *models.Hotel) (e error) {
 	var opError errors.Op = "postgres.PatchHotel"
 
-	_, e = r.Db.Exec("UPDATE hotels SET name = $1, photos = $2, description = $3, country = $4, city = $5, "+
+	_, err := r.Db.Exec("UPDATE hotels SET name = $1, photos = $2, description = $3, country = $4, city = $5, "+
 		"address = $6, isReady = $7 WHERE hotelUuid = $8",
-		h.Name, h.Photos, h.Description, h.Country, h.City, h.Address, h.IsReady, h.HotelUuid)
-	if e == sql.ErrConnDone {
-		e = errors.E(opError, errors.RepositoryDownErr, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e != nil {
-		e = errors.E(opError, errors.RepositoryQueryErr, e)
-		r.Logger.Error("Database error: ", e)
+		h.Name, pq.Array(h.Photos), h.Description, h.Country, h.City, h.Address, h.IsReady, h.HotelUuid)
+	if err == sql.ErrConnDone {
+		e = errors.E(opError, errors.RepositoryDownErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	} else if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
 	}
 
 	return
@@ -94,13 +127,13 @@ func (r *HotelRepository) PatchHotel(h *models.Hotel) (e error) {
 func (r *HotelRepository) DeleteHotel(hotelUuid uuid.UUID) (e error) {
 	var opError errors.Op = "postgres.DeleteHotel"
 
-	_, e = r.Db.Exec("DELETE FROM hotels WHERE hotelUuid = $1", hotelUuid)
-	if e == sql.ErrConnDone {
-		e = errors.E(opError, errors.RepositoryDownErr, e)
-		r.Logger.Error("Database error: ", e)
-	} else if e != nil {
-		e = errors.E(opError, errors.RepositoryQueryErr, e)
-		r.Logger.Error("Database error: ", e)
+	_, err := r.Db.Exec("DELETE FROM hotels WHERE hotelUuid = $1", hotelUuid)
+	if err == sql.ErrConnDone {
+		e = errors.E(opError, errors.RepositoryDownErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	} else if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
 	}
 
 	return

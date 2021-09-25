@@ -73,16 +73,16 @@ func (s *HotelServer) HotelToProto(h *models.Hotel) *proto.Hotel {
 func (s *HotelServer) ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 	var opError errors.Op = "hotel-service.ProtoToRoom"
 
-	validRoomUuid, e := uuid.Parse(pr.RoomUuid)
-	if e != nil {
-		e = errors.E(opError, kinds.RoomUuidValidationErr, e)
+	validRoomUuid, err := uuid.Parse(pr.RoomUuid)
+	if err != nil {
+		e = errors.E(opError, kinds.RoomUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
-	validHotelUuid, e := uuid.Parse(pr.HotelUuid)
-	if e != nil {
-		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
+	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
+	if err != nil {
+		e = errors.E(opError, kinds.HotelUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return
 	}
@@ -104,23 +104,23 @@ func (s *HotelServer) ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 func (s *HotelServer) ProtoToReview(pr *proto.Review) (r *models.Review, e error) {
 	var opError errors.Op = "hotel-service.ProtoToReview"
 
-	validReviewUuid, e := uuid.Parse(pr.ReviewUuid)
-	if e != nil {
-		e = errors.E(opError, kinds.ReviewUuidValidationErr, e)
+	validReviewUuid, err := uuid.Parse(pr.ReviewUuid)
+	if err != nil {
+		e = errors.E(opError, kinds.ReviewUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
-	validUserUuid, e := uuid.Parse(pr.UserUuid)
-	if e != nil {
-		e = errors.E(opError, kinds.UserUuidValidationErr, e)
+	validUserUuid, err := uuid.Parse(pr.UserUuid)
+	if err != nil {
+		e = errors.E(opError, kinds.UserUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
-	validHotelUuid, e := uuid.Parse(pr.HotelUuid)
-	if e != nil {
-		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
+	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
+	if err != nil {
+		e = errors.E(opError, kinds.HotelUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return
 	}
@@ -141,9 +141,9 @@ func (s *HotelServer) ProtoToReview(pr *proto.Review) (r *models.Review, e error
 func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 	var opError errors.Op = "hotel-service.ProtoToHotel"
 
-	validHotelUuid, e := uuid.Parse(pr.HotelUuid)
-	if e != nil {
-		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
+	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
+	if err != nil {
+		e = errors.E(opError, kinds.HotelUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return
 	}
@@ -152,7 +152,7 @@ func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 	for _, v := range pr.Photos {
 		validPhotoUuid, err := uuid.Parse(v)
 		if err != nil {
-			e = errors.E(opError, kinds.PhotoUuidValidationErr, e)
+			e = errors.E(opError, kinds.PhotoUuidValidationErr, err)
 			s.Logger.Error("Grpc error: ", e)
 			return
 		}

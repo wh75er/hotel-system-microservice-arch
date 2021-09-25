@@ -70,6 +70,7 @@ func GetHttpError(err error) int {
 		ReviewTextValidationErr,
 		ReviewUuidValidationErr,
 		UserUuidValidationErr,
+		PhotoUuidValidationErr,
 	}
 
 	internalError := []errors.Kind{

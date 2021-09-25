@@ -78,7 +78,7 @@ func (u *RoomUsecase) AddRoom(r *models.Room) (e error) {
 	}
 
 	r.RoomUuid = uuid.New()
-	r.CreationDate = time.Now().UTC()
+	r.CreationDate = time.Now()
 
 	e = u.RoomRepository.AddRoom(r)
 	if e != nil {

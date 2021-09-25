@@ -33,7 +33,8 @@ func (u *ReviewUsecase) GetReview(reviewUuid string) (r models.Review, e error) 
 	r, e = u.ReviewRepository.GetReview(validReviewUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = nil
+			e = errors.E(opError, kinds.ReviewNotFoundErr, e)
+			u.Logger.Error("Usecase error: ", e)
 			return
 		}
 		e = errors.E(opError, kinds.RepositoryReviewErr, e)
@@ -104,7 +105,7 @@ func (u *ReviewUsecase) AddReview(r *models.Review) (e error) {
 	}
 
 	r.ReviewUuid = uuid.New()
-	r.CreationDate = time.Now().UTC()
+	r.CreationDate = time.Now()
 
 	e = u.ReviewRepository.AddReview(r)
 	if e != nil {

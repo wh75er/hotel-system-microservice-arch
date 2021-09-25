@@ -10,6 +10,10 @@ type Error struct {
 	Err  error
 }
 
+const (
+	emptyDetailsMsg = "without details"
+)
+
 func (e Error) Error() string {
 	return string(e.Kind)
 }
@@ -33,7 +37,12 @@ func E(args ...interface{}) error {
 }
 
 // Ops Get error's operations stack trace
-func Ops(e *Error) []Op {
+func Ops(err error) []Op {
+	e, ok := err.(*Error)
+	if !ok {
+		return []Op{}
+	}
+
 	res := []Op{e.Op}
 
 	subErr, ok := e.Err.(*Error)
@@ -49,7 +58,11 @@ func Ops(e *Error) []Op {
 func SourceDetails(err error) string {
 	e, ok := err.(*Error)
 	if !ok {
-		return "without details"
+		return emptyDetailsMsg
+	}
+
+	if e.Err == nil {
+		return emptyDetailsMsg
 	}
 
 	return e.Err.Error()
