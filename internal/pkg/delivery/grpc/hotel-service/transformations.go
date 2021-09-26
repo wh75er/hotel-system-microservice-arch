@@ -16,7 +16,13 @@ func (s *HotelServer) ReviewToProto(r *models.Review) *proto.Review {
 		ReviewUuid:   r.ReviewUuid.String(),
 		Text:         r.Text,
 		IsAnonymous:  r.IsAnonymous,
-		Photos:       r.Photos,
+		Photos: func() []string {
+			var res []string
+			for _, v := range r.Photos {
+				res = append(res, v.String())
+			}
+			return res
+		}(),
 		CreationDate: r.CreationDate.Unix(),
 	}
 }
@@ -125,13 +131,24 @@ func (s *HotelServer) ProtoToReview(pr *proto.Review) (r *models.Review, e error
 		return
 	}
 
+	var photos []uuid.UUID
+	for _, v := range pr.Photos {
+		validPhotoUuid, err := uuid.Parse(v)
+		if err != nil {
+			e = errors.E(opError, kinds.PhotoUuidValidationErr, err)
+			s.Logger.Error("Grpc error: ", e)
+			return
+		}
+		photos = append(photos, validPhotoUuid)
+	}
+
 	r = &models.Review{
 		UserUuid:     validUserUuid,
 		HotelUuid:    validHotelUuid,
 		ReviewUuid:   validReviewUuid,
 		Text:         pr.Text,
 		IsAnonymous:  pr.IsAnonymous,
-		Photos:       pr.Photos,
+		Photos:       photos,
 		CreationDate: time.Unix(pr.CreationDate, 0),
 	}
 

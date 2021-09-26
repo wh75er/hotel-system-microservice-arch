@@ -11,7 +11,7 @@ type Review struct {
 	ReviewUuid   uuid.UUID
 	Text         string
 	IsAnonymous  bool
-	Photos       []string
+	Photos       []uuid.UUID
 	CreationDate time.Time
 }
 

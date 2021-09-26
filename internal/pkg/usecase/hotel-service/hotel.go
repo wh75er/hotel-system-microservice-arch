@@ -55,7 +55,7 @@ func (u *HotelUsecase) GetHotel(hotelUuid string) (h models.Hotel, e error) {
 	}
 
 	reviews, e := u.ReviewRepository.GetReviews(validHotelUuid)
-	if e != nil && errors.GetKind(e) != errors.RepositoryNoRows {
+	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
 			e = nil
 		} else {
