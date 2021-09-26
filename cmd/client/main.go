@@ -62,20 +62,20 @@ func main() {
 	//}
 
 	/* Get all hotels case */
-	//hotels, err := client.GetHotels(context.Background(), &pb.Empty{})
-	//if err != nil {
-	//	fmt.Printf("Failed to get hotels: %v, code: %v\n", err, status.Code(err))
-	//}
-	//
-	//fmt.Println("Hotels: ", hotels)
-
-	/* Get hotel by uuid */
-	hotel, err := client.GetHotel(context.Background(), &pb.UUID{Value: "85bf1386-e41b-4cfd-9cff-f4448c057ce2"})
+	hotels, err := client.GetHotels(context.Background(), &pb.Empty{})
 	if err != nil {
-		fmt.Printf("Failed to get hotel: %v, code: %v\n", err, status.Code(err))
+		fmt.Printf("Failed to get hotels: %v, code: %v\n", err, status.Code(err))
 	}
 
-	fmt.Println("Hotel: ", hotel)
+	fmt.Println("Hotels: ", hotels)
+
+	/* Get hotel by uuid */
+	//hotel, err := client.GetHotel(context.Background(), &pb.UUID{Value: "85bf1386-e41b-4cfd-9cff-f4448c057ce2"})
+	//if err != nil {
+	//	fmt.Printf("Failed to get hotel: %v, code: %v\n", err, status.Code(err))
+	//}
+	//
+	//fmt.Println("Hotel: ", hotel)
 
 	/* Token middleware update check */
 
