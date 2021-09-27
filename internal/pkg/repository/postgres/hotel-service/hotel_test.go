@@ -29,20 +29,20 @@ func TestHotelRepository_GetHotel(t *testing.T) {
 	hotelUuid := uuid.New()
 	photosUuid := []uuid.UUID{uuid.New(), uuid.New()}
 	expectedHotel := models.Hotel{
-		Name: "Name",
-		HotelUuid: hotelUuid,
-		Photos: photosUuid,
+		Name:        "Name",
+		HotelUuid:   hotelUuid,
+		Photos:      photosUuid,
 		Description: "Desc",
-		Country: "Country",
-		City: "City",
-		Address: "Address",
-		IsReady: true,
+		Country:     "Country",
+		City:        "City",
+		Address:     "Address",
+		IsReady:     true,
 	}
 
 	tests := []struct {
 		name    string
 		r       models.HotelRepositoryI
-		uuid   	uuid.UUID
+		uuid    uuid.UUID
 		mock    func()
 		want    models.Hotel
 		wantErr bool
@@ -135,31 +135,31 @@ func TestHotelRepository_GetHotels(t *testing.T) {
 	photosUuid2 := []uuid.UUID{uuid.New(), uuid.New()}
 	expectedHotels := []models.Hotel{
 		{
-			Name: "Name1",
-			HotelUuid: hotelUuid1,
-			Photos: photosUuid1,
+			Name:        "Name1",
+			HotelUuid:   hotelUuid1,
+			Photos:      photosUuid1,
 			Description: "Desc1",
-			Country: "Country1",
-			City: "City1",
-			Address: "Address1",
-			IsReady: true,
+			Country:     "Country1",
+			City:        "City1",
+			Address:     "Address1",
+			IsReady:     true,
 		},
 		{
-			Name: "Name2",
-			HotelUuid: hotelUuid2,
-			Photos: photosUuid2,
+			Name:        "Name2",
+			HotelUuid:   hotelUuid2,
+			Photos:      photosUuid2,
 			Description: "Desc2",
-			Country: "Country2",
-			City: "City2",
-			Address: "Address2",
-			IsReady: true,
+			Country:     "Country2",
+			City:        "City2",
+			Address:     "Address2",
+			IsReady:     true,
 		},
 	}
 
 	tests := []struct {
 		name    string
 		r       models.HotelRepositoryI
-		uuid   	uuid.UUID
+		uuid    uuid.UUID
 		mock    func()
 		want    []models.Hotel
 		wantErr bool
@@ -255,29 +255,29 @@ func TestHotelRepository_AddHotel(t *testing.T) {
 	hotelUuid := uuid.New()
 	photosUuid := []uuid.UUID{uuid.New(), uuid.New()}
 	hotel := &models.Hotel{
-		Name: "Name",
-		HotelUuid: hotelUuid,
-		Photos: photosUuid,
-		Description: "Desc",
-		Country: "Country",
-		City: "City",
-		Address: "Address",
-		IsReady: true,
+		Name:         "Name",
+		HotelUuid:    hotelUuid,
+		Photos:       photosUuid,
+		Description:  "Desc",
+		Country:      "Country",
+		City:         "City",
+		Address:      "Address",
+		IsReady:      true,
 		CreationDate: time.Now(),
 	}
 
 	tests := []struct {
 		name    string
 		r       models.HotelRepositoryI
-		hotel 	models.Hotel
+		hotel   models.Hotel
 		mock    func()
 		want    []models.Hotel
 		wantErr bool
 	}{
 		{
 			//When everything works as expected
-			name: "OK",
-			r:    r,
+			name:  "OK",
+			r:     r,
 			hotel: *hotel,
 			mock: func() {
 				result := sqlxmock.NewResult(1, 1)
@@ -327,20 +327,19 @@ func TestHotelRepository_PatchHotel(t *testing.T) {
 	hotelUuidOrigin := uuid.New()
 	photosUuidOrigin := []uuid.UUID{uuid.New(), uuid.New()}
 	hotelOrigin := models.Hotel{
-		Name: "Name",
-		HotelUuid: hotelUuidOrigin,
-		Photos: photosUuidOrigin,
-		Description: "Desc",
-		Country: "Country",
-		City: "City",
-		Address: "Address",
-		IsReady: true,
+		Name:         "Name",
+		HotelUuid:    hotelUuidOrigin,
+		Photos:       photosUuidOrigin,
+		Description:  "Desc",
+		Country:      "Country",
+		City:         "City",
+		Address:      "Address",
+		IsReady:      true,
 		CreationDate: time.Now(),
 	}
 
 	patchedHotel := hotelOrigin
 	patchedHotel.Name = "NewName"
-
 
 	otherHotelUuid := uuid.New()
 	if otherHotelUuid == hotelUuidOrigin {
@@ -354,15 +353,15 @@ func TestHotelRepository_PatchHotel(t *testing.T) {
 	tests := []struct {
 		name    string
 		r       models.HotelRepositoryI
-		hotel 	models.Hotel
+		hotel   models.Hotel
 		mock    func()
 		want    []models.Hotel
 		wantErr bool
 	}{
 		{
 			//When everything works as expected
-			name: "OK",
-			r:    r,
+			name:  "OK",
+			r:     r,
 			hotel: patchedHotel,
 			mock: func() {
 				result := sqlxmock.NewResult(1, 1)
@@ -382,8 +381,8 @@ func TestHotelRepository_PatchHotel(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Hotel Not Found",
-			r:    r,
+			name:  "Hotel Not Found",
+			r:     r,
 			hotel: patchedHotelWithAnotherUuid,
 			mock: func() {
 				result := sqlxmock.NewResult(1, 0)
@@ -434,7 +433,7 @@ func TestHotelRepository_Delete(t *testing.T) {
 	tests := []struct {
 		name    string
 		r       models.HotelRepositoryI
-		uuid   	uuid.UUID
+		uuid    uuid.UUID
 		mock    func()
 		want    []models.Hotel
 		wantErr bool

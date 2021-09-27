@@ -30,18 +30,18 @@ func TestReviewRepository_GetReview(t *testing.T) {
 	hotelUuid := uuid.New()
 	photosUuid := []uuid.UUID{uuid.New(), uuid.New()}
 	expectedReview := models.Review{
-		UserUuid: userUuid,
-		HotelUuid: hotelUuid,
-		ReviewUuid: reviewUuid,
-		Text: "Test text",
+		UserUuid:    userUuid,
+		HotelUuid:   hotelUuid,
+		ReviewUuid:  reviewUuid,
+		Text:        "Test text",
 		IsAnonymous: true,
-		Photos: photosUuid,
+		Photos:      photosUuid,
 	}
 
 	tests := []struct {
 		name    string
 		r       models.ReviewRepositoryI
-		uuid   	uuid.UUID
+		uuid    uuid.UUID
 		mock    func()
 		want    models.Review
 		wantErr bool
@@ -127,27 +127,27 @@ func TestReviewRepository_GetReviews(t *testing.T) {
 
 	expectedReviews := []models.Review{
 		{
-			UserUuid: uuid.New(),
-			HotelUuid: hotelUuid,
-			ReviewUuid: uuid.New(),
-			Text: "Test text",
+			UserUuid:    uuid.New(),
+			HotelUuid:   hotelUuid,
+			ReviewUuid:  uuid.New(),
+			Text:        "Test text",
 			IsAnonymous: true,
-			Photos: []uuid.UUID{uuid.New(), uuid.New()},
+			Photos:      []uuid.UUID{uuid.New(), uuid.New()},
 		},
 		{
-			UserUuid: uuid.New(),
-			HotelUuid: hotelUuid,
-			ReviewUuid: uuid.New(),
-			Text: "Test text",
+			UserUuid:    uuid.New(),
+			HotelUuid:   hotelUuid,
+			ReviewUuid:  uuid.New(),
+			Text:        "Test text",
 			IsAnonymous: true,
-			Photos: []uuid.UUID{uuid.New(), uuid.New()},
+			Photos:      []uuid.UUID{uuid.New(), uuid.New()},
 		},
 	}
 
 	tests := []struct {
 		name    string
 		r       models.ReviewRepositoryI
-		uuid   	uuid.UUID
+		uuid    uuid.UUID
 		mock    func()
 		want    []models.Review
 		wantErr bool

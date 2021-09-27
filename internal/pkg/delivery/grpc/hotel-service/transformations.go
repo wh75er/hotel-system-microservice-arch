@@ -11,11 +11,11 @@ import (
 
 func (s *HotelServer) ReviewToProto(r *models.Review) *proto.Review {
 	return &proto.Review{
-		UserUuid:     r.UserUuid.String(),
-		HotelUuid:    r.HotelUuid.String(),
-		ReviewUuid:   r.ReviewUuid.String(),
-		Text:         r.Text,
-		IsAnonymous:  r.IsAnonymous,
+		UserUuid:    r.UserUuid.String(),
+		HotelUuid:   r.HotelUuid.String(),
+		ReviewUuid:  r.ReviewUuid.String(),
+		Text:        r.Text,
+		IsAnonymous: r.IsAnonymous,
 		Photos: func() []string {
 			var res []string
 			for _, v := range r.Photos {

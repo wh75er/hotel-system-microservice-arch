@@ -3,6 +3,7 @@ package jwt_manager
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/models"
 	"time"
@@ -15,21 +16,33 @@ type JWTManager struct {
 
 type UserClaims struct {
 	jwt.StandardClaims
-	Role models.Role `json:"role"`
+	UserUuid string
+	Login    string
+	Role     models.Role `json:"role"`
 }
 
 func NewJWTManager(secret string, tokenDuration time.Duration) *JWTManager {
 	return &JWTManager{secret, tokenDuration}
 }
 
-func (m *JWTManager) Generate(r models.Role) (models.Token, error) {
+func (m *JWTManager) Generate(args ...interface{}) (models.Token, error) {
 	var opError errors.Op = "jwt-manager.Generate"
 
 	claims := UserClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(m.tokenDuration).Unix(),
 		},
-		Role: r,
+	}
+
+	for _, arg := range args {
+		switch arg := arg.(type) {
+		case uuid.UUID:
+			claims.UserUuid = arg.String()
+		case models.Role:
+			claims.Role = arg
+		case string:
+			claims.Login = arg
+		}
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

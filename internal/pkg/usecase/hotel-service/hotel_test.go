@@ -29,51 +29,51 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 	hotelUuidWithoutRoomsReviews := uuid.New()
 	hotelPhotos := []uuid.UUID{uuid.New(), uuid.New()}
 
-	review := models.Review {
-		UserUuid: uuid.New(),
-		HotelUuid: hotelUuid,
-		ReviewUuid: uuid.New(),
-		Text: "test text",
-		IsAnonymous: true,
-		Photos: []uuid.UUID{uuid.New(), uuid.New()},
+	review := models.Review{
+		UserUuid:     uuid.New(),
+		HotelUuid:    hotelUuid,
+		ReviewUuid:   uuid.New(),
+		Text:         "test text",
+		IsAnonymous:  true,
+		Photos:       []uuid.UUID{uuid.New(), uuid.New()},
 		CreationDate: time.Now(),
 	}
 
-	room := models.Room {
-		RoomType: "family",
-		Amount: 4,
-		Beds: 5,
-		HotelUuid: hotelUuid,
-		RoomUuid: uuid.New(),
+	room := models.Room{
+		RoomType:     "family",
+		Amount:       4,
+		Beds:         5,
+		HotelUuid:    hotelUuid,
+		RoomUuid:     uuid.New(),
 		CreationDate: time.Now(),
-		Offers: []string{"diving", "food included"},
-		NightPrice: 3000,
+		Offers:       []string{"diving", "food included"},
+		NightPrice:   3000,
 	}
 
-	hotel := models.Hotel {
-		Name: "Name",
-		HotelUuid: hotelUuid,
-		Photos: hotelPhotos,
+	hotel := models.Hotel{
+		Name:        "Name",
+		HotelUuid:   hotelUuid,
+		Photos:      hotelPhotos,
 		Description: "Desc",
-		Country: "Country",
-		City: "City",
-		Address: "Address",
-		IsReady: true,
+		Country:     "Country",
+		City:        "City",
+		Address:     "Address",
+		IsReady:     true,
 	}
 
 	expectedHotelWithoutRoomsReviews := hotel
 
-	expectedHotelWithRoomsReviews := models.Hotel {
-		Name: "Name",
-		HotelUuid: hotelUuid,
-		Photos: hotelPhotos,
+	expectedHotelWithRoomsReviews := models.Hotel{
+		Name:        "Name",
+		HotelUuid:   hotelUuid,
+		Photos:      hotelPhotos,
 		Description: "Desc",
-		Country: "Country",
-		City: "City",
-		Address: "Address",
-		IsReady: true,
-		Rooms: []models.Room{room},
-		Reviews: []models.Review{review},
+		Country:     "Country",
+		City:        "City",
+		Address:     "Address",
+		IsReady:     true,
+		Rooms:       []models.Room{room},
+		Reviews:     []models.Review{review},
 	}
 
 	hotelMockRepository.On(
@@ -158,53 +158,53 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 	).Return(emptyReviews, errors.E(errors.RepositoryDownErr))
 
 	tests := []struct {
-		name    string
-		hotelU  models.HotelUsecaseI
+		name      string
+		hotelU    models.HotelUsecaseI
 		hotelUuid string
-		want    models.Hotel
-		wantErr bool
+		want      models.Hotel
+		wantErr   bool
 	}{
 		{
-			name: "OK",
-			hotelU: hotelUsecase,
+			name:      "OK",
+			hotelU:    hotelUsecase,
 			hotelUuid: hotelUuid.String(),
-			want: expectedHotelWithRoomsReviews,
+			want:      expectedHotelWithRoomsReviews,
 		},
 		{
-			name: "Hotel Not Found",
-			hotelU: hotelUsecase,
+			name:      "Hotel Not Found",
+			hotelU:    hotelUsecase,
 			hotelUuid: nonExistedHotelUuid.String(),
-			wantErr: true,
+			wantErr:   true,
 		},
 		{
-			name: "Hotel without rooms and reviews",
-			hotelU: hotelUsecase,
+			name:      "Hotel without rooms and reviews",
+			hotelU:    hotelUsecase,
 			hotelUuid: hotelUuidWithoutRoomsReviews.String(),
-			want: expectedHotelWithoutRoomsReviews,
+			want:      expectedHotelWithoutRoomsReviews,
 		},
 		{
-			name: "Hotel Uuid Validation Error",
-			hotelU: hotelUsecase,
+			name:      "Hotel Uuid Validation Error",
+			hotelU:    hotelUsecase,
 			hotelUuid: "invalid uuid",
-			wantErr: true,
+			wantErr:   true,
 		},
 		{
-			name: "Hotel Repository Error",
-			hotelU: hotelUsecase,
+			name:      "Hotel Repository Error",
+			hotelU:    hotelUsecase,
 			hotelUuid: hotelRepoErr.String(),
-			wantErr: true,
+			wantErr:   true,
 		},
 		{
-			name: "Room Repository Error",
-			hotelU: hotelUsecase,
+			name:      "Room Repository Error",
+			hotelU:    hotelUsecase,
 			hotelUuid: RoomRepoErr.String(),
-			wantErr: true,
+			wantErr:   true,
 		},
 		{
-			name: "Review Repository Error",
-			hotelU: hotelUsecase,
+			name:      "Review Repository Error",
+			hotelU:    hotelUsecase,
 			hotelUuid: ReviewRepoErr.String(),
-			wantErr: true,
+			wantErr:   true,
 		},
 	}
 
@@ -237,39 +237,38 @@ func TestHotelUsecase_GetHotels(t *testing.T) {
 	hotelUuid1 := uuid.New()
 	hotelPhotos1 := []uuid.UUID{uuid.New(), uuid.New()}
 
-	expectedHotels := []models.Hotel {
+	expectedHotels := []models.Hotel{
 		{
-			Name: "Name",
-			HotelUuid: hotelUuid1,
-			Photos: hotelPhotos1,
+			Name:        "Name",
+			HotelUuid:   hotelUuid1,
+			Photos:      hotelPhotos1,
 			Description: "Desc",
-			Country: "Country",
-			City: "City",
-			Address: "Address",
-			IsReady: true,
+			Country:     "Country",
+			City:        "City",
+			Address:     "Address",
+			IsReady:     true,
 		},
 		{
-			Name: "Name",
-			HotelUuid: hotelUuid1,
-			Photos: hotelPhotos1,
+			Name:        "Name",
+			HotelUuid:   hotelUuid1,
+			Photos:      hotelPhotos1,
 			Description: "Desc",
-			Country: "Country",
-			City: "City",
-			Address: "Address",
-			IsReady: true,
+			Country:     "Country",
+			City:        "City",
+			Address:     "Address",
+			IsReady:     true,
 		},
 	}
-
 
 	tests := []struct {
 		name    string
 		hotelU  models.HotelUsecaseI
-		mock 	func()
+		mock    func()
 		want    []models.Hotel
 		wantErr bool
 	}{
 		{
-			name: "OK",
+			name:   "OK",
 			hotelU: hotelUsecase,
 			mock: func() {
 				hotelMockRepository.On("GetHotels").Return(expectedHotels, nil).Once()
@@ -277,7 +276,7 @@ func TestHotelUsecase_GetHotels(t *testing.T) {
 			want: expectedHotels,
 		},
 		{
-			name: "Hotel Repository Error",
+			name:   "Hotel Repository Error",
 			hotelU: hotelUsecase,
 			mock: func() {
 				var emptyHotels []models.Hotel
@@ -286,7 +285,7 @@ func TestHotelUsecase_GetHotels(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "No Hotels Found",
+			name:   "No Hotels Found",
 			hotelU: hotelUsecase,
 			mock: func() {
 				var emptyHotels []models.Hotel
@@ -295,7 +294,7 @@ func TestHotelUsecase_GetHotels(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "Hotel Repository No Rows Err",
+			name:   "Hotel Repository No Rows Err",
 			hotelU: hotelUsecase,
 			mock: func() {
 				var emptyHotels []models.Hotel
@@ -335,38 +334,38 @@ func TestHotelUsecase_AddHotel(t *testing.T) {
 	hotelUuid1 := uuid.New()
 	hotelPhotos1 := []uuid.UUID{uuid.New(), uuid.New()}
 
-	expectedHotels := []models.Hotel {
+	expectedHotels := []models.Hotel{
 		{
-			Name: "Name",
-			HotelUuid: hotelUuid1,
-			Photos: hotelPhotos1,
+			Name:        "Name",
+			HotelUuid:   hotelUuid1,
+			Photos:      hotelPhotos1,
 			Description: "Desc",
-			Country: "Country",
-			City: "City",
-			Address: "Address",
-			IsReady: true,
+			Country:     "Country",
+			City:        "City",
+			Address:     "Address",
+			IsReady:     true,
 		},
 		{
-			Name: "Name",
-			HotelUuid: hotelUuid1,
-			Photos: hotelPhotos1,
+			Name:        "Name",
+			HotelUuid:   hotelUuid1,
+			Photos:      hotelPhotos1,
 			Description: "Desc",
-			Country: "Country",
-			City: "City",
-			Address: "Address",
-			IsReady: true,
+			Country:     "Country",
+			City:        "City",
+			Address:     "Address",
+			IsReady:     true,
 		},
 	}
 
 	tests := []struct {
 		name    string
 		hotelU  models.HotelUsecaseI
-		mock 	func()
+		mock    func()
 		want    []models.Hotel
 		wantErr bool
 	}{
 		{
-			name: "OK",
+			name:   "OK",
 			hotelU: hotelUsecase,
 			mock: func() {
 				hotelMockRepository.On("GetHotels").Return(expectedHotels, nil).Once()
@@ -374,7 +373,7 @@ func TestHotelUsecase_AddHotel(t *testing.T) {
 			want: expectedHotels,
 		},
 		{
-			name: "Hotel Repository Error",
+			name:   "Hotel Repository Error",
 			hotelU: hotelUsecase,
 			mock: func() {
 				var emptyHotels []models.Hotel
@@ -383,7 +382,7 @@ func TestHotelUsecase_AddHotel(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "No Hotels Found",
+			name:   "No Hotels Found",
 			hotelU: hotelUsecase,
 			mock: func() {
 				var emptyHotels []models.Hotel
@@ -392,7 +391,7 @@ func TestHotelUsecase_AddHotel(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "Hotel Repository No Rows Err",
+			name:   "Hotel Repository No Rows Err",
 			hotelU: hotelUsecase,
 			mock: func() {
 				var emptyHotels []models.Hotel

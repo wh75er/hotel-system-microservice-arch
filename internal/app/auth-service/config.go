@@ -1,4 +1,4 @@
-package hotel_service
+package auth_service
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ const (
 	jwtSecretEnv   = "JWT_KEY"
 	adminIdEnv     = "ADMIN_ID"
 	adminSecretEnv = "ADMIN_SECRET"
-	configDst      = "configs/hotel-service/"
+	configDst      = "configs/auth-service/"
 )
 
 type duration struct {

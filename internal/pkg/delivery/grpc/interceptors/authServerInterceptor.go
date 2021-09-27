@@ -14,9 +14,9 @@ import (
 )
 
 type ServerAdminAuthInterceptor struct {
-	JwtManager      *jwt_manager.JWTManager
+	JwtManager   *jwt_manager.JWTManager
 	ApplyMethods map[string][]models.Role
-	logger logs.LoggerInterface
+	logger       logs.LoggerInterface
 }
 
 func NewServerAdminAuthInterceptor(

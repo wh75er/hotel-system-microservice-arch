@@ -23,12 +23,12 @@ type GrpcClientI interface {
 }
 
 type ClientAuthInterceptor struct {
-	GrpcServiceClient GrpcClientI
+	GrpcServiceClient  GrpcClientI
 	ServiceCredentials models.Credentials
-	JwtManager      *jwtManager.JWTManager
-	AuthMethods map[string]bool
-	logger logs.LoggerInterface
-	token models.Token
+	JwtManager         *jwtManager.JWTManager
+	AuthMethods        map[string]bool
+	logger             logs.LoggerInterface
+	token              models.Token
 }
 
 func NewClientAuthInterceptor(
@@ -39,9 +39,9 @@ func NewClientAuthInterceptor(
 ) *ClientAuthInterceptor {
 	return &ClientAuthInterceptor{
 		ServiceCredentials: creds,
-		JwtManager: jwtManager,
-		AuthMethods: authMethods,
-		logger: logger,
+		JwtManager:         jwtManager,
+		AuthMethods:        authMethods,
+		logger:             logger,
 	}
 }
 

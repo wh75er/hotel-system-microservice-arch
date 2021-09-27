@@ -24,15 +24,15 @@ func (r *HotelRepository) GetHotel(hotelUuid uuid.UUID) (h models.Hotel, e error
 
 	err := r.Db.QueryRowx("SELECT name, hotelUuid, photos, description, country, city, address, "+
 		"isReady FROM hotels WHERE hotelUuid = $1", hotelUuid).Scan(
-			&h.Name,
-			&h.HotelUuid,
-			pq.Array(&h.Photos),
-			&h.Description,
-			&h.Country,
-			&h.City,
-			&h.Address,
-			&h.IsReady,
-		)
+		&h.Name,
+		&h.HotelUuid,
+		pq.Array(&h.Photos),
+		&h.Description,
+		&h.Country,
+		&h.City,
+		&h.Address,
+		&h.IsReady,
+	)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
@@ -50,7 +50,7 @@ func (r *HotelRepository) GetHotel(hotelUuid uuid.UUID) (h models.Hotel, e error
 func (r *HotelRepository) GetHotels() (h []models.Hotel, e error) {
 	var opError errors.Op = "postgres.GetHotels"
 
-	rows, err := r.Db.Queryx("SELECT name, hotelUuid, photos, description, country, city, address, "+
+	rows, err := r.Db.Queryx("SELECT name, hotelUuid, photos, description, country, city, address, " +
 		"isReady FROM hotels")
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
