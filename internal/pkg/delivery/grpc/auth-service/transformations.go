@@ -36,7 +36,7 @@ func (s *AuthServer) UserToProto(user *models.User) *proto.User {
 }
 
 func (s *AuthServer) RoleToProto(role *models.Role) *proto.Role {
-	return &proto.Role {
+	return &proto.Role{
 		Value: string(*role),
 	}
 }

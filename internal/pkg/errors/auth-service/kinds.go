@@ -1,4 +1,4 @@
-package hotel_service
+package auth_service
 
 import (
 	"hotel-booking-system/internal/pkg/errors"
@@ -50,6 +50,7 @@ func GetHttpError(err error) int {
 	}
 
 	internalError := []errors.Kind{
+		RepositoryUserErr,
 		FailedToHashPassword,
 	}
 

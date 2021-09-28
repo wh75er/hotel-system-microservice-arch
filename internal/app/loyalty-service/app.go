@@ -1,19 +1,19 @@
-package auth_service
+package loyalty_service
 
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc"
-	authServer "hotel-booking-system/internal/pkg/delivery/grpc/auth-service"
-	authService "hotel-booking-system/internal/pkg/delivery/grpc/auth-service"
-	pb "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
+	loyaltyServer "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service"
+	loyaltyService "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service"
+	pb "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/repository/postgres"
-	userRepositories "hotel-booking-system/internal/pkg/repository/postgres/auth-service"
+	userRepositories "hotel-booking-system/internal/pkg/repository/postgres/loyalty-service"
 	"hotel-booking-system/internal/pkg/usecase"
-	userUsecases "hotel-booking-system/internal/pkg/usecase/auth-service"
+	userUsecases "hotel-booking-system/internal/pkg/usecase/loyalty-service"
 	"net"
 )
 
@@ -46,25 +46,25 @@ func (a *App) Run(configFilename string) {
 		grpc.UnaryInterceptor(
 			interceptors.NewServerAdminAuthInterceptor(
 				jwtTokenManager,
-				authService.AccessibleAuthServicePaths(),
+				loyaltyService.AccessibleLoyaltyServicePaths(),
 				a.logger,
 			).Unary(),
 		),
 	)
 
-	userRepository := userRepositories.NewUserRepository(a.db, a.logger)
+	loyaltyRepository := userRepositories.NewLoyaltyRepository(a.db, a.logger)
 
-	userUsecase := userUsecases.NewUserUsecase(userRepository, jwtTokenManager, a.logger)
+	loayltyUsecase := userUsecases.NewLoyaltyUsecase(loyaltyRepository, a.logger)
 	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
 
-	authS := authServer.NewAuthServer(
-		userUsecase,
+	loyaltyS := loyaltyServer.NewLoyaltyServer(
+		loayltyUsecase,
 		adminCredsUsecase,
 		jwtTokenManager,
 		a.logger,
 	)
 
-	pb.RegisterAuthServiceServer(a.server, authS)
+	pb.RegisterLoyaltyServiceServer(a.server, loyaltyS)
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)
@@ -81,7 +81,7 @@ func (a *App) setupStorage() {
 
 	a.logger.Info("Successfully established connection with database")
 
-	postgres.RunMigrations(a.logger, "file://init/migrations/auth-service", a.conf.Storage.Url)
+	postgres.RunMigrations(a.logger, "file://init/migrations/loyalty-service", a.conf.Storage.Url)
 
 	a.logger.Info("Successfully ran migrations")
 }

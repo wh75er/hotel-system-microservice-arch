@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto";
+
+package proto;
+
+service LoyaltyService {
+  rpc GetToken (Credentials) returns (Token) {}
+
+  rpc GetDiscount (UUID) returns (Loyalty) {}
+  rpc AddUser (UUID) returns (Empty) {}
+  rpc UpdateDiscount (UpdateDiscountRequest) returns (Empty) {}
+}
+
+message Empty {
+
+}
+
+message UUID {
+  string Value = 1;
+}
+
+message Credentials {
+  string id = 1;
+  string secret = 2;
+}
+
+message Token {
+  string Value = 1;
+}
+
+message UpdateDiscountRequest {
+  UUID userUid = 1;
+  int64 contribution = 2;
+}
+
+message Loyalty {
+  UUID UserUuid = 1;
+  string Status = 2;
+  int64 Discount = 3;
+  int64 ContributionAmount = 4;
+}
