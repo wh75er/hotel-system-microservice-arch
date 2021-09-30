@@ -247,28 +247,3 @@ func (s *HotelServer) RoomsToProto(r []models.Room) *proto.RoomsResponse {
 		Rooms: protoRooms,
 	}
 }
-
-func ProtoToCredentials(c *proto.Credentials) *models.Credentials {
-	return &models.Credentials{
-		Id:     c.Id,
-		Secret: c.Secret,
-	}
-}
-
-func CredentialsToProto(c *models.Credentials) *proto.Credentials {
-	return &proto.Credentials{
-		Id:     c.Id,
-		Secret: c.Secret,
-	}
-}
-
-func ProtoToToken(t *proto.Token) *models.Token {
-	_token := models.Token(t.Value)
-	return &_token
-}
-
-func TokenToProto(t *models.Token) *proto.Token {
-	return &proto.Token{
-		Value: string(*t),
-	}
-}

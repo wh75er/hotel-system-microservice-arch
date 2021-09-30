@@ -12,10 +12,10 @@ const (
 const (
 	PaymentExistsErr             = errors.Kind("Payment exists")
 	PaymentNotFoundErr           = errors.Kind("Payment not found")
-	UserNotFoundErr 			 = errors.Kind("User with specified UUID does not exists")
+	UserNotFoundErr              = errors.Kind("User with specified UUID does not exists")
 	PaymentUserUuidValidationErr = errors.Kind("User UUID is not valid")
-	PaymentUuidValidationErr 	 = errors.Kind("Payment UUID is not valid")
-	PaymentPriceValidationErr	 = errors.Kind("Price cannot be less or equal zero")
+	PaymentUuidValidationErr     = errors.Kind("Payment UUID is not valid")
+	PaymentPriceValidationErr    = errors.Kind("Price cannot be less or equal zero")
 )
 
 func GetHttpError(err error) int {

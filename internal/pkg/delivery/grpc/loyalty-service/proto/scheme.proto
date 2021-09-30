@@ -4,38 +4,23 @@ option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-ser
 
 package proto;
 
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
 service LoyaltyService {
-  rpc GetToken (Credentials) returns (Token) {}
+  rpc GetToken (common.Credentials) returns (common.Token) {}
 
-  rpc GetDiscount (UUID) returns (Loyalty) {}
-  rpc AddUser (UUID) returns (Empty) {}
-  rpc UpdateDiscount (UpdateDiscountRequest) returns (Empty) {}
-}
-
-message Empty {
-
-}
-
-message UUID {
-  string Value = 1;
-}
-
-message Credentials {
-  string id = 1;
-  string secret = 2;
-}
-
-message Token {
-  string Value = 1;
+  rpc GetDiscount (common.UUID) returns (Loyalty) {}
+  rpc AddUser (common.UUID) returns (common.Empty) {}
+  rpc UpdateDiscount (UpdateDiscountRequest) returns (common.Empty) {}
 }
 
 message UpdateDiscountRequest {
-  UUID userUid = 1;
+  common.UUID userUid = 1;
   int64 contribution = 2;
 }
 
 message Loyalty {
-  UUID UserUuid = 1;
+  common.UUID UserUuid = 1;
   string Status = 2;
   int64 Discount = 3;
   int64 ContributionAmount = 4;

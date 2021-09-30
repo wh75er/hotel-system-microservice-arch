@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	commonProto "hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -18,11 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
-	GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error)
-	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error)
-	GetUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*User, error)
-	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
-	CheckAuth(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Role, error)
+	GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error)
+	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	GetUser(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*User, error)
+	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*commonProto.Token, error)
+	CheckAuth(ctx context.Context, in *commonProto.Token, opts ...grpc.CallOption) (*Role, error)
 }
 
 type authServiceClient struct {
@@ -33,8 +34,8 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
 }
 
-func (c *authServiceClient) GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
+func (c *authServiceClient) GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error) {
+	out := new(commonProto.Token)
 	err := c.cc.Invoke(ctx, "/proto.AuthService/GetToken", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -42,8 +43,8 @@ func (c *authServiceClient) GetToken(ctx context.Context, in *Credentials, opts 
 	return out, nil
 }
 
-func (c *authServiceClient) AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *authServiceClient) AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.AuthService/AddUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +52,7 @@ func (c *authServiceClient) AddUser(ctx context.Context, in *User, opts ...grpc.
 	return out, nil
 }
 
-func (c *authServiceClient) GetUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*User, error) {
+func (c *authServiceClient) GetUser(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/proto.AuthService/GetUser", in, out, opts...)
 	if err != nil {
@@ -60,8 +61,8 @@ func (c *authServiceClient) GetUser(ctx context.Context, in *UUID, opts ...grpc.
 	return out, nil
 }
 
-func (c *authServiceClient) Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
+func (c *authServiceClient) Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*commonProto.Token, error) {
+	out := new(commonProto.Token)
 	err := c.cc.Invoke(ctx, "/proto.AuthService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,7 +70,7 @@ func (c *authServiceClient) Login(ctx context.Context, in *User, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *authServiceClient) CheckAuth(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Role, error) {
+func (c *authServiceClient) CheckAuth(ctx context.Context, in *commonProto.Token, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
 	err := c.cc.Invoke(ctx, "/proto.AuthService/CheckAuth", in, out, opts...)
 	if err != nil {
@@ -82,11 +83,11 @@ func (c *authServiceClient) CheckAuth(ctx context.Context, in *Token, opts ...gr
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
-	GetToken(context.Context, *Credentials) (*Token, error)
-	AddUser(context.Context, *User) (*Empty, error)
-	GetUser(context.Context, *UUID) (*User, error)
-	Login(context.Context, *User) (*Token, error)
-	CheckAuth(context.Context, *Token) (*Role, error)
+	GetToken(context.Context, *commonProto.Credentials) (*commonProto.Token, error)
+	AddUser(context.Context, *User) (*commonProto.Empty, error)
+	GetUser(context.Context, *commonProto.UUID) (*User, error)
+	Login(context.Context, *User) (*commonProto.Token, error)
+	CheckAuth(context.Context, *commonProto.Token) (*Role, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -94,19 +95,19 @@ type AuthServiceServer interface {
 type UnimplementedAuthServiceServer struct {
 }
 
-func (UnimplementedAuthServiceServer) GetToken(context.Context, *Credentials) (*Token, error) {
+func (UnimplementedAuthServiceServer) GetToken(context.Context, *commonProto.Credentials) (*commonProto.Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
 }
-func (UnimplementedAuthServiceServer) AddUser(context.Context, *User) (*Empty, error) {
+func (UnimplementedAuthServiceServer) AddUser(context.Context, *User) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
 }
-func (UnimplementedAuthServiceServer) GetUser(context.Context, *UUID) (*User, error) {
+func (UnimplementedAuthServiceServer) GetUser(context.Context, *commonProto.UUID) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedAuthServiceServer) Login(context.Context, *User) (*Token, error) {
+func (UnimplementedAuthServiceServer) Login(context.Context, *User) (*commonProto.Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServiceServer) CheckAuth(context.Context, *Token) (*Role, error) {
+func (UnimplementedAuthServiceServer) CheckAuth(context.Context, *commonProto.Token) (*Role, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckAuth not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
@@ -123,7 +124,7 @@ func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
 }
 
 func _AuthService_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Credentials)
+	in := new(commonProto.Credentials)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func _AuthService_GetToken_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/proto.AuthService/GetToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetToken(ctx, req.(*Credentials))
+		return srv.(AuthServiceServer).GetToken(ctx, req.(*commonProto.Credentials))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -159,7 +160,7 @@ func _AuthService_AddUser_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -171,7 +172,7 @@ func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/proto.AuthService/GetUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetUser(ctx, req.(*UUID))
+		return srv.(AuthServiceServer).GetUser(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -195,7 +196,7 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _AuthService_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Token)
+	in := new(commonProto.Token)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -207,7 +208,7 @@ func _AuthService_CheckAuth_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto.AuthService/CheckAuth",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).CheckAuth(ctx, req.(*Token))
+		return srv.(AuthServiceServer).CheckAuth(ctx, req.(*commonProto.Token))
 	}
 	return interceptor(ctx, in, info, handler)
 }

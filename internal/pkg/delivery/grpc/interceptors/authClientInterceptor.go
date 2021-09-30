@@ -4,8 +4,7 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
-	hotel_service "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
-	"hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/errors"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
@@ -19,7 +18,7 @@ const (
 )
 
 type GrpcClientI interface {
-	GetToken(ctx context.Context, in *proto.Credentials, opts ...grpc.CallOption) (*proto.Token, error)
+	GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error)
 }
 
 type ClientAuthInterceptor struct {
@@ -101,12 +100,12 @@ func (i *ClientAuthInterceptor) updateTokenIfRequired() error {
 }
 
 func (i *ClientAuthInterceptor) refreshToken() error {
-	newToken, err := i.GrpcServiceClient.GetToken(context.Background(), hotel_service.CredentialsToProto(&i.ServiceCredentials))
+	newToken, err := i.GrpcServiceClient.GetToken(context.Background(), commonProto.CredentialsToProto(&i.ServiceCredentials))
 	if err != nil {
 		return err
 	}
 
-	i.token = *hotel_service.ProtoToToken(newToken)
+	i.token = *commonProto.ProtoToToken(newToken)
 
 	return nil
 }

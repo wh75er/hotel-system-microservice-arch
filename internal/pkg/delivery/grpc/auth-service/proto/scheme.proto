@@ -4,30 +4,15 @@ option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/auth-servic
 
 package proto;
 
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
 service AuthService {
-  rpc GetToken (Credentials) returns (Token) {}
+  rpc GetToken (common.Credentials) returns (common.Token) {}
 
-  rpc AddUser (User) returns (Empty) {}
-  rpc GetUser (UUID) returns (User) {}
-  rpc Login(User) returns (Token) {}
-  rpc CheckAuth (Token) returns (Role) {}
-}
-
-message Empty {
-
-}
-
-message UUID {
-  string Value = 1;
-}
-
-message Credentials {
-  string id = 1;
-  string secret = 2;
-}
-
-message Token {
-  string Value = 1;
+  rpc AddUser (User) returns (common.Empty) {}
+  rpc GetUser (common.UUID) returns (User) {}
+  rpc Login(User) returns (common.Token) {}
+  rpc CheckAuth (common.Token) returns (Role) {}
 }
 
 message Role {
@@ -35,7 +20,7 @@ message Role {
 }
 
 message User {
-  UUID UserUuid = 1;
+  common.UUID UserUuid = 1;
   string Login = 2;
   string Password = 3;
   string Role = 4;

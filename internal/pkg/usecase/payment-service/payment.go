@@ -11,7 +11,7 @@ import (
 
 type PaymentUsecase struct {
 	PaymentRepository models.PaymentRepositoryI
-	Logger         logs.LoggerInterface
+	Logger            logs.LoggerInterface
 }
 
 func NewPaymentUsecase(

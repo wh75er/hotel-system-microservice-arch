@@ -4,42 +4,27 @@ option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/hotel-servi
 
 package proto;
 
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
 service HotelService {
-  rpc GetToken (Credentials) returns (Token) {}
+  rpc GetToken (common.Credentials) returns (common.Token) {}
 
-  rpc AddHotel (Hotel) returns (Empty) {}
-  rpc GetHotel (UUID) returns (Hotel) {}
-  rpc GetHotels (Empty) returns (HotelsResponse) {}
-  rpc PatchHotel (Hotel) returns (Empty) {}
-  rpc DeleteHotel (UUID) returns (Empty) {}
+  rpc AddHotel (Hotel) returns (common.Empty) {}
+  rpc GetHotel (common.UUID) returns (Hotel) {}
+  rpc GetHotels (common.Empty) returns (HotelsResponse) {}
+  rpc PatchHotel (Hotel) returns (common.Empty) {}
+  rpc DeleteHotel (common.UUID) returns (common.Empty) {}
 
-  rpc AddReview (Review) returns (Empty) {}
-  rpc GetReview (UUID) returns (Review) {}
-  rpc GetReviews (UUID) returns (ReviewsResponse) {}
-  rpc PatchReview (Review) returns (Empty) {}
-  rpc DeleteReview (UUID) returns (Empty) {}
+  rpc AddReview (Review) returns (common.Empty) {}
+  rpc GetReview (common.UUID) returns (Review) {}
+  rpc GetReviews (common.UUID) returns (ReviewsResponse) {}
+  rpc PatchReview (Review) returns (common.Empty) {}
+  rpc DeleteReview (common.UUID) returns (common.Empty) {}
 
-  rpc AddRoom (Room) returns (Empty) {}
-  rpc GetRooms (UUID) returns (RoomsResponse) {}
-  rpc PatchRoom (Room) returns (Empty) {}
-  rpc DeleteRoom (UUID) returns (Empty) {}
-}
-
-message Empty {
-
-}
-
-message UUID {
-  string Value = 1;
-}
-
-message Credentials {
-  string id = 1;
-  string secret = 2;
-}
-
-message Token {
-  string Value = 1;
+  rpc AddRoom (Room) returns (common.Empty) {}
+  rpc GetRooms (common.UUID) returns (RoomsResponse) {}
+  rpc PatchRoom (Room) returns (common.Empty) {}
+  rpc DeleteRoom (common.UUID) returns (common.Empty) {}
 }
 
 message Room {

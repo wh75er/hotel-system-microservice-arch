@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/errors"
 	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
@@ -34,8 +35,8 @@ func NewAuthServer(
 	}
 }
 
-func (s *AuthServer) GetToken(ctx context.Context, pc *proto.Credentials) (*proto.Token, error) {
-	c := ProtoToCredentials(pc)
+func (s *AuthServer) GetToken(ctx context.Context, pc *commonProto.Credentials) (*commonProto.Token, error) {
+	c := commonProto.ProtoToCredentials(pc)
 
 	err := s.AdminCredsUsecase.Login(c)
 	if err != nil {
@@ -51,12 +52,12 @@ func (s *AuthServer) GetToken(ctx context.Context, pc *proto.Credentials) (*prot
 		return nil, err
 	}
 
-	pt := TokenToProto(&token)
+	pt := commonProto.TokenToProto(&token)
 
 	return pt, nil
 }
 
-func (s *AuthServer) AddUser(ctx context.Context, pu *proto.User) (*proto.Empty, error) {
+func (s *AuthServer) AddUser(ctx context.Context, pu *proto.User) (*commonProto.Empty, error) {
 	user, err := s.ProtoToUser(pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -71,10 +72,10 @@ func (s *AuthServer) AddUser(ctx context.Context, pu *proto.User) (*proto.Empty,
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *AuthServer) GetUser(ctx context.Context, pUuid *proto.UUID) (*proto.User, error) {
+func (s *AuthServer) GetUser(ctx context.Context, pUuid *commonProto.UUID) (*proto.User, error) {
 	user, err := s.UserUsecase.GetUser(pUuid.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -85,7 +86,7 @@ func (s *AuthServer) GetUser(ctx context.Context, pUuid *proto.UUID) (*proto.Use
 	return s.UserToProto(user), nil
 }
 
-func (s *AuthServer) Login(ctx context.Context, pu *proto.User) (*proto.Token, error) {
+func (s *AuthServer) Login(ctx context.Context, pu *proto.User) (*commonProto.Token, error) {
 	user, err := s.ProtoToUser(pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -102,11 +103,11 @@ func (s *AuthServer) Login(ctx context.Context, pu *proto.User) (*proto.Token, e
 
 	tokenType := models.Token(token)
 
-	return TokenToProto(&tokenType), nil
+	return commonProto.TokenToProto(&tokenType), nil
 }
 
-func (s *AuthServer) CheckAuth(ctx context.Context, pt *proto.Token) (*proto.Role, error) {
-	token := ProtoToToken(pt)
+func (s *AuthServer) CheckAuth(ctx context.Context, pt *commonProto.Token) (*proto.Role, error) {
+	token := commonProto.ProtoToToken(pt)
 
 	role, err := s.UserUsecase.CheckAuth(string(*token))
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	commonProto "hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -18,21 +19,21 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HotelServiceClient interface {
-	GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error)
-	AddHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*Empty, error)
-	GetHotel(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Hotel, error)
-	GetHotels(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HotelsResponse, error)
-	PatchHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*Empty, error)
-	DeleteHotel(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
-	AddReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*Empty, error)
-	GetReview(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Review, error)
-	GetReviews(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ReviewsResponse, error)
-	PatchReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*Empty, error)
-	DeleteReview(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
-	AddRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*Empty, error)
-	GetRooms(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*RoomsResponse, error)
-	PatchRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*Empty, error)
-	DeleteRoom(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
+	GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error)
+	AddHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	GetHotel(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*Hotel, error)
+	GetHotels(ctx context.Context, in *commonProto.Empty, opts ...grpc.CallOption) (*HotelsResponse, error)
+	PatchHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	DeleteHotel(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	AddReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	GetReview(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*Review, error)
+	GetReviews(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*ReviewsResponse, error)
+	PatchReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	DeleteReview(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	AddRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	GetRooms(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*RoomsResponse, error)
+	PatchRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	DeleteRoom(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error)
 }
 
 type hotelServiceClient struct {
@@ -43,8 +44,8 @@ func NewHotelServiceClient(cc grpc.ClientConnInterface) HotelServiceClient {
 	return &hotelServiceClient{cc}
 }
 
-func (c *hotelServiceClient) GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
+func (c *hotelServiceClient) GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error) {
+	out := new(commonProto.Token)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/GetToken", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -52,8 +53,8 @@ func (c *hotelServiceClient) GetToken(ctx context.Context, in *Credentials, opts
 	return out, nil
 }
 
-func (c *hotelServiceClient) AddHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) AddHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/AddHotel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -61,7 +62,7 @@ func (c *hotelServiceClient) AddHotel(ctx context.Context, in *Hotel, opts ...gr
 	return out, nil
 }
 
-func (c *hotelServiceClient) GetHotel(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Hotel, error) {
+func (c *hotelServiceClient) GetHotel(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*Hotel, error) {
 	out := new(Hotel)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/GetHotel", in, out, opts...)
 	if err != nil {
@@ -70,7 +71,7 @@ func (c *hotelServiceClient) GetHotel(ctx context.Context, in *UUID, opts ...grp
 	return out, nil
 }
 
-func (c *hotelServiceClient) GetHotels(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HotelsResponse, error) {
+func (c *hotelServiceClient) GetHotels(ctx context.Context, in *commonProto.Empty, opts ...grpc.CallOption) (*HotelsResponse, error) {
 	out := new(HotelsResponse)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/GetHotels", in, out, opts...)
 	if err != nil {
@@ -79,8 +80,8 @@ func (c *hotelServiceClient) GetHotels(ctx context.Context, in *Empty, opts ...g
 	return out, nil
 }
 
-func (c *hotelServiceClient) PatchHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) PatchHotel(ctx context.Context, in *Hotel, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/PatchHotel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -88,8 +89,8 @@ func (c *hotelServiceClient) PatchHotel(ctx context.Context, in *Hotel, opts ...
 	return out, nil
 }
 
-func (c *hotelServiceClient) DeleteHotel(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) DeleteHotel(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/DeleteHotel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,8 +98,8 @@ func (c *hotelServiceClient) DeleteHotel(ctx context.Context, in *UUID, opts ...
 	return out, nil
 }
 
-func (c *hotelServiceClient) AddReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) AddReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/AddReview", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -106,7 +107,7 @@ func (c *hotelServiceClient) AddReview(ctx context.Context, in *Review, opts ...
 	return out, nil
 }
 
-func (c *hotelServiceClient) GetReview(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Review, error) {
+func (c *hotelServiceClient) GetReview(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*Review, error) {
 	out := new(Review)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/GetReview", in, out, opts...)
 	if err != nil {
@@ -115,7 +116,7 @@ func (c *hotelServiceClient) GetReview(ctx context.Context, in *UUID, opts ...gr
 	return out, nil
 }
 
-func (c *hotelServiceClient) GetReviews(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ReviewsResponse, error) {
+func (c *hotelServiceClient) GetReviews(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*ReviewsResponse, error) {
 	out := new(ReviewsResponse)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/GetReviews", in, out, opts...)
 	if err != nil {
@@ -124,8 +125,8 @@ func (c *hotelServiceClient) GetReviews(ctx context.Context, in *UUID, opts ...g
 	return out, nil
 }
 
-func (c *hotelServiceClient) PatchReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) PatchReview(ctx context.Context, in *Review, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/PatchReview", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -133,8 +134,8 @@ func (c *hotelServiceClient) PatchReview(ctx context.Context, in *Review, opts .
 	return out, nil
 }
 
-func (c *hotelServiceClient) DeleteReview(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) DeleteReview(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/DeleteReview", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -142,8 +143,8 @@ func (c *hotelServiceClient) DeleteReview(ctx context.Context, in *UUID, opts ..
 	return out, nil
 }
 
-func (c *hotelServiceClient) AddRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) AddRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/AddRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -151,7 +152,7 @@ func (c *hotelServiceClient) AddRoom(ctx context.Context, in *Room, opts ...grpc
 	return out, nil
 }
 
-func (c *hotelServiceClient) GetRooms(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*RoomsResponse, error) {
+func (c *hotelServiceClient) GetRooms(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*RoomsResponse, error) {
 	out := new(RoomsResponse)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/GetRooms", in, out, opts...)
 	if err != nil {
@@ -160,8 +161,8 @@ func (c *hotelServiceClient) GetRooms(ctx context.Context, in *UUID, opts ...grp
 	return out, nil
 }
 
-func (c *hotelServiceClient) PatchRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) PatchRoom(ctx context.Context, in *Room, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/PatchRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -169,8 +170,8 @@ func (c *hotelServiceClient) PatchRoom(ctx context.Context, in *Room, opts ...gr
 	return out, nil
 }
 
-func (c *hotelServiceClient) DeleteRoom(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *hotelServiceClient) DeleteRoom(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.HotelService/DeleteRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -182,21 +183,21 @@ func (c *hotelServiceClient) DeleteRoom(ctx context.Context, in *UUID, opts ...g
 // All implementations must embed UnimplementedHotelServiceServer
 // for forward compatibility
 type HotelServiceServer interface {
-	GetToken(context.Context, *Credentials) (*Token, error)
-	AddHotel(context.Context, *Hotel) (*Empty, error)
-	GetHotel(context.Context, *UUID) (*Hotel, error)
-	GetHotels(context.Context, *Empty) (*HotelsResponse, error)
-	PatchHotel(context.Context, *Hotel) (*Empty, error)
-	DeleteHotel(context.Context, *UUID) (*Empty, error)
-	AddReview(context.Context, *Review) (*Empty, error)
-	GetReview(context.Context, *UUID) (*Review, error)
-	GetReviews(context.Context, *UUID) (*ReviewsResponse, error)
-	PatchReview(context.Context, *Review) (*Empty, error)
-	DeleteReview(context.Context, *UUID) (*Empty, error)
-	AddRoom(context.Context, *Room) (*Empty, error)
-	GetRooms(context.Context, *UUID) (*RoomsResponse, error)
-	PatchRoom(context.Context, *Room) (*Empty, error)
-	DeleteRoom(context.Context, *UUID) (*Empty, error)
+	GetToken(context.Context, *commonProto.Credentials) (*commonProto.Token, error)
+	AddHotel(context.Context, *Hotel) (*commonProto.Empty, error)
+	GetHotel(context.Context, *commonProto.UUID) (*Hotel, error)
+	GetHotels(context.Context, *commonProto.Empty) (*HotelsResponse, error)
+	PatchHotel(context.Context, *Hotel) (*commonProto.Empty, error)
+	DeleteHotel(context.Context, *commonProto.UUID) (*commonProto.Empty, error)
+	AddReview(context.Context, *Review) (*commonProto.Empty, error)
+	GetReview(context.Context, *commonProto.UUID) (*Review, error)
+	GetReviews(context.Context, *commonProto.UUID) (*ReviewsResponse, error)
+	PatchReview(context.Context, *Review) (*commonProto.Empty, error)
+	DeleteReview(context.Context, *commonProto.UUID) (*commonProto.Empty, error)
+	AddRoom(context.Context, *Room) (*commonProto.Empty, error)
+	GetRooms(context.Context, *commonProto.UUID) (*RoomsResponse, error)
+	PatchRoom(context.Context, *Room) (*commonProto.Empty, error)
+	DeleteRoom(context.Context, *commonProto.UUID) (*commonProto.Empty, error)
 	mustEmbedUnimplementedHotelServiceServer()
 }
 
@@ -204,49 +205,49 @@ type HotelServiceServer interface {
 type UnimplementedHotelServiceServer struct {
 }
 
-func (UnimplementedHotelServiceServer) GetToken(context.Context, *Credentials) (*Token, error) {
+func (UnimplementedHotelServiceServer) GetToken(context.Context, *commonProto.Credentials) (*commonProto.Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
 }
-func (UnimplementedHotelServiceServer) AddHotel(context.Context, *Hotel) (*Empty, error) {
+func (UnimplementedHotelServiceServer) AddHotel(context.Context, *Hotel) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddHotel not implemented")
 }
-func (UnimplementedHotelServiceServer) GetHotel(context.Context, *UUID) (*Hotel, error) {
+func (UnimplementedHotelServiceServer) GetHotel(context.Context, *commonProto.UUID) (*Hotel, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHotel not implemented")
 }
-func (UnimplementedHotelServiceServer) GetHotels(context.Context, *Empty) (*HotelsResponse, error) {
+func (UnimplementedHotelServiceServer) GetHotels(context.Context, *commonProto.Empty) (*HotelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHotels not implemented")
 }
-func (UnimplementedHotelServiceServer) PatchHotel(context.Context, *Hotel) (*Empty, error) {
+func (UnimplementedHotelServiceServer) PatchHotel(context.Context, *Hotel) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PatchHotel not implemented")
 }
-func (UnimplementedHotelServiceServer) DeleteHotel(context.Context, *UUID) (*Empty, error) {
+func (UnimplementedHotelServiceServer) DeleteHotel(context.Context, *commonProto.UUID) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteHotel not implemented")
 }
-func (UnimplementedHotelServiceServer) AddReview(context.Context, *Review) (*Empty, error) {
+func (UnimplementedHotelServiceServer) AddReview(context.Context, *Review) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddReview not implemented")
 }
-func (UnimplementedHotelServiceServer) GetReview(context.Context, *UUID) (*Review, error) {
+func (UnimplementedHotelServiceServer) GetReview(context.Context, *commonProto.UUID) (*Review, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReview not implemented")
 }
-func (UnimplementedHotelServiceServer) GetReviews(context.Context, *UUID) (*ReviewsResponse, error) {
+func (UnimplementedHotelServiceServer) GetReviews(context.Context, *commonProto.UUID) (*ReviewsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReviews not implemented")
 }
-func (UnimplementedHotelServiceServer) PatchReview(context.Context, *Review) (*Empty, error) {
+func (UnimplementedHotelServiceServer) PatchReview(context.Context, *Review) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PatchReview not implemented")
 }
-func (UnimplementedHotelServiceServer) DeleteReview(context.Context, *UUID) (*Empty, error) {
+func (UnimplementedHotelServiceServer) DeleteReview(context.Context, *commonProto.UUID) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteReview not implemented")
 }
-func (UnimplementedHotelServiceServer) AddRoom(context.Context, *Room) (*Empty, error) {
+func (UnimplementedHotelServiceServer) AddRoom(context.Context, *Room) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddRoom not implemented")
 }
-func (UnimplementedHotelServiceServer) GetRooms(context.Context, *UUID) (*RoomsResponse, error) {
+func (UnimplementedHotelServiceServer) GetRooms(context.Context, *commonProto.UUID) (*RoomsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRooms not implemented")
 }
-func (UnimplementedHotelServiceServer) PatchRoom(context.Context, *Room) (*Empty, error) {
+func (UnimplementedHotelServiceServer) PatchRoom(context.Context, *Room) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PatchRoom not implemented")
 }
-func (UnimplementedHotelServiceServer) DeleteRoom(context.Context, *UUID) (*Empty, error) {
+func (UnimplementedHotelServiceServer) DeleteRoom(context.Context, *commonProto.UUID) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRoom not implemented")
 }
 func (UnimplementedHotelServiceServer) mustEmbedUnimplementedHotelServiceServer() {}
@@ -263,7 +264,7 @@ func RegisterHotelServiceServer(s grpc.ServiceRegistrar, srv HotelServiceServer)
 }
 
 func _HotelService_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Credentials)
+	in := new(commonProto.Credentials)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -275,7 +276,7 @@ func _HotelService_GetToken_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto.HotelService/GetToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).GetToken(ctx, req.(*Credentials))
+		return srv.(HotelServiceServer).GetToken(ctx, req.(*commonProto.Credentials))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -299,7 +300,7 @@ func _HotelService_AddHotel_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _HotelService_GetHotel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -311,13 +312,13 @@ func _HotelService_GetHotel_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto.HotelService/GetHotel",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).GetHotel(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).GetHotel(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _HotelService_GetHotels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(commonProto.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -329,7 +330,7 @@ func _HotelService_GetHotels_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto.HotelService/GetHotels",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).GetHotels(ctx, req.(*Empty))
+		return srv.(HotelServiceServer).GetHotels(ctx, req.(*commonProto.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -353,7 +354,7 @@ func _HotelService_PatchHotel_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _HotelService_DeleteHotel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -365,7 +366,7 @@ func _HotelService_DeleteHotel_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/proto.HotelService/DeleteHotel",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).DeleteHotel(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).DeleteHotel(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -389,7 +390,7 @@ func _HotelService_AddReview_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _HotelService_GetReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -401,13 +402,13 @@ func _HotelService_GetReview_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto.HotelService/GetReview",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).GetReview(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).GetReview(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _HotelService_GetReviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -419,7 +420,7 @@ func _HotelService_GetReviews_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/proto.HotelService/GetReviews",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).GetReviews(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).GetReviews(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -443,7 +444,7 @@ func _HotelService_PatchReview_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _HotelService_DeleteReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -455,7 +456,7 @@ func _HotelService_DeleteReview_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/proto.HotelService/DeleteReview",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).DeleteReview(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).DeleteReview(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -479,7 +480,7 @@ func _HotelService_AddRoom_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _HotelService_GetRooms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -491,7 +492,7 @@ func _HotelService_GetRooms_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto.HotelService/GetRooms",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).GetRooms(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).GetRooms(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -515,7 +516,7 @@ func _HotelService_PatchRoom_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _HotelService_DeleteRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -527,7 +528,7 @@ func _HotelService_DeleteRoom_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/proto.HotelService/DeleteRoom",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotelServiceServer).DeleteRoom(ctx, req.(*UUID))
+		return srv.(HotelServiceServer).DeleteRoom(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }

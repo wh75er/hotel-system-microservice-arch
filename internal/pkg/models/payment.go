@@ -10,16 +10,16 @@ import (
 type PaymentStatus string
 
 const (
-	NewPaymentStatus = "New"
-	PaidPaymentStatus = "Paid"
+	NewPaymentStatus      = "New"
+	PaidPaymentStatus     = "Paid"
 	CanceledPaymentStatus = "Canceled"
 )
 
 type Payment struct {
 	PaymentUuid uuid.UUID
-	UserUuid uuid.UUID
-	Status PaymentStatus
-	Price int
+	UserUuid    uuid.UUID
+	Status      PaymentStatus
+	Price       int
 	TimeUpdated time.Time
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
 	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
@@ -40,8 +41,8 @@ func NewHotelServer(
 	}
 }
 
-func (s *HotelServer) GetToken(ctx context.Context, pc *proto.Credentials) (*proto.Token, error) {
-	c := ProtoToCredentials(pc)
+func (s *HotelServer) GetToken(ctx context.Context, pc *commonProto.Credentials) (*commonProto.Token, error) {
+	c := commonProto.ProtoToCredentials(pc)
 
 	err := s.AdminCredsUsecase.Login(c)
 	if err != nil {
@@ -57,12 +58,12 @@ func (s *HotelServer) GetToken(ctx context.Context, pc *proto.Credentials) (*pro
 		return nil, err
 	}
 
-	pt := TokenToProto(&token)
+	pt := commonProto.TokenToProto(&token)
 
 	return pt, nil
 }
 
-func (s *HotelServer) AddHotel(ctx context.Context, ph *proto.Hotel) (*proto.Empty, error) {
+func (s *HotelServer) AddHotel(ctx context.Context, ph *proto.Hotel) (*commonProto.Empty, error) {
 	h, err := s.ProtoToHotel(ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -77,10 +78,10 @@ func (s *HotelServer) AddHotel(ctx context.Context, ph *proto.Hotel) (*proto.Emp
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) GetHotel(ctx context.Context, u *proto.UUID) (*proto.Hotel, error) {
+func (s *HotelServer) GetHotel(ctx context.Context, u *commonProto.UUID) (*proto.Hotel, error) {
 	h, err := s.HotelUsecase.GetHotel(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -93,7 +94,7 @@ func (s *HotelServer) GetHotel(ctx context.Context, u *proto.UUID) (*proto.Hotel
 	return ph, nil
 }
 
-func (s *HotelServer) GetHotels(ctx context.Context, e *proto.Empty) (*proto.HotelsResponse, error) {
+func (s *HotelServer) GetHotels(ctx context.Context, e *commonProto.Empty) (*proto.HotelsResponse, error) {
 	hotels, err := s.HotelUsecase.GetHotels()
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -105,7 +106,7 @@ func (s *HotelServer) GetHotels(ctx context.Context, e *proto.Empty) (*proto.Hot
 	return ph, nil
 }
 
-func (s *HotelServer) PatchHotel(ctx context.Context, ph *proto.Hotel) (*proto.Empty, error) {
+func (s *HotelServer) PatchHotel(ctx context.Context, ph *proto.Hotel) (*commonProto.Empty, error) {
 	h, err := s.ProtoToHotel(ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -120,10 +121,10 @@ func (s *HotelServer) PatchHotel(ctx context.Context, ph *proto.Hotel) (*proto.E
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) DeleteHotel(ctx context.Context, u *proto.UUID) (*proto.Empty, error) {
+func (s *HotelServer) DeleteHotel(ctx context.Context, u *commonProto.UUID) (*commonProto.Empty, error) {
 	err := s.HotelUsecase.DeleteHotel(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -131,10 +132,10 @@ func (s *HotelServer) DeleteHotel(ctx context.Context, u *proto.UUID) (*proto.Em
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) AddReview(ctx context.Context, pr *proto.Review) (*proto.Empty, error) {
+func (s *HotelServer) AddReview(ctx context.Context, pr *proto.Review) (*commonProto.Empty, error) {
 	r, err := s.ProtoToReview(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -149,10 +150,10 @@ func (s *HotelServer) AddReview(ctx context.Context, pr *proto.Review) (*proto.E
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) GetReview(ctx context.Context, u *proto.UUID) (*proto.Review, error) {
+func (s *HotelServer) GetReview(ctx context.Context, u *commonProto.UUID) (*proto.Review, error) {
 	r, err := s.ReviewUsecase.GetReview(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -165,7 +166,7 @@ func (s *HotelServer) GetReview(ctx context.Context, u *proto.UUID) (*proto.Revi
 	return pr, nil
 }
 
-func (s *HotelServer) GetReviews(ctx context.Context, u *proto.UUID) (*proto.ReviewsResponse, error) {
+func (s *HotelServer) GetReviews(ctx context.Context, u *commonProto.UUID) (*proto.ReviewsResponse, error) {
 	r, err := s.ReviewUsecase.GetReviews(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -178,7 +179,7 @@ func (s *HotelServer) GetReviews(ctx context.Context, u *proto.UUID) (*proto.Rev
 	return pr, nil
 }
 
-func (s *HotelServer) PatchReview(ctx context.Context, pr *proto.Review) (*proto.Empty, error) {
+func (s *HotelServer) PatchReview(ctx context.Context, pr *proto.Review) (*commonProto.Empty, error) {
 	r, err := s.ProtoToReview(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -193,10 +194,10 @@ func (s *HotelServer) PatchReview(ctx context.Context, pr *proto.Review) (*proto
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) DeleteReview(ctx context.Context, u *proto.UUID) (*proto.Empty, error) {
+func (s *HotelServer) DeleteReview(ctx context.Context, u *commonProto.UUID) (*commonProto.Empty, error) {
 	err := s.ReviewUsecase.DeleteReview(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -204,10 +205,10 @@ func (s *HotelServer) DeleteReview(ctx context.Context, u *proto.UUID) (*proto.E
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) AddRoom(ctx context.Context, pr *proto.Room) (*proto.Empty, error) {
+func (s *HotelServer) AddRoom(ctx context.Context, pr *proto.Room) (*commonProto.Empty, error) {
 	r, err := s.ProtoToRoom(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -222,10 +223,10 @@ func (s *HotelServer) AddRoom(ctx context.Context, pr *proto.Room) (*proto.Empty
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) GetRooms(ctx context.Context, u *proto.UUID) (*proto.RoomsResponse, error) {
+func (s *HotelServer) GetRooms(ctx context.Context, u *commonProto.UUID) (*proto.RoomsResponse, error) {
 	r, err := s.RoomUsecase.GetRooms(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -238,7 +239,7 @@ func (s *HotelServer) GetRooms(ctx context.Context, u *proto.UUID) (*proto.Rooms
 	return pr, nil
 }
 
-func (s *HotelServer) PatchRoom(ctx context.Context, pr *proto.Room) (*proto.Empty, error) {
+func (s *HotelServer) PatchRoom(ctx context.Context, pr *proto.Room) (*commonProto.Empty, error) {
 	r, err := s.ProtoToRoom(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -253,10 +254,10 @@ func (s *HotelServer) PatchRoom(ctx context.Context, pr *proto.Room) (*proto.Emp
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }
 
-func (s *HotelServer) DeleteRoom(ctx context.Context, u *proto.UUID) (*proto.Empty, error) {
+func (s *HotelServer) DeleteRoom(ctx context.Context, u *commonProto.UUID) (*commonProto.Empty, error) {
 	err := s.RoomUsecase.DeleteRoom(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
@@ -264,5 +265,5 @@ func (s *HotelServer) DeleteRoom(ctx context.Context, u *proto.UUID) (*proto.Emp
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &commonProto.Empty{}, nil
 }

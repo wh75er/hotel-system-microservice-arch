@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	commonProto "hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -18,10 +19,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LoyaltyServiceClient interface {
-	GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error)
-	GetDiscount(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Loyalty, error)
-	AddUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
-	UpdateDiscount(ctx context.Context, in *UpdateDiscountRequest, opts ...grpc.CallOption) (*Empty, error)
+	GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error)
+	GetDiscount(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*Loyalty, error)
+	AddUser(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error)
+	UpdateDiscount(ctx context.Context, in *UpdateDiscountRequest, opts ...grpc.CallOption) (*commonProto.Empty, error)
 }
 
 type loyaltyServiceClient struct {
@@ -32,8 +33,8 @@ func NewLoyaltyServiceClient(cc grpc.ClientConnInterface) LoyaltyServiceClient {
 	return &loyaltyServiceClient{cc}
 }
 
-func (c *loyaltyServiceClient) GetToken(ctx context.Context, in *Credentials, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
+func (c *loyaltyServiceClient) GetToken(ctx context.Context, in *commonProto.Credentials, opts ...grpc.CallOption) (*commonProto.Token, error) {
+	out := new(commonProto.Token)
 	err := c.cc.Invoke(ctx, "/proto.LoyaltyService/GetToken", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -41,7 +42,7 @@ func (c *loyaltyServiceClient) GetToken(ctx context.Context, in *Credentials, op
 	return out, nil
 }
 
-func (c *loyaltyServiceClient) GetDiscount(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Loyalty, error) {
+func (c *loyaltyServiceClient) GetDiscount(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*Loyalty, error) {
 	out := new(Loyalty)
 	err := c.cc.Invoke(ctx, "/proto.LoyaltyService/GetDiscount", in, out, opts...)
 	if err != nil {
@@ -50,8 +51,8 @@ func (c *loyaltyServiceClient) GetDiscount(ctx context.Context, in *UUID, opts .
 	return out, nil
 }
 
-func (c *loyaltyServiceClient) AddUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *loyaltyServiceClient) AddUser(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.LoyaltyService/AddUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -59,8 +60,8 @@ func (c *loyaltyServiceClient) AddUser(ctx context.Context, in *UUID, opts ...gr
 	return out, nil
 }
 
-func (c *loyaltyServiceClient) UpdateDiscount(ctx context.Context, in *UpdateDiscountRequest, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *loyaltyServiceClient) UpdateDiscount(ctx context.Context, in *UpdateDiscountRequest, opts ...grpc.CallOption) (*commonProto.Empty, error) {
+	out := new(commonProto.Empty)
 	err := c.cc.Invoke(ctx, "/proto.LoyaltyService/UpdateDiscount", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -72,10 +73,10 @@ func (c *loyaltyServiceClient) UpdateDiscount(ctx context.Context, in *UpdateDis
 // All implementations must embed UnimplementedLoyaltyServiceServer
 // for forward compatibility
 type LoyaltyServiceServer interface {
-	GetToken(context.Context, *Credentials) (*Token, error)
-	GetDiscount(context.Context, *UUID) (*Loyalty, error)
-	AddUser(context.Context, *UUID) (*Empty, error)
-	UpdateDiscount(context.Context, *UpdateDiscountRequest) (*Empty, error)
+	GetToken(context.Context, *commonProto.Credentials) (*commonProto.Token, error)
+	GetDiscount(context.Context, *commonProto.UUID) (*Loyalty, error)
+	AddUser(context.Context, *commonProto.UUID) (*commonProto.Empty, error)
+	UpdateDiscount(context.Context, *UpdateDiscountRequest) (*commonProto.Empty, error)
 	mustEmbedUnimplementedLoyaltyServiceServer()
 }
 
@@ -83,16 +84,16 @@ type LoyaltyServiceServer interface {
 type UnimplementedLoyaltyServiceServer struct {
 }
 
-func (UnimplementedLoyaltyServiceServer) GetToken(context.Context, *Credentials) (*Token, error) {
+func (UnimplementedLoyaltyServiceServer) GetToken(context.Context, *commonProto.Credentials) (*commonProto.Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
 }
-func (UnimplementedLoyaltyServiceServer) GetDiscount(context.Context, *UUID) (*Loyalty, error) {
+func (UnimplementedLoyaltyServiceServer) GetDiscount(context.Context, *commonProto.UUID) (*Loyalty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDiscount not implemented")
 }
-func (UnimplementedLoyaltyServiceServer) AddUser(context.Context, *UUID) (*Empty, error) {
+func (UnimplementedLoyaltyServiceServer) AddUser(context.Context, *commonProto.UUID) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
 }
-func (UnimplementedLoyaltyServiceServer) UpdateDiscount(context.Context, *UpdateDiscountRequest) (*Empty, error) {
+func (UnimplementedLoyaltyServiceServer) UpdateDiscount(context.Context, *UpdateDiscountRequest) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDiscount not implemented")
 }
 func (UnimplementedLoyaltyServiceServer) mustEmbedUnimplementedLoyaltyServiceServer() {}
@@ -109,7 +110,7 @@ func RegisterLoyaltyServiceServer(s grpc.ServiceRegistrar, srv LoyaltyServiceSer
 }
 
 func _LoyaltyService_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Credentials)
+	in := new(commonProto.Credentials)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -121,13 +122,13 @@ func _LoyaltyService_GetToken_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/proto.LoyaltyService/GetToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoyaltyServiceServer).GetToken(ctx, req.(*Credentials))
+		return srv.(LoyaltyServiceServer).GetToken(ctx, req.(*commonProto.Credentials))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoyaltyService_GetDiscount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -139,13 +140,13 @@ func _LoyaltyService_GetDiscount_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/proto.LoyaltyService/GetDiscount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoyaltyServiceServer).GetDiscount(ctx, req.(*UUID))
+		return srv.(LoyaltyServiceServer).GetDiscount(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoyaltyService_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UUID)
+	in := new(commonProto.UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -157,7 +158,7 @@ func _LoyaltyService_AddUser_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto.LoyaltyService/AddUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoyaltyServiceServer).AddUser(ctx, req.(*UUID))
+		return srv.(LoyaltyServiceServer).AddUser(ctx, req.(*commonProto.UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
