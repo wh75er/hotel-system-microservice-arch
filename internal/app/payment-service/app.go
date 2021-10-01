@@ -121,7 +121,7 @@ func (a *App) setupStorage() {
 
 	a.logger.Info("Successfully established connection with database")
 
-	postgres.RunMigrations(a.logger, "file://init/migrations/loyalty-service", a.conf.Storage.Url)
+	postgres.RunMigrations(a.logger, "file://init/migrations/payment-service", a.conf.Storage.Url)
 
 	a.logger.Info("Successfully ran migrations")
 }

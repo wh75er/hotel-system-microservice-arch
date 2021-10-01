@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS payments(
     userUuid UUID NOT NULL,
     status VARCHAR(250) NOT NULL,
     price INTEGER NOT NULL,
-    timeUpdated DATE NOT NULL,
+    timeUpdated DATE NOT NULL
 );

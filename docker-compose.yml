@@ -10,3 +10,15 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
+  payment-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/payment.Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - db

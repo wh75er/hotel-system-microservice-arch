@@ -39,9 +39,8 @@ func LoggingMiddleware(logger logs.LoggerInterface) func(http.Handler) http.Hand
 			defer func() {
 				if err := recover(); err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
-					logger.Error(
-						"err", err,
-						"trace", debug.Stack(),
+					logger.Errorf(
+						"err: %v, trace: %v", err, debug.Stack(),
 					)
 				}
 			}()
@@ -49,11 +48,12 @@ func LoggingMiddleware(logger logs.LoggerInterface) func(http.Handler) http.Hand
 			start := time.Now()
 			wrapped := wrapResponseWriter(w)
 			next.ServeHTTP(wrapped, r)
-			logger.Info(
-				"status", wrapped.status,
-				"method", r.Method,
-				"path", r.URL.EscapedPath(),
-				"duration", time.Since(start),
+			logger.Infof(
+				"status: %v, method: %v, path: %v, duration: %v",
+				wrapped.status,
+				r.Method,
+				r.URL.EscapedPath(),
+				time.Since(start),
 			)
 		}
 
