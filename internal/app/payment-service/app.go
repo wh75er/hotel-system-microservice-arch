@@ -80,7 +80,7 @@ func (a *App) Run(configFilename string) {
 	loggedRouter := loggingMiddleware(router)
 	a.httpRouter = loggedRouter
 
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", a.conf.Server.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)
 	}

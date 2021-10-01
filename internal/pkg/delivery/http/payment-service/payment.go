@@ -21,5 +21,9 @@ func SetPaymentHttpRoutes(router *http.ServeMux, paymentU models.PaymentUsecaseI
 }
 
 func (d *PaymentHttp) makePaymentHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
