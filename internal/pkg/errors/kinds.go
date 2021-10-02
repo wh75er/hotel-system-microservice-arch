@@ -9,6 +9,10 @@ const (
 )
 
 const (
+	RoomUnavailableCustomStatus = 419
+)
+
+const (
 	JWTGenerationErr                = Kind("Failed to generate JWT access token")
 	JWTVerificationSigningMethodErr = Kind("Unexpected token signing method")
 	JWTVerificationErr              = Kind("Invalid token")
@@ -131,6 +135,10 @@ func GetHttpError(err error) int {
 
 	if Contains(UnauthorizedErrors, kind) {
 		return http.StatusUnauthorized
+	}
+
+	if kind == RoomUnavailableErr {
+		return RoomUnavailableCustomStatus
 	}
 
 	return http.StatusInternalServerError

@@ -162,6 +162,28 @@ func (s *HotelServer) GetRooms(ctx context.Context, u *commonProto.UUID) (*proto
 	return pr, nil
 }
 
+func (s *HotelServer) TakeRoom(ctx context.Context, roomUuid *commonProto.UUID) (*commonProto.Empty, error) {
+	err := s.RoomUsecase.TakeRoom(roomUuid.Value)
+	if err != nil {
+		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		return nil, err
+	}
+
+	return &commonProto.Empty{}, nil
+}
+
+func (s *HotelServer) DismissRoom(ctx context.Context, roomUuid *commonProto.UUID) (*commonProto.Empty, error) {
+	err := s.RoomUsecase.DismissRoom(roomUuid.Value)
+	if err != nil {
+		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		return nil, err
+	}
+
+	return &commonProto.Empty{}, nil
+}
+
 func (s *HotelServer) PatchRoom(ctx context.Context, pr *proto.Room) (*commonProto.Empty, error) {
 	r, err := s.ProtoToRoom(pr)
 	if err != nil {

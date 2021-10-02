@@ -19,6 +19,7 @@ const (
 
 const (
 	RoomNotFoundErr             = Kind("Room not found")
+	RoomUnavailableErr			= Kind("This room is not available")
 	RoomUuidValidationErr       = Kind("Room UUID is not valid")
 	RoomBedsValidationErr       = Kind("Beds number should be integer > 0")
 	RoomAmountValidationErr     = Kind("Amount of rooms number should be integer > 0")

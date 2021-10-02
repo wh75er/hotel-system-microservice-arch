@@ -131,6 +131,67 @@ func (u *RoomUsecase) PatchRoom(r *models.Room) (e error) {
 	return
 }
 
+func (u *RoomUsecase) TakeRoom(roomUuid string) (e error) {
+	err := u.changeRoomAmount(roomUuid, -1)
+	if err != nil {
+		e = err
+		return err
+	}
+
+	return
+}
+
+func (u *RoomUsecase) DismissRoom(roomUuid string) (e error) {
+	err := u.changeRoomAmount(roomUuid, +1)
+	if err != nil {
+		e = err
+		return err
+	}
+
+	return
+}
+
+func (u *RoomUsecase) changeRoomAmount(roomUuid string, lambda int) (e error) {
+	var opError errors.Op = "usecase.changeRoomAmount"
+
+	validRoomUuid, err := uuid.Parse(roomUuid)
+	if err != nil {
+		e = errors.E(opError, errors.RoomUuidValidationErr, err)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	r, err := u.RoomRepository.GetRoom(validRoomUuid)
+	if err != nil {
+		if errors.GetKind(e) == errors.RepositoryNoRows {
+			e = errors.E(opError, errors.RoomNotFoundErr, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		e = errors.E(opError, errors.RepositoryRoomErr, err)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	if r.Amount == 0 {
+		e = errors.E(opError, errors.RoomUnavailableErr)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	r.Amount += lambda
+
+	err = u.RoomRepository.PatchRoom(&r)
+	if err != nil {
+		e = errors.E(opError, errors.RepositoryRoomErr, err)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	return
+}
+
+
 func (u *RoomUsecase) DeleteRoom(roomUuid string) (e error) {
 	var opError errors.Op = "usecase.DeleteRoom"
 

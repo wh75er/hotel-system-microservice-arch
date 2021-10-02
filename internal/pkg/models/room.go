@@ -27,6 +27,8 @@ type RoomRepositoryI interface {
 type RoomUsecaseI interface {
 	GetRooms(hotelUuid string) (r []Room, e error)
 	AddRoom(r *Room) (e error)
+	TakeRoom(roomUuid string) (e error)
+	DismissRoom(roomUuid string) (e error)
 	PatchRoom(r *Room) (e error)
 	DeleteRoom(roomUuid string) (e error)
 }
