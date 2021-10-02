@@ -63,14 +63,14 @@ func (s *HotelServer) AddHotel(ctx context.Context, ph *proto.Hotel) (*commonPro
 	h, err := s.ProtoToHotel(ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
 	err = s.HotelUsecase.AddHotel(h)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -81,7 +81,7 @@ func (s *HotelServer) GetHotel(ctx context.Context, u *commonProto.UUID) (*proto
 	h, err := s.HotelUsecase.GetHotel(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -94,7 +94,7 @@ func (s *HotelServer) GetHotels(ctx context.Context, e *commonProto.Empty) (*pro
 	hotels, err := s.HotelUsecase.GetHotels()
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -106,14 +106,14 @@ func (s *HotelServer) PatchHotel(ctx context.Context, ph *proto.Hotel) (*commonP
 	h, err := s.ProtoToHotel(ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
 	err = s.HotelUsecase.PatchHotel(h)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -124,7 +124,7 @@ func (s *HotelServer) DeleteHotel(ctx context.Context, u *commonProto.UUID) (*co
 	err := s.HotelUsecase.DeleteHotel(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -135,14 +135,14 @@ func (s *HotelServer) AddRoom(ctx context.Context, pr *proto.Room) (*commonProto
 	r, err := s.ProtoToRoom(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
 	err = s.RoomUsecase.AddRoom(r)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -153,7 +153,7 @@ func (s *HotelServer) GetRooms(ctx context.Context, u *commonProto.UUID) (*proto
 	r, err := s.RoomUsecase.GetRooms(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -166,7 +166,7 @@ func (s *HotelServer) TakeRoom(ctx context.Context, roomUuid *commonProto.UUID) 
 	err := s.RoomUsecase.TakeRoom(roomUuid.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -177,7 +177,7 @@ func (s *HotelServer) DismissRoom(ctx context.Context, roomUuid *commonProto.UUI
 	err := s.RoomUsecase.DismissRoom(roomUuid.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -188,14 +188,14 @@ func (s *HotelServer) PatchRoom(ctx context.Context, pr *proto.Room) (*commonPro
 	r, err := s.ProtoToRoom(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
 	err = s.RoomUsecase.PatchRoom(r)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ func (s *HotelServer) DeleteRoom(ctx context.Context, u *commonProto.UUID) (*com
 	err := s.RoomUsecase.DeleteRoom(u.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 

@@ -60,7 +60,7 @@ func (s *PaymentServer) CreatePayment(ctx context.Context, pr *proto.CreatePayme
 	paymentUuid, err := s.PaymentUsecase.CreatePayment(int(pr.Value), pr.UserUuid.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -71,7 +71,7 @@ func (s *PaymentServer) GetPayment(ctx context.Context, pu *commonProto.UUID) (*
 	p, err := s.PaymentUsecase.GetPayment(pu.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 

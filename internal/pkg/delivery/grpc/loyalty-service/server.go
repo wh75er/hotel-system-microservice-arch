@@ -60,7 +60,7 @@ func (s *LoyaltyServer) GetDiscount(ctx context.Context, pu *commonProto.UUID) (
 	l, err := s.LoyaltyUsecase.GetDiscount(pu.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -71,7 +71,7 @@ func (s *LoyaltyServer) AddUser(ctx context.Context, pu *commonProto.UUID) (*com
 	err := s.LoyaltyUsecase.AddUser(pu.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
@@ -82,7 +82,7 @@ func (s *LoyaltyServer) UpdateDiscount(ctx context.Context, pr *proto.UpdateDisc
 	err := s.LoyaltyUsecase.UpdateDiscount(pr.UserUid.Value, int(pr.Contribution))
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 

@@ -10,7 +10,6 @@ import (
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
-	"net/http"
 	"time"
 )
 
@@ -53,12 +52,8 @@ func (u *PaymentUsecase) CreatePayment(price int, userUuid string) (paymentUuid 
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		httpCode := status.Code(err)
-		if httpCode == http.StatusNotFound {
-			e = errors.E(opError, errors.UserNotFoundErr, err)
-		} else {
-			e = errors.E(opError, errors.AuthServiceUnavailable, err)
-		}
+		serviceKind := errors.Kind(status.Code(err))
+		e = errors.E(opError, serviceKind)
 		return
 	}
 
@@ -132,11 +127,11 @@ func (u *PaymentUsecase) MakePayment(paymentUuid string) (e error) {
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		httpCode := status.Code(err)
-		if httpCode == http.StatusNotFound {
+		serviceKind := errors.Kind(status.Code(err))
+		if serviceKind == errors.LoyaltyNotFoundErr {
 			u.Logger.Warnf("loyalty discount account not found for user[uuid]: %v", p.UserUuid)
 		} else {
-			u.Logger.Warnf("undesirable behaviour on loyalty service: %v")
+			u.Logger.Warnf("undesirable behaviour on loyalty service: %v", serviceKind)
 		}
 
 		// Not valuable service, don't interrupt, only log

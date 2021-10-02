@@ -65,7 +65,7 @@ func (u *HotelUsecase) GetHotels() (h []models.Hotel, e error) {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
 			e = nil
 		} else {
-			e = errors.E(opError, errors.RepositoryReviewErr, e)
+			e = errors.E(opError, errors.RepositoryHotelErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}

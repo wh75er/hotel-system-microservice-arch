@@ -1,7 +1,7 @@
 // Package errors Marwan Sulaiman GopherCon 2019
 package errors
 
-type Kind string
+type Kind int64
 type Op string
 
 type Error struct {
@@ -15,7 +15,7 @@ const (
 )
 
 func (e Error) Error() string {
-	return string(e.Kind)
+	return string(e.Kind.String())
 }
 
 func E(args ...interface{}) error {
