@@ -1,6 +1,7 @@
 package payment_service
 
 import (
+	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"net/http"
@@ -23,7 +24,22 @@ func SetPaymentHttpRoutes(router *http.ServeMux, paymentU models.PaymentUsecaseI
 func (d *PaymentHttp) makePaymentHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
+
+	err := req.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	paymentuUid := req.Form.Get("label")
+	err = d.paymentUsecase.MakePayment(paymentuUid)
+	if err != nil {
+		w.WriteHeader(errors.GetHttpError(err))
+		return
+	}
+
 
 	w.WriteHeader(http.StatusOK)
 }
