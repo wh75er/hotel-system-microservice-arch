@@ -3,7 +3,6 @@ package auth_service
 import (
 	"github.com/google/uuid"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/auth-service"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -28,7 +27,7 @@ func (u *UserUsecase) GetUser(uid string) (user *models.User, e error) {
 
 	validUserUuid, err := uuid.Parse(uid)
 	if err != nil {
-		e = errors.E(opError, kinds.UserUuidValidationErr, err)
+		e = errors.E(opError, errors.UserUuidValidationErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -36,11 +35,11 @@ func (u *UserUsecase) GetUser(uid string) (user *models.User, e error) {
 	user, err = u.UserRepository.GetUserByUuid(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.UserNotFoundErr, err)
+			e = errors.E(opError, errors.UserNotFoundErr, err)
 			u.Logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryUserErr, err)
+		e = errors.E(opError, errors.RepositoryUserErr, err)
 		u.Logger.Error("Usecase error: %v", e)
 		return
 	}
@@ -69,13 +68,13 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 			e = nil
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryUserErr, err)
+		e = errors.E(opError, errors.RepositoryUserErr, err)
 		u.Logger.Error("Usecase error: %v", e)
 		return
 	}
 
 	if foundUser != nil {
-		e = errors.E(opError, kinds.UserExistsErr, err)
+		e = errors.E(opError, errors.UserExistsErr, err)
 		u.Logger.Error("Usecase error: %v", e)
 		return
 	}
@@ -91,7 +90,7 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 
 	e = u.UserRepository.AddUser(user)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryUserErr, e)
+		e = errors.E(opError, errors.RepositoryUserErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -117,18 +116,18 @@ func (u *UserUsecase) Login(user *models.User) (authToken string, e error) {
 	foundUser, err := u.UserRepository.GetUserByLogin(user.Login)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.AuthorizationErr, err)
+			e = errors.E(opError, errors.AuthorizationErr, err)
 			u.Logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryUserErr, err)
+		e = errors.E(opError, errors.RepositoryUserErr, err)
 		u.Logger.Error("Usecase error: %v", e)
 		return
 	}
 
 	err = foundUser.CompareWithPassword(user.Password)
 	if err != nil {
-		e = errors.E(opError, kinds.AuthorizationErr, err)
+		e = errors.E(opError, errors.AuthorizationErr, err)
 		u.Logger.Error("Usecase error: %v", e)
 		return
 	}

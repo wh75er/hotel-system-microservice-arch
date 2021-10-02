@@ -9,20 +9,33 @@ import (
 )
 
 const (
-	jwtSecretEnv   = "JWT_KEY"
-	adminIdEnv     = "ADMIN_ID"
-	adminSecretEnv = "ADMIN_SECRET"
-	configDst      = "configs/payment-service/"
+	jwtSecretEnv                     = "JWT_KEY"
+	adminIdEnv                       = "ADMIN_ID"
+	adminSecretEnv                   = "ADMIN_SECRET"
+	userLoyaltyServiceUrlEnv         = "USER_LOYALTY_SERVICE_URL"
+	userLoyaltyServiceAdminIdEnv     = "USER_LOYALTY_SERVICE_ADMIN_ID"
+	userLoyaltyServiceAdminSecretEnv = "USER_LOYALTY_SERVICE_ADMIN_SECRET"
+	userServiceUrlEnv                = "USER_SERVICE_URL"
+	userServiceAdminIdEnv            = "USER_SERVICE_ADMIN_ID"
+	userServiceAdminSecretEnv        = "USER_SERVICE_ADMIN_SECRET"
+	configDst                        = "configs/payment-service/"
 )
+
+type DependencyService struct {
+	Url         string
+	Credentials models.Credentials
+}
 
 type duration struct {
 	time.Duration
 }
 
 type config struct {
-	Server           Server
-	Storage          Storage
-	AdminCredentials models.Credentials
+	Server             Server
+	Storage            Storage
+	AdminCredentials   models.Credentials
+	UserLoyaltyService DependencyService
+	UserService        DependencyService
 }
 
 type Server struct {
@@ -38,14 +51,14 @@ type Storage struct {
 
 func newConfig() *config {
 	return &config{
-		Server{
+		Server: Server{
 			Port: 3000,
 		},
-		Storage{
+		Storage: Storage{
 			"postgresql://postgres:postgres@localhost:5432/postgres",
 			30,
 		},
-		models.Credentials{},
+		AdminCredentials: models.Credentials{},
 	}
 }
 
@@ -90,6 +103,56 @@ func getEnvVariable(varName string) (string, error) {
 	}
 
 	return v, nil
+}
+
+func (c *config) setUserLoyaltyServiceFromEnv() error {
+	url, err := getEnvVariable(userLoyaltyServiceUrlEnv)
+	if err != nil {
+		return err
+	}
+
+	c.UserLoyaltyService.Url = url
+
+	id, err := getEnvVariable(userLoyaltyServiceAdminIdEnv)
+	if err != nil {
+		return err
+	}
+
+	c.UserLoyaltyService.Credentials.Id = id
+
+	secret, err := getEnvVariable(userLoyaltyServiceAdminSecretEnv)
+	if err != nil {
+		return err
+	}
+
+	c.UserLoyaltyService.Credentials.Secret = secret
+
+	return nil
+}
+
+func (c *config) setUserServiceFromEnv() error {
+	url, err := getEnvVariable(userServiceUrlEnv)
+	if err != nil {
+		return err
+	}
+
+	c.UserService.Url = url
+
+	id, err := getEnvVariable(userServiceAdminIdEnv)
+	if err != nil {
+		return err
+	}
+
+	c.UserService.Credentials.Id = id
+
+	secret, err := getEnvVariable(userServiceAdminSecretEnv)
+	if err != nil {
+		return err
+	}
+
+	c.UserService.Credentials.Secret = secret
+
+	return nil
 }
 
 func (d *duration) UnmarshalText(text []byte) error {

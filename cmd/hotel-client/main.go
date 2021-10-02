@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	hotel_service "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
 	pb "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
@@ -49,20 +50,18 @@ func main() {
 	//_, err = client.AddHotel(context.Background(), &pb.Hotel{
 	//	Name: "test",
 	//	HotelUuid: "c6df5496-7146-43ba-8e80-0a22bcaaf6bb",
-	//	Photos: []string{"c6df5496-7146-43ba-8e80-0a22bcaaf6bb"},
 	//	Description: "test",
 	//	Country: "test",
 	//	City: "test",
 	//	Address: "test",
 	//	Rooms: nil,
-	//	Reviews: nil,
 	//})
 	//if err != nil {
 	//	fmt.Printf("Failed to create hotel: %v, code: %v\n", err, status.Code(err))
 	//}
 
 	/* Get all hotels case */
-	hotels, err := client.GetHotels(context.Background(), &pb.Empty{})
+	hotels, err := client.GetHotels(context.Background(), &commonProto.Empty{})
 	if err != nil {
 		fmt.Printf("Failed to get hotels: %v, code: %v\n", err, status.Code(err))
 	}

@@ -3,9 +3,14 @@ package payment_service
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
+	auth_service "hotel-booking-system/internal/pkg/delivery/grpc/auth-service"
+	users_proto "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
+	loyalty_service "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service"
+	loyalty_proto "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	paymentServer "hotel-booking-system/internal/pkg/delivery/grpc/payment-service"
 	paymentService "hotel-booking-system/internal/pkg/delivery/grpc/payment-service"
 	pb "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
@@ -22,12 +27,14 @@ import (
 )
 
 type App struct {
-	db         *sqlx.DB
-	conf       *config
-	configName string
-	server     *grpc.Server
-	httpRouter http.Handler
-	logger     logs.LoggerInterface
+	db                *sqlx.DB
+	conf              *config
+	configName        string
+	server            *grpc.Server
+	UserLoyaltyClient loyalty_proto.LoyaltyServiceClient
+	UsersClient       users_proto.AuthServiceClient
+	httpRouter        http.Handler
+	logger            logs.LoggerInterface
 }
 
 func New() *App {
@@ -37,6 +44,8 @@ func New() *App {
 		"",
 		&grpc.Server{},
 		nil,
+		nil,
+		nil,
 		logs.NewLogrus(),
 	}
 }
@@ -45,6 +54,10 @@ func (a *App) Run(configFilename string) {
 	a.configName = configFilename
 	a.setupApp()
 	a.setupStorage()
+	connectionsCloseFunction := a.establishClientConnectWithAllDependentServices()
+	defer func() {
+		connectionsCloseFunction()
+	}()
 
 	jwtTokenManager := jwtManager.NewJWTManager(a.conf.Server.JWTSecret, a.conf.Server.TokenDuration.Duration)
 
@@ -60,7 +73,12 @@ func (a *App) Run(configFilename string) {
 
 	paymentRepository := paymentRepositories.NewPaymentRepository(a.db, a.logger)
 
-	paymentUsecase := paymentUsecases.NewPaymentUsecase(paymentRepository, a.logger)
+	paymentUsecase := paymentUsecases.NewPaymentUsecase(
+		paymentRepository,
+		a.UsersClient,
+		a.UserLoyaltyClient,
+		a.logger,
+	)
 	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
 
 	paymentS := paymentServer.NewPaymentServer(
@@ -145,7 +163,83 @@ func (a *App) setupApp() {
 		a.logger.Fatal(err)
 	}
 
+	if err := a.conf.setUserLoyaltyServiceFromEnv(); err != nil {
+		a.logger.Fatal(err)
+	}
+
+	if err := a.conf.setUserServiceFromEnv(); err != nil {
+		a.logger.Fatal(err)
+	}
+
 	a.logger.Infof("Loaded JWT Key: %v***", a.conf.Server.JWTSecret[:2])
 	a.logger.Infof("Loaded Admin Id: %v", a.conf.AdminCredentials.Id)
 	a.logger.Infof("Loaded Admin Secret: %v***", a.conf.AdminCredentials.Secret[:2])
+}
+
+func (a *App) establishClientConnectWithAllDependentServices() func() {
+	jwtTokenManager := jwtManager.NewJWTManager("", 0)
+
+	userLoyaltyServiceConnCloseFunction := a.setupUserLoyaltyServiceConnection(jwtTokenManager)
+	usersServiceConnCloseFunction := a.setupUserServiceConnection(jwtTokenManager)
+
+	return func() {
+		userLoyaltyServiceConnCloseFunction()
+		usersServiceConnCloseFunction()
+	}
+}
+
+func (a *App) setupUserLoyaltyServiceConnection(jwtTokenManager *jwtManager.JWTManager) func() {
+	authInterceptor := interceptors.NewClientAuthInterceptor(
+		a.conf.UserLoyaltyService.Credentials,
+		jwtTokenManager,
+		interceptors.MethodsRoleMapToSet(loyalty_service.AccessibleLoyaltyServicePaths()),
+		logrus.New(),
+	)
+
+	conn, err := grpc.Dial(
+		fmt.Sprintf(a.conf.UserLoyaltyService.Url),
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(authInterceptor.Unary()),
+	)
+	if err != nil {
+		a.logger.Fatalf("Failed to make User Loyalty Service grpc client: %v", err)
+	}
+
+	// Create specific client out of connection
+	client := loyalty_proto.NewLoyaltyServiceClient(conn)
+
+	// Add client GetToken API to auth interceptor
+	authInterceptor.GrpcServiceClient = client
+
+	a.UserLoyaltyClient = client
+
+	return func() { conn.Close() }
+}
+
+func (a *App) setupUserServiceConnection(jwtTokenManager *jwtManager.JWTManager) func() {
+	authInterceptor := interceptors.NewClientAuthInterceptor(
+		a.conf.UserService.Credentials,
+		jwtTokenManager,
+		interceptors.MethodsRoleMapToSet(auth_service.AccessibleAuthServicePaths()),
+		logrus.New(),
+	)
+
+	conn, err := grpc.Dial(
+		fmt.Sprintf(a.conf.UserService.Url),
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(authInterceptor.Unary()),
+	)
+	if err != nil {
+		a.logger.Fatalf("Failed to make User Service grpc client: %v", err)
+	}
+
+	// Create specific client out of connection
+	client := users_proto.NewAuthServiceClient(conn)
+
+	// Add client GetToken API to auth interceptor
+	authInterceptor.GrpcServiceClient = client
+
+	a.UsersClient = client
+
+	return func() { conn.Close() }
 }

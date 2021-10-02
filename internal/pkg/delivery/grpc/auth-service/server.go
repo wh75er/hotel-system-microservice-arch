@@ -7,7 +7,6 @@ import (
 	"hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -41,14 +40,14 @@ func (s *AuthServer) GetToken(ctx context.Context, pc *commonProto.Credentials) 
 	err := s.AdminCredsUsecase.Login(c)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
 	token, err := s.TokenManager.Generate(models.SERVICE)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -61,14 +60,14 @@ func (s *AuthServer) AddUser(ctx context.Context, pu *proto.User) (*commonProto.
 	user, err := s.ProtoToUser(pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
 	err = s.UserUsecase.AddUser(user)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -79,7 +78,7 @@ func (s *AuthServer) GetUser(ctx context.Context, pUuid *commonProto.UUID) (*pro
 	user, err := s.UserUsecase.GetUser(pUuid.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -90,14 +89,14 @@ func (s *AuthServer) Login(ctx context.Context, pu *proto.User) (*commonProto.To
 	user, err := s.ProtoToUser(pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
 	token, err := s.UserUsecase.Login(user)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -112,7 +111,7 @@ func (s *AuthServer) CheckAuth(ctx context.Context, pt *commonProto.Token) (*pro
 	role, err := s.UserUsecase.CheckAuth(string(*token))
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 

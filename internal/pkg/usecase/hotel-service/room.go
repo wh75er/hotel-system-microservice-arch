@@ -4,7 +4,6 @@ import (
 	"github.com/aglyzov/go-patch"
 	"github.com/google/uuid"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"time"
@@ -25,7 +24,7 @@ func (u *RoomUsecase) GetRooms(hotelUuid string) (r []models.Room, e error) {
 
 	validHotelUuid, e := uuid.Parse(hotelUuid)
 	if e != nil {
-		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
+		e = errors.E(opError, errors.HotelUuidValidationErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -33,11 +32,11 @@ func (u *RoomUsecase) GetRooms(hotelUuid string) (r []models.Room, e error) {
 	_, e = u.HotelRepository.GetHotel(validHotelUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.HotelNotFoundErr, e)
+			e = errors.E(opError, errors.HotelNotFoundErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -48,7 +47,7 @@ func (u *RoomUsecase) GetRooms(hotelUuid string) (r []models.Room, e error) {
 			e = nil
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryRoomErr, e)
+		e = errors.E(opError, errors.RepositoryRoomErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -68,11 +67,11 @@ func (u *RoomUsecase) AddRoom(r *models.Room) (e error) {
 	_, e = u.HotelRepository.GetHotel(r.HotelUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.HotelNotFoundErr, e)
+			e = errors.E(opError, errors.HotelNotFoundErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -82,7 +81,7 @@ func (u *RoomUsecase) AddRoom(r *models.Room) (e error) {
 
 	e = u.RoomRepository.AddRoom(r)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryRoomErr)
+		e = errors.E(opError, errors.RepositoryRoomErr)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -102,11 +101,11 @@ func (u *RoomUsecase) PatchRoom(r *models.Room) (e error) {
 	currentRoom, e := u.RoomRepository.GetRoom(r.RoomUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.RoomNotFoundErr, e)
+			e = errors.E(opError, errors.RoomNotFoundErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryRoomErr, e)
+		e = errors.E(opError, errors.RepositoryRoomErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -117,14 +116,14 @@ func (u *RoomUsecase) PatchRoom(r *models.Room) (e error) {
 
 	_, e = patch.Struct(&currentRoom, r)
 	if e != nil {
-		e = errors.E(opError, kinds.RoomFailedToPatch, e)
+		e = errors.E(opError, errors.RoomFailedToPatch, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
 	e = u.RoomRepository.PatchRoom(&currentRoom)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryRoomErr, e)
+		e = errors.E(opError, errors.RepositoryRoomErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -137,14 +136,14 @@ func (u *RoomUsecase) DeleteRoom(roomUuid string) (e error) {
 
 	validRoomUuid, e := uuid.Parse(roomUuid)
 	if e != nil {
-		e = errors.E(opError, kinds.RoomUuidValidationErr, e)
+		e = errors.E(opError, errors.RoomUuidValidationErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
 	e = u.HotelRepository.DeleteHotel(validRoomUuid)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryRoomErr, e)
+		e = errors.E(opError, errors.RepositoryRoomErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -154,22 +153,22 @@ func (u *RoomUsecase) DeleteRoom(roomUuid string) (e error) {
 
 func (u *RoomUsecase) validateRoom(opError errors.Op, r *models.Room) (e error) {
 	if len(r.RoomType) > 250 {
-		e = errors.E(opError, kinds.RoomTypeValidationErr, e)
+		e = errors.E(opError, errors.RoomTypeValidationErr, e)
 		return
 	}
 
 	if r.Amount < 0 {
-		e = errors.E(opError, kinds.RoomAmountValidationErr, e)
+		e = errors.E(opError, errors.RoomAmountValidationErr, e)
 		return
 	}
 
 	if r.Beds < 0 {
-		e = errors.E(opError, kinds.RoomBedsValidationErr, e)
+		e = errors.E(opError, errors.RoomBedsValidationErr, e)
 		return
 	}
 
 	if r.NightPrice < 0 {
-		e = errors.E(opError, kinds.RoomNightPriceValidationErr, e)
+		e = errors.E(opError, errors.RoomNightPriceValidationErr, e)
 		return
 	}
 

@@ -15,12 +15,6 @@ service HotelService {
   rpc PatchHotel (Hotel) returns (common.Empty) {}
   rpc DeleteHotel (common.UUID) returns (common.Empty) {}
 
-  rpc AddReview (Review) returns (common.Empty) {}
-  rpc GetReview (common.UUID) returns (Review) {}
-  rpc GetReviews (common.UUID) returns (ReviewsResponse) {}
-  rpc PatchReview (Review) returns (common.Empty) {}
-  rpc DeleteReview (common.UUID) returns (common.Empty) {}
-
   rpc AddRoom (Room) returns (common.Empty) {}
   rpc GetRooms (common.UUID) returns (RoomsResponse) {}
   rpc PatchRoom (Room) returns (common.Empty) {}
@@ -38,20 +32,9 @@ message Room {
   int64 NightPrice = 8;
 }
 
-message Review {
-  string UserUuid = 1;
-  string HotelUuid = 2;
-  string ReviewUuid = 3;
-  string Text = 4;
-  bool IsAnonymous = 5;
-  repeated string Photos = 6;
-  int64 CreationDate = 7;
-}
-
 message Hotel {
   string Name = 1;
   string HotelUuid = 2;
-  repeated string Photos = 3;
   string Description = 4;
   string Country = 5;
   string City = 6;
@@ -59,15 +42,10 @@ message Hotel {
   bool IsReady = 8;
   int64 CreationDate = 9;
   repeated Room rooms = 10;
-  repeated Review Reviews = 11;
 }
 
 message HotelsResponse {
   repeated Hotel Hotels = 1;
-}
-
-message ReviewsResponse {
-  repeated Review Reviews = 1;
 }
 
 message RoomsResponse {

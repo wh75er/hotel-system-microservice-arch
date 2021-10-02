@@ -20,24 +20,13 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 
 	hotelMockRepository := repositoryMocks.HotelRepositoryI{}
 	roomMockRepository := repositoryMocks.RoomRepositoryI{}
-	reviewMockRepository := repositoryMocks.ReviewRepositoryI{}
 
-	hotelUsecase := NewHotelUsecase(&hotelMockRepository, &roomMockRepository, &reviewMockRepository, loggerMock)
+	hotelUsecase := NewHotelUsecase(&hotelMockRepository, &roomMockRepository, loggerMock)
 
 	hotelUuid := uuid.New()
 	nonExistedHotelUuid := uuid.New()
 	hotelUuidWithoutRoomsReviews := uuid.New()
 	hotelPhotos := []uuid.UUID{uuid.New(), uuid.New()}
-
-	review := models.Review{
-		UserUuid:     uuid.New(),
-		HotelUuid:    hotelUuid,
-		ReviewUuid:   uuid.New(),
-		Text:         "test text",
-		IsAnonymous:  true,
-		Photos:       []uuid.UUID{uuid.New(), uuid.New()},
-		CreationDate: time.Now(),
-	}
 
 	room := models.Room{
 		RoomType:     "family",
@@ -73,7 +62,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 		Address:     "Address",
 		IsReady:     true,
 		Rooms:       []models.Room{room},
-		Reviews:     []models.Review{review},
 	}
 
 	hotelMockRepository.On(
@@ -84,10 +72,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 		"GetRooms", hotelUuid,
 	).Return([]models.Room{room}, nil)
 
-	reviewMockRepository.On(
-		"GetReviews", hotelUuid,
-	).Return([]models.Review{review}, nil)
-
 	hotelMockRepository.On(
 		"GetHotel", nonExistedHotelUuid,
 	).Return(models.Hotel{}, errors.E(errors.RepositoryNoRows))
@@ -95,10 +79,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 	roomMockRepository.On(
 		"GetRooms", nonExistedHotelUuid,
 	).Return([]models.Room{}, errors.E(errors.RepositoryNoRows))
-
-	reviewMockRepository.On(
-		"GetReviews", nonExistedHotelUuid,
-	).Return([]models.Review{}, errors.E(errors.RepositoryNoRows))
 
 	hotelMockRepository.On(
 		"GetHotel", hotelUuidWithoutRoomsReviews,
@@ -108,11 +88,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 	roomMockRepository.On(
 		"GetRooms", hotelUuidWithoutRoomsReviews,
 	).Return(emptyRooms, errors.E(errors.RepositoryNoRows))
-
-	var emptyReviews []models.Review
-	reviewMockRepository.On(
-		"GetReviews", hotelUuidWithoutRoomsReviews,
-	).Return(emptyReviews, errors.E(errors.RepositoryNoRows))
 
 	hotelRepoErr := uuid.New()
 
@@ -125,10 +100,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 		"GetRooms", hotelRepoErr,
 	).Return(emptyRooms, errors.E(errors.RepositoryNoRows))
 
-	reviewMockRepository.On(
-		"GetReviews", hotelRepoErr,
-	).Return(emptyReviews, errors.E(errors.RepositoryNoRows))
-
 	RoomRepoErr := uuid.New()
 
 	hotelMockRepository.On(
@@ -139,10 +110,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 		"GetRooms", RoomRepoErr,
 	).Return(emptyRooms, errors.E(errors.RepositoryDownErr))
 
-	reviewMockRepository.On(
-		"GetReviews", RoomRepoErr,
-	).Return(emptyReviews, errors.E(errors.RepositoryNoRows))
-
 	ReviewRepoErr := uuid.New()
 
 	hotelMockRepository.On(
@@ -152,10 +119,6 @@ func TestHotelUsecase_GetHotel(t *testing.T) {
 	roomMockRepository.On(
 		"GetRooms", ReviewRepoErr,
 	).Return(emptyRooms, errors.E(errors.RepositoryNoRows))
-
-	reviewMockRepository.On(
-		"GetReviews", ReviewRepoErr,
-	).Return(emptyReviews, errors.E(errors.RepositoryDownErr))
 
 	tests := []struct {
 		name      string
@@ -230,9 +193,8 @@ func TestHotelUsecase_GetHotels(t *testing.T) {
 
 	hotelMockRepository := repositoryMocks.HotelRepositoryI{}
 	roomMockRepository := repositoryMocks.RoomRepositoryI{}
-	reviewMockRepository := repositoryMocks.ReviewRepositoryI{}
 
-	hotelUsecase := NewHotelUsecase(&hotelMockRepository, &roomMockRepository, &reviewMockRepository, loggerMock)
+	hotelUsecase := NewHotelUsecase(&hotelMockRepository, &roomMockRepository, loggerMock)
 
 	hotelUuid1 := uuid.New()
 	hotelPhotos1 := []uuid.UUID{uuid.New(), uuid.New()}
@@ -327,9 +289,8 @@ func TestHotelUsecase_AddHotel(t *testing.T) {
 
 	hotelMockRepository := repositoryMocks.HotelRepositoryI{}
 	roomMockRepository := repositoryMocks.RoomRepositoryI{}
-	reviewMockRepository := repositoryMocks.ReviewRepositoryI{}
 
-	hotelUsecase := NewHotelUsecase(&hotelMockRepository, &roomMockRepository, &reviewMockRepository, loggerMock)
+	hotelUsecase := NewHotelUsecase(&hotelMockRepository, &roomMockRepository, loggerMock)
 
 	hotelUuid1 := uuid.New()
 	hotelPhotos1 := []uuid.UUID{uuid.New(), uuid.New()}

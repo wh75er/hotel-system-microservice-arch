@@ -8,14 +8,12 @@ import (
 type Hotel struct {
 	Name         string
 	HotelUuid    uuid.UUID
-	Photos       []uuid.UUID
 	Description  string
 	Country      string
 	City         string
 	Address      string
 	IsReady      bool
 	CreationDate time.Time
-	Reviews      []Review
 	Rooms        []Room
 }
 

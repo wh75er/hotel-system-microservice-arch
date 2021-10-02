@@ -53,16 +53,13 @@ func (a *App) Run(configFilename string) {
 
 	hotelRepository := hotelRepositories.NewHotelRepository(a.db, a.logger)
 	roomRepository := hotelRepositories.NewRoomRepository(a.db, a.logger)
-	reviewRepository := hotelRepositories.NewReviewRepository(a.db, a.logger)
 
-	hotelUsecase := hotelUsecases.NewHotelUsecase(hotelRepository, roomRepository, reviewRepository, a.logger)
+	hotelUsecase := hotelUsecases.NewHotelUsecase(hotelRepository, roomRepository, a.logger)
 	roomUsecase := hotelUsecases.NewRoomUsecase(hotelRepository, roomRepository, a.logger)
-	reviewUsecase := hotelUsecases.NewReviewUsecase(hotelRepository, reviewRepository, a.logger)
 	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
 
 	hotelS := hotelServer.NewHotelServer(
 		hotelUsecase,
-		reviewUsecase,
 		roomUsecase,
 		adminCredsUsecase,
 		jwtTokenManager,

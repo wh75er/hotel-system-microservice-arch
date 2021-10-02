@@ -5,7 +5,6 @@ import (
 	"hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
 	"hotel-booking-system/internal/pkg/models"
 )
 
@@ -14,7 +13,7 @@ func (s *AuthServer) ProtoToUser(pu *proto.User) (*models.User, error) {
 
 	validUserUuid, err := uuid.Parse(pu.UserUuid.Value)
 	if err != nil {
-		e := errors.E(opError, kinds.UserUuidValidationErr, err)
+		e := errors.E(opError, errors.UserUuidValidationErr, err)
 		s.Logger.Error("Grpc error: ", e)
 		return nil, e
 	}

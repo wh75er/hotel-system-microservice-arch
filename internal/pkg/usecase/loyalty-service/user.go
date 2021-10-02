@@ -3,7 +3,6 @@ package loyalty_service
 import (
 	"github.com/google/uuid"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/loyalty-service"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 )
@@ -25,7 +24,7 @@ func (u *LoyaltyUsecase) GetDiscount(userUid string) (l *models.Loyalty, e error
 
 	validUserUuid, err := uuid.Parse(userUid)
 	if err != nil {
-		e = errors.E(opError, kinds.LoyaltyUserUuidValidationErr, err)
+		e = errors.E(opError, errors.LoyaltyUserUuidValidationErr, err)
 		u.logger.Error("Usecase error: ", e)
 		return
 	}
@@ -33,11 +32,11 @@ func (u *LoyaltyUsecase) GetDiscount(userUid string) (l *models.Loyalty, e error
 	l, err = u.loyaltyRepository.GetLoyalty(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.LoyaltyNotFoundErr, err)
+			e = errors.E(opError, errors.LoyaltyNotFoundErr, err)
 			u.logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryLoyaltyErr, err)
+		e = errors.E(opError, errors.RepositoryLoyaltyErr, err)
 		u.logger.Error("Usecase error: %v", e)
 		return
 	}
@@ -50,7 +49,7 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 
 	validUserUuid, err := uuid.Parse(userUid)
 	if err != nil {
-		e = errors.E(opError, kinds.LoyaltyUserUuidValidationErr, err)
+		e = errors.E(opError, errors.LoyaltyUserUuidValidationErr, err)
 		u.logger.Error("Usecase error: ", e)
 		return
 	}
@@ -60,7 +59,7 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			err = nil
 		}
-		e = errors.E(opError, kinds.RepositoryLoyaltyErr, err)
+		e = errors.E(opError, errors.RepositoryLoyaltyErr, err)
 		u.logger.Error("Usecase error: %v", e)
 		return
 	}
@@ -74,7 +73,7 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 
 	err = u.loyaltyRepository.AddLoyalty(l)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryLoyaltyErr, e)
+		e = errors.E(opError, errors.RepositoryLoyaltyErr, e)
 		u.logger.Error("Usecase error: ", e)
 		return
 	}
@@ -87,7 +86,7 @@ func (u *LoyaltyUsecase) UpdateDiscount(userUid string, contribution int) (e err
 
 	validUserUuid, err := uuid.Parse(userUid)
 	if err != nil {
-		e = errors.E(opError, kinds.LoyaltyUserUuidValidationErr, err)
+		e = errors.E(opError, errors.LoyaltyUserUuidValidationErr, err)
 		u.logger.Error("Usecase error: ", e)
 		return
 	}
@@ -95,11 +94,11 @@ func (u *LoyaltyUsecase) UpdateDiscount(userUid string, contribution int) (e err
 	l, err := u.loyaltyRepository.GetLoyalty(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.LoyaltyNotFoundErr, err)
+			e = errors.E(opError, errors.LoyaltyNotFoundErr, err)
 			u.logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryLoyaltyErr, err)
+		e = errors.E(opError, errors.RepositoryLoyaltyErr, err)
 		u.logger.Error("Usecase error: %v", e)
 		return
 	}
@@ -109,7 +108,7 @@ func (u *LoyaltyUsecase) UpdateDiscount(userUid string, contribution int) (e err
 
 	err = u.loyaltyRepository.UpdateLoyalty(l)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryLoyaltyErr, e)
+		e = errors.E(opError, errors.RepositoryLoyaltyErr, e)
 		u.logger.Error("Usecase error: ", e)
 		return
 	}

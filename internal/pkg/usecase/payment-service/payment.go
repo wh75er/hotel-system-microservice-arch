@@ -1,24 +1,38 @@
 package payment_service
 
 import (
+	"context"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/status"
+	users_proto "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
+	loyalty_proto "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/payment-service"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
+	"net/http"
 	"time"
 )
 
 type PaymentUsecase struct {
-	PaymentRepository models.PaymentRepositoryI
-	Logger            logs.LoggerInterface
+	PaymentRepository        models.PaymentRepositoryI
+	UserServiceClient        users_proto.AuthServiceClient
+	UserLoyaltyServiceClient loyalty_proto.LoyaltyServiceClient
+	Logger                   logs.LoggerInterface
 }
 
 func NewPaymentUsecase(
 	paymentR models.PaymentRepositoryI,
+	userClient users_proto.AuthServiceClient,
+	userLoyaltyClient loyalty_proto.LoyaltyServiceClient,
 	logger logs.LoggerInterface,
 ) models.PaymentUsecaseI {
-	return &PaymentUsecase{paymentR, logger}
+	return &PaymentUsecase{
+		paymentR,
+		userClient,
+		userLoyaltyClient,
+		logger,
+	}
 }
 
 func (u *PaymentUsecase) CreatePayment(price int, userUuid string) (paymentUuid uuid.UUID, e error) {
@@ -26,12 +40,27 @@ func (u *PaymentUsecase) CreatePayment(price int, userUuid string) (paymentUuid 
 
 	validUserUuid, err := uuid.Parse(userUuid)
 	if err != nil {
-		e = errors.E(opError, kinds.PaymentUserUuidValidationErr, err)
+		e = errors.E(opError, errors.PaymentUserUuidValidationErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
-	// TODO: call to user Service(check that this user exists)
+	// call to user Service(check that this user exists)
+	_, err = u.UserServiceClient.GetUser(context.Background(), &commonProto.UUID{Value: validUserUuid.String()})
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.AuthServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		httpCode := status.Code(err)
+		if httpCode == http.StatusNotFound {
+			e = errors.E(opError, errors.UserNotFoundErr, err)
+		} else {
+			e = errors.E(opError, errors.AuthServiceUnavailable, err)
+		}
+		return
+	}
 
 	paymentUuid = uuid.New()
 
@@ -52,7 +81,7 @@ func (u *PaymentUsecase) CreatePayment(price int, userUuid string) (paymentUuid 
 
 	err = u.PaymentRepository.AddPayment(&p)
 	if err != nil {
-		e = errors.E(opError, kinds.RepositoryPaymentErr, err)
+		e = errors.E(opError, errors.RepositoryPaymentErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -65,7 +94,7 @@ func (u *PaymentUsecase) MakePayment(paymentUuid string) (e error) {
 
 	validPaymentUuid, err := uuid.Parse(paymentUuid)
 	if err != nil {
-		e = errors.E(opError, kinds.PaymentUuidValidationErr, err)
+		e = errors.E(opError, errors.PaymentUuidValidationErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -73,11 +102,11 @@ func (u *PaymentUsecase) MakePayment(paymentUuid string) (e error) {
 	p, err := u.PaymentRepository.GetPayment(validPaymentUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.PaymentNotFoundErr, err)
+			e = errors.E(opError, errors.PaymentNotFoundErr, err)
 			u.Logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryPaymentErr, err)
+		e = errors.E(opError, errors.RepositoryPaymentErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -87,12 +116,32 @@ func (u *PaymentUsecase) MakePayment(paymentUuid string) (e error) {
 
 	err = u.PaymentRepository.ChangePaymentStatus(p)
 	if err != nil {
-		e = errors.E(opError, kinds.RepositoryPaymentErr, err)
+		e = errors.E(opError, errors.RepositoryPaymentErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
-	// TODO: make call to UserLoyaltyService to update user's discount
+	// make call to UserLoyaltyService to update user's discount
+	_, err = u.UserLoyaltyServiceClient.UpdateDiscount(context.Background(), &loyalty_proto.UpdateDiscountRequest{
+		UserUid:      &commonProto.UUID{Value: p.UserUuid.String()},
+		Contribution: int64(p.Price),
+	})
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.UserLoyaltyServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		httpCode := status.Code(err)
+		if httpCode == http.StatusNotFound {
+			u.Logger.Warnf("loyalty discount account not found for user[uuid]: %v", p.UserUuid)
+		} else {
+			u.Logger.Warnf("undesirable behaviour on loyalty service: %v")
+		}
+
+		// Not valuable service, don't interrupt, only log
+		e = nil
+	}
 
 	return
 }
@@ -102,7 +151,7 @@ func (u *PaymentUsecase) GetPayment(paymentUuid string) (p *models.Payment, e er
 
 	validPaymentUuid, err := uuid.Parse(paymentUuid)
 	if err != nil {
-		e = errors.E(opError, kinds.PaymentUuidValidationErr, err)
+		e = errors.E(opError, errors.PaymentUuidValidationErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -110,11 +159,11 @@ func (u *PaymentUsecase) GetPayment(paymentUuid string) (p *models.Payment, e er
 	p, err = u.PaymentRepository.GetPayment(validPaymentUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.PaymentNotFoundErr, err)
+			e = errors.E(opError, errors.PaymentNotFoundErr, err)
 			u.Logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryPaymentErr, err)
+		e = errors.E(opError, errors.RepositoryPaymentErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}

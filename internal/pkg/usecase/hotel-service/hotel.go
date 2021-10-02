@@ -4,21 +4,19 @@ import (
 	"github.com/aglyzov/go-patch"
 	"github.com/google/uuid"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/hotel-service"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
 	"time"
 )
 
 type HotelUsecase struct {
-	HotelRepository  models.HotelRepositoryI
-	RoomRepository   models.RoomRepositoryI
-	ReviewRepository models.ReviewRepositoryI
-	Logger           logs.LoggerInterface
+	HotelRepository models.HotelRepositoryI
+	RoomRepository  models.RoomRepositoryI
+	Logger          logs.LoggerInterface
 }
 
-func NewHotelUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, reviewR models.ReviewRepositoryI, logger logs.LoggerInterface) models.HotelUsecaseI {
-	return &HotelUsecase{hotelR, roomR, reviewR, logger}
+func NewHotelUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, logger logs.LoggerInterface) models.HotelUsecaseI {
+	return &HotelUsecase{hotelR, roomR, logger}
 }
 
 func (u *HotelUsecase) GetHotel(hotelUuid string) (h models.Hotel, e error) {
@@ -26,7 +24,7 @@ func (u *HotelUsecase) GetHotel(hotelUuid string) (h models.Hotel, e error) {
 
 	validHotelUuid, e := uuid.Parse(hotelUuid)
 	if e != nil {
-		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
+		e = errors.E(opError, errors.HotelUuidValidationErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -34,11 +32,11 @@ func (u *HotelUsecase) GetHotel(hotelUuid string) (h models.Hotel, e error) {
 	h, e = u.HotelRepository.GetHotel(validHotelUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.HotelNotFoundErr, e)
+			e = errors.E(opError, errors.HotelNotFoundErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -48,25 +46,13 @@ func (u *HotelUsecase) GetHotel(hotelUuid string) (h models.Hotel, e error) {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
 			e = nil
 		} else {
-			e = errors.E(opError, kinds.RepositoryRoomErr, e)
-			u.Logger.Error("Usecase error: ", e)
-			return
-		}
-	}
-
-	reviews, e := u.ReviewRepository.GetReviews(validHotelUuid)
-	if e != nil {
-		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = nil
-		} else {
-			e = errors.E(opError, kinds.RepositoryReviewErr, e)
+			e = errors.E(opError, errors.RepositoryRoomErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
 	}
 
 	h.Rooms = rooms
-	h.Reviews = reviews
 
 	return
 }
@@ -79,7 +65,7 @@ func (u *HotelUsecase) GetHotels() (h []models.Hotel, e error) {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
 			e = nil
 		} else {
-			e = errors.E(opError, kinds.RepositoryReviewErr, e)
+			e = errors.E(opError, errors.RepositoryReviewErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
@@ -102,7 +88,7 @@ func (u *HotelUsecase) AddHotel(h *models.Hotel) (e error) {
 
 	e = u.HotelRepository.AddHotel(h)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 	}
 
@@ -121,30 +107,29 @@ func (u *HotelUsecase) PatchHotel(h *models.Hotel) (e error) {
 	currentHotel, e := u.HotelRepository.GetHotel(h.HotelUuid)
 	if e != nil {
 		if errors.GetKind(e) == errors.RepositoryNoRows {
-			e = errors.E(opError, kinds.HotelNotFoundErr, e)
+			e = errors.E(opError, errors.HotelNotFoundErr, e)
 			u.Logger.Error("Usecase error: ", e)
 			return
 		}
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
 	// Reset unchangable fields
 	h.CreationDate = time.Time{}
-	h.Reviews = []models.Review{}
 	h.Rooms = []models.Room{}
 
 	_, e = patch.Struct(&currentHotel, h)
 	if e != nil {
-		e = errors.E(opError, kinds.HotelFailedToPatch, e)
+		e = errors.E(opError, errors.HotelFailedToPatch, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
 	e = u.HotelRepository.PatchHotel(&currentHotel)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -157,14 +142,14 @@ func (u *HotelUsecase) DeleteHotel(hotelUuid string) (e error) {
 
 	validHotelUuid, e := uuid.Parse(hotelUuid)
 	if e != nil {
-		e = errors.E(opError, kinds.HotelUuidValidationErr, e)
+		e = errors.E(opError, errors.HotelUuidValidationErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
 
 	e = u.HotelRepository.DeleteHotel(validHotelUuid)
 	if e != nil {
-		e = errors.E(opError, kinds.RepositoryHotelErr, e)
+		e = errors.E(opError, errors.RepositoryHotelErr, e)
 		u.Logger.Error("Usecase error: ", e)
 		return
 	}
@@ -174,27 +159,27 @@ func (u *HotelUsecase) DeleteHotel(hotelUuid string) (e error) {
 
 func (u *HotelUsecase) validateHotel(opError errors.Op, h *models.Hotel) (e error) {
 	if len(h.Name) > 250 {
-		e = errors.E(opError, kinds.HotelNameValidationError, e)
+		e = errors.E(opError, errors.HotelNameValidationError, e)
 		return
 	}
 
 	if len(h.Description) > 1000 {
-		e = errors.E(opError, kinds.HotelDescriptionValidationError, e)
+		e = errors.E(opError, errors.HotelDescriptionValidationError, e)
 		return
 	}
 
 	if len(h.Country) > 100 {
-		e = errors.E(opError, kinds.HotelCountryValidationError, e)
+		e = errors.E(opError, errors.HotelCountryValidationError, e)
 		return
 	}
 
 	if len(h.City) > 100 {
-		e = errors.E(opError, kinds.HotelCityValidationError, e)
+		e = errors.E(opError, errors.HotelCityValidationError, e)
 		return
 	}
 
 	if len(h.Address) > 250 {
-		e = errors.E(opError, kinds.HotelAddressValidationError, e)
+		e = errors.E(opError, errors.HotelAddressValidationError, e)
 		return
 	}
 

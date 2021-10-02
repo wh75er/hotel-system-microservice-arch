@@ -7,7 +7,6 @@ import (
 	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/loyalty-service"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -41,14 +40,14 @@ func (s *LoyaltyServer) GetToken(ctx context.Context, pc *commonProto.Credential
 	err := s.AdminCredsUsecase.Login(c)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
 	token, err := s.TokenManager.Generate(models.SERVICE)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -61,7 +60,7 @@ func (s *LoyaltyServer) GetDiscount(ctx context.Context, pu *commonProto.UUID) (
 	l, err := s.LoyaltyUsecase.GetDiscount(pu.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -72,7 +71,7 @@ func (s *LoyaltyServer) AddUser(ctx context.Context, pu *commonProto.UUID) (*com
 	err := s.LoyaltyUsecase.AddUser(pu.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -83,7 +82,7 @@ func (s *LoyaltyServer) UpdateDiscount(ctx context.Context, pr *proto.UpdateDisc
 	err := s.LoyaltyUsecase.UpdateDiscount(pr.UserUid.Value, int(pr.Contribution))
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 

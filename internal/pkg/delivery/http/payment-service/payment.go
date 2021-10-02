@@ -40,6 +40,5 @@ func (d *PaymentHttp) makePaymentHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-
 	w.WriteHeader(http.StatusOK)
 }

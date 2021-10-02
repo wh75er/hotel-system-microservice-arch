@@ -7,7 +7,6 @@ import (
 	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/payment-service"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -41,14 +40,14 @@ func (s *PaymentServer) GetToken(ctx context.Context, pc *commonProto.Credential
 	err := s.AdminCredsUsecase.Login(c)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
 	token, err := s.TokenManager.Generate(models.SERVICE)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -61,7 +60,7 @@ func (s *PaymentServer) CreatePayment(ctx context.Context, pr *proto.CreatePayme
 	paymentUuid, err := s.PaymentUsecase.CreatePayment(int(pr.Value), pr.UserUuid.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 
@@ -72,7 +71,7 @@ func (s *PaymentServer) GetPayment(ctx context.Context, pu *commonProto.UUID) (*
 	p, err := s.PaymentUsecase.GetPayment(pu.Value)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(kinds.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
 		return nil, err
 	}
 

@@ -15,4 +15,3 @@ func (s *PaymentServer) PaymentToProto(p *models.Payment) *proto.Payment {
 		TimeUpdated: p.TimeUpdated.Unix(),
 	}
 }
-

@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/google/uuid"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/payment-service"
 	"time"
 )
 
@@ -37,7 +36,7 @@ type PaymentUsecaseI interface {
 
 func (p *Payment) ValidatePrice() error {
 	if p.Price <= 0 {
-		return errors.E(kinds.PaymentPriceValidationErr)
+		return errors.E(errors.PaymentPriceValidationErr)
 	}
 
 	return nil

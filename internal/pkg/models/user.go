@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"hotel-booking-system/internal/pkg/errors"
-	kinds "hotel-booking-system/internal/pkg/errors/auth-service"
 	"regexp"
 )
 
@@ -42,13 +41,13 @@ func (u *User) HashPassword() (e error) {
 	var opError errors.Op = "models.HashPassword"
 
 	if len(u.Password) < PasswordMinLength || len(u.Password) > PasswordMaxLength {
-		e = errors.E(opError, kinds.UserPasswordLengthValidationError)
+		e = errors.E(opError, errors.UserPasswordLengthValidationError)
 		return
 	}
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(u.Password), HashCost)
 	if err != nil {
-		return errors.E(opError, kinds.FailedToHashPassword, err)
+		return errors.E(opError, errors.FailedToHashPassword, err)
 	}
 
 	u.Password = string(hashedPass)
@@ -69,12 +68,12 @@ func (u *User) ValidatePassword() error {
 	var opError errors.Op = "models.validatePassword"
 
 	if len(u.Password) < PasswordMinLength || len(u.Password) > PasswordMaxLength {
-		return errors.E(opError, kinds.UserPasswordLengthValidationError)
+		return errors.E(opError, errors.UserPasswordLengthValidationError)
 	}
 
 	validatorRegex := regexp.MustCompile(`^[a-zA-Z0-9./?,'\[\]\\!@#$%^&*()]+$`)
 	if match := validatorRegex.MatchString(u.Password); match == false {
-		return errors.E(opError, kinds.UserPasswordCharsValidationError)
+		return errors.E(opError, errors.UserPasswordCharsValidationError)
 	}
 
 	return nil
@@ -84,12 +83,12 @@ func (u *User) ValidateLogin() error {
 	var opError errors.Op = "models.ValidateLogin"
 
 	if len(u.Login) < LoginMinLength || len(u.Login) > LoginMaxLength {
-		return errors.E(opError, kinds.UserLoginLengthValidationError)
+		return errors.E(opError, errors.UserLoginLengthValidationError)
 	}
 
 	validatorRegex := regexp.MustCompile(`^[a-zA-Z0-9]+$`)
 	if match := validatorRegex.MatchString(u.Password); match == false {
-		return errors.E(opError, kinds.UserLoginCharsValidationError)
+		return errors.E(opError, errors.UserLoginCharsValidationError)
 	}
 
 	return nil
