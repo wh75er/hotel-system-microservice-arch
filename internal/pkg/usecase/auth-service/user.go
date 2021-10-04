@@ -1,7 +1,11 @@
 package auth_service
 
 import (
+	"context"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/status"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
+	loyalty_proto "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
@@ -9,17 +13,19 @@ import (
 )
 
 type UserUsecase struct {
-	UserRepository models.UserRepositoryI
-	jwtManager     *jwt_manager.JWTManager
-	Logger         logs.LoggerInterface
+	UserRepository           models.UserRepositoryI
+	UserLoyaltyServiceClient loyalty_proto.LoyaltyServiceClient
+	jwtManager               *jwt_manager.JWTManager
+	Logger                   logs.LoggerInterface
 }
 
 func NewUserUsecase(
 	userR models.UserRepositoryI,
+	userLoyaltyClient loyalty_proto.LoyaltyServiceClient,
 	jwtManager *jwt_manager.JWTManager,
 	logger logs.LoggerInterface,
 ) models.UserUsecaseI {
-	return &UserUsecase{userR, jwtManager, logger}
+	return &UserUsecase{userR, userLoyaltyClient, jwtManager, logger}
 }
 
 func (u *UserUsecase) GetUser(uid string) (user *models.User, e error) {
@@ -66,13 +72,12 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			e = nil
+		} else {
+			e = errors.E(opError, errors.RepositoryUserErr, err)
+			u.Logger.Error("Usecase error: %v", e)
 			return
 		}
-		e = errors.E(opError, errors.RepositoryUserErr, err)
-		u.Logger.Error("Usecase error: %v", e)
-		return
 	}
-
 	if foundUser != nil {
 		e = errors.E(opError, errors.UserExistsErr, err)
 		u.Logger.Error("Usecase error: %v", e)
@@ -80,6 +85,23 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 	}
 
 	user.UserUuid = uuid.New()
+
+	_, err = u.UserLoyaltyServiceClient.AddUser(context.Background(), &commonProto.UUID{Value: user.UserUuid.String()})
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.UserLoyaltyServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		serviceKind := errors.Kind(status.Code(err))
+		if serviceKind == errors.LoyaltyExistsErr {
+			e = nil
+		} else {
+			e = errors.E(opError, serviceKind)
+			return
+		}
+	}
+
 	user.Role = string(models.USER)
 	err = user.HashPassword()
 	if err != nil {

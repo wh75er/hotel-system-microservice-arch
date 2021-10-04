@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (s *HotelServer) RoomToProto(r *models.Room) *proto.Room {
+func RoomToProto(r *models.Room) *proto.Room {
 	return &proto.Room{
 		RoomType:     r.RoomType,
 		Amount:       int64(r.Amount),
@@ -21,7 +21,7 @@ func (s *HotelServer) RoomToProto(r *models.Room) *proto.Room {
 	}
 }
 
-func (s *HotelServer) HotelToProto(h *models.Hotel) *proto.Hotel {
+func HotelToProto(h *models.Hotel) *proto.Hotel {
 	return &proto.Hotel{
 		Name:         h.Name,
 		HotelUuid:    h.HotelUuid.String(),
@@ -34,7 +34,7 @@ func (s *HotelServer) HotelToProto(h *models.Hotel) *proto.Hotel {
 		Rooms: func() []*proto.Room {
 			var r []*proto.Room
 			for _, v := range h.Rooms {
-				r = append(r, s.RoomToProto(&v))
+				r = append(r, RoomToProto(&v))
 			}
 
 			return r
@@ -42,20 +42,18 @@ func (s *HotelServer) HotelToProto(h *models.Hotel) *proto.Hotel {
 	}
 }
 
-func (s *HotelServer) ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
+func ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 	var opError errors.Op = "hotel-service.ProtoToRoom"
 
 	validRoomUuid, err := uuid.Parse(pr.RoomUuid)
 	if err != nil {
 		e = errors.E(opError, errors.RoomUuidValidationErr, err)
-		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
 	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
 	if err != nil {
 		e = errors.E(opError, errors.HotelUuidValidationErr, err)
-		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
@@ -73,19 +71,18 @@ func (s *HotelServer) ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 	return
 }
 
-func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
+func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 	var opError errors.Op = "hotel-service.ProtoToHotel"
 
 	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
 	if err != nil {
 		e = errors.E(opError, errors.HotelUuidValidationErr, err)
-		s.Logger.Error("Grpc error: ", e)
 		return
 	}
 
 	var rooms []models.Room
 	for _, v := range pr.Rooms {
-		validRoom, err := s.ProtoToRoom(v)
+		validRoom, err := ProtoToRoom(v)
 		if err != nil {
 			e = err
 			return
@@ -109,10 +106,10 @@ func (s *HotelServer) ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 	return
 }
 
-func (s *HotelServer) HotelsToProto(h []models.Hotel) *proto.HotelsResponse {
+func HotelsToProto(h []models.Hotel) *proto.HotelsResponse {
 	var protoHotels []*proto.Hotel
 	for _, v := range h {
-		protoHotels = append(protoHotels, s.HotelToProto(&v))
+		protoHotels = append(protoHotels, HotelToProto(&v))
 	}
 
 	return &proto.HotelsResponse{
@@ -120,10 +117,10 @@ func (s *HotelServer) HotelsToProto(h []models.Hotel) *proto.HotelsResponse {
 	}
 }
 
-func (s *HotelServer) RoomsToProto(r []models.Room) *proto.RoomsResponse {
+func RoomsToProto(r []models.Room) *proto.RoomsResponse {
 	var protoRooms []*proto.Room
 	for _, v := range r {
-		protoRooms = append(protoRooms, s.RoomToProto(&v))
+		protoRooms = append(protoRooms, RoomToProto(&v))
 	}
 
 	return &proto.RoomsResponse{

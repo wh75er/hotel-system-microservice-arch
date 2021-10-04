@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto";
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto";
 
 package proto;
 
@@ -14,14 +14,6 @@ service ReservationService {
   rpc GetReservation (common.UUID) returns (Reservation) {}
   rpc GetReservationsByUser (common.UUID) returns (Reservations) {}
   rpc CreatePayment (common.UUID) returns (common.UUID) {}
-}
-
-message Price {
-}
-
-message CreatePaymentRequest {
-  common.UUID UserUuid = 1;
-  int64 Value = 2;
 }
 
 message Reservation {

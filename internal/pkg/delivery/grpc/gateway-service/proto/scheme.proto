@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/gateway-service/proto";
+
+package proto;
+
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+import "internal/pkg/delivery/grpc/auth-service/proto/scheme.proto";
+import "internal/pkg/delivery/grpc/hotel-service/proto/scheme.proto";
+import "internal/pkg/delivery/grpc/loyalty-service/proto/scheme.proto";
+import "internal/pkg/delivery/grpc/payment-service/proto/scheme.proto";
+import "internal/pkg/delivery/grpc/reservation-service/proto/scheme.proto";
+
+service GatewayService {
+  rpc AddReservation (proto.Reservation) returns (common.UUID) {}
+  rpc CancelReservation (common.UUID) returns (common.Empty) {}
+  rpc GetReservation (common.UUID) returns (proto.Reservation) {}
+  rpc GetReservationsByUser (common.UUID) returns (proto.Reservations) {}
+  rpc CreatePayment (common.UUID) returns (common.UUID) {}
+
+  rpc AddUser (proto.User) returns (common.Empty) {}
+  rpc Login(proto.User) returns (common.Token) {}
+
+  rpc AddHotel (proto.Hotel) returns (common.Empty) {}
+  rpc GetHotel (common.UUID) returns (proto.Hotel) {}
+  rpc GetHotels (common.Empty) returns (proto.HotelsResponse) {}
+  rpc PatchHotel (proto.Hotel) returns (common.Empty) {}
+  rpc DeleteHotel (common.UUID) returns (common.Empty) {}
+
+  rpc AddRoom (proto.Room) returns (common.Empty) {}
+  rpc GetRooms (common.UUID) returns (proto.RoomsResponse) {}
+  rpc GetRoom (common.UUID) returns (proto.Room) {}
+  rpc PatchRoom (proto.Room) returns (common.Empty) {}
+  rpc DeleteRoom (common.UUID) returns (common.Empty) {}
+
+  rpc GetDiscount (common.UUID) returns (proto.Loyalty) {}
+
+  rpc GetPayment (common.UUID) returns (proto.Payment) {}
+}

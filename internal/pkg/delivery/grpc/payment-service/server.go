@@ -75,5 +75,5 @@ func (s *PaymentServer) GetPayment(ctx context.Context, pu *commonProto.UUID) (*
 		return nil, err
 	}
 
-	return s.PaymentToProto(p), nil
+	return PaymentToProto(p), nil
 }

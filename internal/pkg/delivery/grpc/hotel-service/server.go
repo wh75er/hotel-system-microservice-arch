@@ -60,7 +60,7 @@ func (s *HotelServer) GetToken(ctx context.Context, pc *commonProto.Credentials)
 }
 
 func (s *HotelServer) AddHotel(ctx context.Context, ph *proto.Hotel) (*commonProto.Empty, error) {
-	h, err := s.ProtoToHotel(ph)
+	h, err := ProtoToHotel(ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -85,7 +85,7 @@ func (s *HotelServer) GetHotel(ctx context.Context, u *commonProto.UUID) (*proto
 		return nil, err
 	}
 
-	ph := s.HotelToProto(&h)
+	ph := HotelToProto(&h)
 
 	return ph, nil
 }
@@ -98,12 +98,12 @@ func (s *HotelServer) GetHotels(ctx context.Context, e *commonProto.Empty) (*pro
 		return nil, err
 	}
 
-	ph := s.HotelsToProto(hotels)
+	ph := HotelsToProto(hotels)
 	return ph, nil
 }
 
 func (s *HotelServer) PatchHotel(ctx context.Context, ph *proto.Hotel) (*commonProto.Empty, error) {
-	h, err := s.ProtoToHotel(ph)
+	h, err := ProtoToHotel(ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -132,7 +132,7 @@ func (s *HotelServer) DeleteHotel(ctx context.Context, u *commonProto.UUID) (*co
 }
 
 func (s *HotelServer) AddRoom(ctx context.Context, pr *proto.Room) (*commonProto.Empty, error) {
-	r, err := s.ProtoToRoom(pr)
+	r, err := ProtoToRoom(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -157,7 +157,7 @@ func (s *HotelServer) GetRooms(ctx context.Context, u *commonProto.UUID) (*proto
 		return nil, err
 	}
 
-	pr := s.RoomsToProto(r)
+	pr := RoomsToProto(r)
 
 	return pr, nil
 }
@@ -185,7 +185,7 @@ func (s *HotelServer) DismissRoom(ctx context.Context, roomUuid *commonProto.UUI
 }
 
 func (s *HotelServer) PatchRoom(ctx context.Context, pr *proto.Room) (*commonProto.Empty, error) {
-	r, err := s.ProtoToRoom(pr)
+	r, err := ProtoToRoom(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())

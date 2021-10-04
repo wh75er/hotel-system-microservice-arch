@@ -64,7 +64,7 @@ func (s *LoyaltyServer) GetDiscount(ctx context.Context, pu *commonProto.UUID) (
 		return nil, err
 	}
 
-	return s.LoyaltyToProto(l), nil
+	return LoyaltyToProto(l), nil
 }
 
 func (s *LoyaltyServer) AddUser(ctx context.Context, pu *commonProto.UUID) (*commonProto.Empty, error) {

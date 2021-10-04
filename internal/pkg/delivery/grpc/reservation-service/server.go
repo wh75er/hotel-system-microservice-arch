@@ -57,7 +57,7 @@ func (s *ReservationServer) GetToken(ctx context.Context, pc *commonProto.Creden
 }
 
 func (s *ReservationServer) AddReservation(ctx context.Context, pr *proto.Reservation) (*commonProto.UUID, error) {
-	r, err := s.ProtoToReservation(pr)
+	r, err := ProtoToReservation(pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -95,7 +95,7 @@ func (s *ReservationServer) GetReservation(ctx context.Context, pu *commonProto.
 		return nil, err
 	}
 
-	return s.ReservationToProto(r), nil
+	return ReservationToProto(r), nil
 }
 
 func (s *ReservationServer) GetReservationsByUser(ctx context.Context, pu *commonProto.UUID) (*proto.Reservations, error) {
@@ -106,7 +106,7 @@ func (s *ReservationServer) GetReservationsByUser(ctx context.Context, pu *commo
 		return nil, err
 	}
 
-	return s.ReservationsToProto(r), nil
+	return ReservationsToProto(r), nil
 }
 
 func (s *ReservationServer) CreatePayment(ctx context.Context, pu *commonProto.UUID) (*commonProto.UUID, error) {

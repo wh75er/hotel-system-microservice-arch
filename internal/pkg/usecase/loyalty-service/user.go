@@ -54,12 +54,18 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 		return
 	}
 
-	_, err = u.loyaltyRepository.GetLoyalty(validUserUuid)
+	foundLoyalty, err := u.loyaltyRepository.GetLoyalty(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			err = nil
+		} else {
+			e = errors.E(opError, errors.RepositoryLoyaltyErr, err)
+			u.logger.Error("Usecase error: %v", e)
+			return
 		}
-		e = errors.E(opError, errors.RepositoryLoyaltyErr, err)
+	}
+	if foundLoyalty != nil {
+		e = errors.E(opError, errors.LoyaltyExistsErr, err)
 		u.logger.Error("Usecase error: %v", e)
 		return
 	}

@@ -93,11 +93,11 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 		if status.Code(err) < errors.MaxGrpcCodeValue {
 			e = errors.E(opError, errors.UserLoyaltyServiceUnavailable, err)
 			u.Logger.Error("Usecase error: ", e)
-			e = nil
+		} else {
+			serviceKind := errors.Kind(status.Code(err))
+			e = errors.E(opError, serviceKind)
+			u.Logger.Error("Usecase error: ", e)
 		}
-		serviceKind := errors.Kind(status.Code(err))
-		e = errors.E(opError, serviceKind)
-		u.Logger.Error("Usecase error: ", e)
 		e = nil
 	}
 
@@ -117,11 +117,11 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 			if status.Code(err) < errors.MaxGrpcCodeValue {
 				e = errors.E(opError, errors.PaymentServiceUnavailable, err)
 				u.Logger.Error("Usecase error: ", e)
-				e = nil
+			} else {
+				serviceKind := errors.Kind(status.Code(err))
+				e = errors.E(opError, serviceKind)
+				u.Logger.Error("Usecase error: ", e)
 			}
-			serviceKind := errors.Kind(status.Code(err))
-			e = errors.E(opError, serviceKind)
-			u.Logger.Error("Usecase error: ", e)
 			e = nil
 		}
 
@@ -335,10 +335,11 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 			e = errors.E(opError, errors.UserLoyaltyServiceUnavailable, err)
 			u.Logger.Error("Usecase error: ", e)
 			e = nil
+		} else {
+			serviceKind := errors.Kind(status.Code(err))
+			e = errors.E(opError, serviceKind)
+			return
 		}
-		serviceKind := errors.Kind(status.Code(err))
-		e = errors.E(opError, serviceKind)
-		return
 	}
 
 	// Create payment instance with considered discount price
@@ -356,11 +357,11 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 		if status.Code(err) < errors.MaxGrpcCodeValue {
 			e = errors.E(opError, errors.PaymentServiceUnavailable, err)
 			u.Logger.Error("Usecase error: ", e)
-			e = nil
+		} else {
+			serviceKind := errors.Kind(status.Code(err))
+			e = errors.E(opError, serviceKind)
+			u.Logger.Error("Usecase error: ", e)
 		}
-		serviceKind := errors.Kind(status.Code(err))
-		e = errors.E(opError, serviceKind)
-		u.Logger.Error("Usecase error: ", e)
 		e = nil
 	}
 

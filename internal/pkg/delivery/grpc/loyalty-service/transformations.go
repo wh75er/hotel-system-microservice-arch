@@ -6,7 +6,7 @@ import (
 	"hotel-booking-system/internal/pkg/models"
 )
 
-func (s *LoyaltyServer) LoyaltyToProto(l *models.Loyalty) *proto.Loyalty {
+func LoyaltyToProto(l *models.Loyalty) *proto.Loyalty {
 	return &proto.Loyalty{
 		UserUuid:           &commonProto.UUID{Value: l.UserUuid.String()},
 		Status:             string(l.Status),

@@ -8,13 +8,12 @@ import (
 	"hotel-booking-system/internal/pkg/models"
 )
 
-func (s *AuthServer) ProtoToUser(pu *proto.User) (*models.User, error) {
+func ProtoToUser(pu *proto.User) (*models.User, error) {
 	var opError errors.Op = "auth-service.ProtoToUser"
 
 	validUserUuid, err := uuid.Parse(pu.UserUuid.Value)
 	if err != nil {
 		e := errors.E(opError, errors.UserUuidValidationErr, err)
-		s.Logger.Error("Grpc error: ", e)
 		return nil, e
 	}
 
@@ -26,7 +25,7 @@ func (s *AuthServer) ProtoToUser(pu *proto.User) (*models.User, error) {
 	}, nil
 }
 
-func (s *AuthServer) UserToProto(user *models.User) *proto.User {
+func UserToProto(user *models.User) *proto.User {
 	return &proto.User{
 		UserUuid: &commonProto.UUID{Value: user.UserUuid.String()},
 		Login:    user.Login,
@@ -35,7 +34,7 @@ func (s *AuthServer) UserToProto(user *models.User) *proto.User {
 	}
 }
 
-func (s *AuthServer) RoleToProto(role *models.Role) *proto.Role {
+func RoleToProto(role *models.Role) *proto.Role {
 	return &proto.Role{
 		Value: string(*role),
 	}

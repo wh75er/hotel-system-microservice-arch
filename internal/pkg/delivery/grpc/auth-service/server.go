@@ -57,7 +57,7 @@ func (s *AuthServer) GetToken(ctx context.Context, pc *commonProto.Credentials) 
 }
 
 func (s *AuthServer) AddUser(ctx context.Context, pu *proto.User) (*commonProto.Empty, error) {
-	user, err := s.ProtoToUser(pu)
+	user, err := ProtoToUser(pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
@@ -82,11 +82,11 @@ func (s *AuthServer) GetUser(ctx context.Context, pUuid *commonProto.UUID) (*pro
 		return nil, err
 	}
 
-	return s.UserToProto(user), nil
+	return UserToProto(user), nil
 }
 
 func (s *AuthServer) Login(ctx context.Context, pu *proto.User) (*commonProto.Token, error) {
-	user, err := s.ProtoToUser(pu)
+	user, err := ProtoToUser(pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
@@ -115,5 +115,5 @@ func (s *AuthServer) CheckAuth(ctx context.Context, pt *commonProto.Token) (*pro
 		return nil, err
 	}
 
-	return s.RoleToProto(&role), nil
+	return RoleToProto(&role), nil
 }

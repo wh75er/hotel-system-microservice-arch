@@ -7,6 +7,8 @@ import (
 	"google.golang.org/grpc"
 	auth_service "hotel-booking-system/internal/pkg/delivery/grpc/auth-service"
 	users_proto "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
+	gateway_service "hotel-booking-system/internal/pkg/delivery/grpc/gateway-service"
+	"hotel-booking-system/internal/pkg/delivery/grpc/gateway-service/proto"
 	hotel_service "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
 	hotel_proto "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
@@ -15,13 +17,11 @@ import (
 	paymentService "hotel-booking-system/internal/pkg/delivery/grpc/payment-service"
 	payment_proto "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
 	reservationService "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service"
-	pb "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto"
+	reservation_proto "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/repository/postgres"
-	reservationRepositories "hotel-booking-system/internal/pkg/repository/postgres/reservation-service"
 	"hotel-booking-system/internal/pkg/usecase"
-	reservationUsecases "hotel-booking-system/internal/pkg/usecase/reservation-service"
 	"net"
 )
 
@@ -30,6 +30,7 @@ type App struct {
 	conf              *config
 	configName        string
 	server            *grpc.Server
+	ReservationClient reservation_proto.ReservationServiceClient
 	HotelClient       hotel_proto.HotelServiceClient
 	PaymentClient     payment_proto.PaymentServiceClient
 	UserLoyaltyClient loyalty_proto.LoyaltyServiceClient
@@ -47,6 +48,7 @@ func New() *App {
 		nil,
 		nil,
 		nil,
+		nil,
 		logs.NewLogrus(),
 	}
 }
@@ -60,38 +62,32 @@ func (a *App) Run(configFilename string) {
 		connectionsCloseFunction()
 	}()
 
-	jwtTokenManager := jwtManager.NewJWTManager(a.conf.Server.JWTSecret, a.conf.Server.TokenDuration.Duration)
+	jwtTokenManager := jwtManager.NewJWTManager("", 0)
 
 	a.server = grpc.NewServer(
 		grpc.UnaryInterceptor(
-			interceptors.NewServerAdminAuthInterceptor(
+			interceptors.NewAuthServiceInterceptor(
 				jwtTokenManager,
+				a.UsersClient,
 				reservationService.AccessibleReservationServicePaths(),
 				a.logger,
 			).Unary(),
 		),
 	)
 
-	reservationRepository := reservationRepositories.NewReservationRepository(a.db, a.logger)
-
-	reservationUsecase := reservationUsecases.NewReservationUsecase(
-		reservationRepository,
-		a.HotelClient,
-		a.PaymentClient,
-		a.UsersClient,
-		a.UserLoyaltyClient,
-		a.logger,
-	)
 	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
 
-	reservationS := reservationService.NewReservationServer(
-		reservationUsecase,
+	gatewayS := gateway_service.NewGatewayServer(
 		adminCredsUsecase,
-		jwtTokenManager,
+		a.UsersClient,
+		a.HotelClient,
+		a.UserLoyaltyClient,
+		a.PaymentClient,
+		a.ReservationClient,
 		a.logger,
 	)
 
-	pb.RegisterReservationServiceServer(a.server, reservationS)
+	proto.RegisterGatewayServiceServer(a.server, gatewayS)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)
@@ -147,6 +143,9 @@ func (a *App) setupApp() {
 	if err := a.conf.setPaymentServiceFromEnv(); err != nil {
 		a.logger.Fatal(err)
 	}
+	if err := a.conf.setReservationServiceFromEnv(); err != nil {
+		a.logger.Fatal(err)
+	}
 
 	a.logger.Infof("Loaded JWT Key: %v***", a.conf.Server.JWTSecret[:2])
 	a.logger.Infof("Loaded Admin Id: %v", a.conf.AdminCredentials.Id)
@@ -160,12 +159,14 @@ func (a *App) establishClientConnectWithAllDependentServices() func() {
 	usersServiceConnCloseFunction := a.setupUserServiceConnection(jwtTokenManager)
 	hotelServiceConnCloseFunction := a.setupHotelServiceConnection(jwtTokenManager)
 	paymentServiceConnCloseFunction := a.setupPaymentServiceConnection(jwtTokenManager)
+	reservationServiceConnCloseFunction := a.setupReservationServiceConnection(jwtTokenManager)
 
 	return func() {
 		userLoyaltyServiceConnCloseFunction()
 		usersServiceConnCloseFunction()
 		hotelServiceConnCloseFunction()
 		paymentServiceConnCloseFunction()
+		reservationServiceConnCloseFunction()
 	}
 }
 
@@ -277,6 +278,34 @@ func (a *App) setupUserServiceConnection(jwtTokenManager *jwtManager.JWTManager)
 	authInterceptor.GrpcServiceClient = client
 
 	a.UsersClient = client
+
+	return func() { conn.Close() }
+}
+
+func (a *App) setupReservationServiceConnection(jwtTokenManager *jwtManager.JWTManager) func() {
+	authInterceptor := interceptors.NewClientAuthInterceptor(
+		a.conf.ReservationService.Credentials,
+		jwtTokenManager,
+		interceptors.MethodsRoleMapToSet(reservationService.AccessibleReservationServicePaths()),
+		logrus.New(),
+	)
+
+	conn, err := grpc.Dial(
+		fmt.Sprintf(a.conf.ReservationService.Url),
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(authInterceptor.Unary()),
+	)
+	if err != nil {
+		a.logger.Fatalf("Failed to make User Service grpc client: %v", err)
+	}
+
+	// Create specific client out of connection
+	client := reservation_proto.NewReservationServiceClient(conn)
+
+	// Add client GetToken API to auth interceptor
+	authInterceptor.GrpcServiceClient = client
+
+	a.ReservationClient = client
 
 	return func() { conn.Close() }
 }

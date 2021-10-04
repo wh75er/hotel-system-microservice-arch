@@ -6,7 +6,7 @@ import (
 	"hotel-booking-system/internal/pkg/models"
 )
 
-func (s *PaymentServer) PaymentToProto(p *models.Payment) *proto.Payment {
+func PaymentToProto(p *models.Payment) *proto.Payment {
 	return &proto.Payment{
 		PaymentUuid: &commonProto.UUID{Value: p.PaymentUuid.String()},
 		UserUuid:    &commonProto.UUID{Value: p.UserUuid.String()},

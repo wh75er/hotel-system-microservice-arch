@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (s *ReservationServer) ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
+func ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
 	var opError errors.Op = "reservation-service.ProtoToReservation"
 
 	var validReservationUuid uuid.UUID
@@ -18,7 +18,6 @@ func (s *ReservationServer) ProtoToReservation(pr *proto.Reservation) (*models.R
 		validReservationUuid, err = uuid.Parse(pr.ReservationUuid.Value)
 		if err != nil {
 			e := errors.E(opError, errors.ReservationUuidValidationErr, err)
-			s.Logger.Error("Grpc error: ", e)
 			return nil, e
 		}
 	}
@@ -29,7 +28,6 @@ func (s *ReservationServer) ProtoToReservation(pr *proto.Reservation) (*models.R
 		validUserUuid, err = uuid.Parse(pr.UserUuid.Value)
 		if err != nil {
 			e := errors.E(opError, errors.UserUuidValidationErr, err)
-			s.Logger.Error("Grpc error: ", e)
 			return nil, e
 		}
 	}
@@ -40,7 +38,6 @@ func (s *ReservationServer) ProtoToReservation(pr *proto.Reservation) (*models.R
 		validRoomUuid, err = uuid.Parse(pr.RoomUuid.Value)
 		if err != nil {
 			e := errors.E(opError, errors.RoomUuidValidationErr, err)
-			s.Logger.Error("Grpc error: ", e)
 			return nil, e
 		}
 	}
@@ -51,7 +48,6 @@ func (s *ReservationServer) ProtoToReservation(pr *proto.Reservation) (*models.R
 		validPaymentUuid, err = uuid.Parse(pr.PaymentUuid.Value)
 		if err != nil {
 			e := errors.E(opError, errors.PaymentUuidValidationErr, err)
-			s.Logger.Error("Grpc error: ", e)
 			return nil, e
 		}
 
@@ -67,7 +63,7 @@ func (s *ReservationServer) ProtoToReservation(pr *proto.Reservation) (*models.R
 	}, nil
 }
 
-func (s *ReservationServer) ReservationToProto(r *models.Reservation) *proto.Reservation {
+func ReservationToProto(r *models.Reservation) *proto.Reservation {
 	return &proto.Reservation{
 		ReservationUuid: &commonProto.UUID{Value: r.ReservationUuid.String()},
 		RoomUuid:        &commonProto.UUID{Value: r.RoomUuid.String()},
@@ -78,11 +74,11 @@ func (s *ReservationServer) ReservationToProto(r *models.Reservation) *proto.Res
 	}
 }
 
-func (s *ReservationServer) ReservationsToProto(r []models.Reservation) *proto.Reservations {
+func ReservationsToProto(r []models.Reservation) *proto.Reservations {
 	var refReservations []*proto.Reservation
 
 	for _, v := range r {
-		t := s.ReservationToProto(&v)
+		t := ReservationToProto(&v)
 		refReservations = append(refReservations, t)
 	}
 

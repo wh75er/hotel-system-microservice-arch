@@ -1,6 +1,6 @@
 /*
-		This interceptor provides cross service authentication.
-	it uses jwt manager with specified secret to validate tokens.
+		This interceptor provides application layer authentication.
+	It uses auth service to validate token and check token's role.
 */
 package interceptors
 
@@ -10,6 +10,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	proto1 "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
+	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	"hotel-booking-system/internal/pkg/errors"
 	jwt_manager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
@@ -17,25 +19,28 @@ import (
 	"log"
 )
 
-type ServerAdminAuthInterceptor struct {
-	JwtManager   *jwt_manager.JWTManager
-	ApplyMethods map[string][]models.Role
-	logger       logs.LoggerInterface
+type AuthServiceInterceptor struct {
+	JwtManager        *jwt_manager.JWTManager
+	UserServiceClient proto1.AuthServiceClient
+	ApplyMethods      map[string][]models.Role
+	logger            logs.LoggerInterface
 }
 
-func NewServerAdminAuthInterceptor(
+func NewAuthServiceInterceptor(
 	jwtManager *jwt_manager.JWTManager,
+	userClient proto1.AuthServiceClient,
 	applyMethods map[string][]models.Role,
 	logger logs.LoggerInterface,
-) *ServerAdminAuthInterceptor {
-	return &ServerAdminAuthInterceptor{
+) *AuthServiceInterceptor {
+	return &AuthServiceInterceptor{
 		jwtManager,
+		userClient,
 		applyMethods,
 		logger,
 	}
 }
 
-func (i *ServerAdminAuthInterceptor) Unary() grpc.UnaryServerInterceptor {
+func (i *AuthServiceInterceptor) Unary() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
@@ -53,7 +58,7 @@ func (i *ServerAdminAuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 	}
 }
 
-func (i *ServerAdminAuthInterceptor) authorize(ctx context.Context, method string) error {
+func (i *AuthServiceInterceptor) authorize(ctx context.Context, method string) error {
 	var opError errors.Op = "jwt-manager.authorize"
 
 	accessiblePaths, ok := i.ApplyMethods[method]
@@ -77,20 +82,23 @@ func (i *ServerAdminAuthInterceptor) authorize(ctx context.Context, method strin
 	}
 
 	accessToken := values[0]
-	claims, err := i.JwtManager.Verify(accessToken)
+	userRole, err := i.UserServiceClient.CheckAuth(context.Background(), &commonProto.Token{Value: accessToken})
 	if err != nil {
-		i.logger.Error("Failed to verify token")
-		return errors.E(opError, errors.InvalidCredentials, err)
+		i.logger.Errorf("Authorization error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
+		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		return err
 	}
 
+	parsedRole := models.Role(userRole.Value)
+
 	for _, role := range accessiblePaths {
-		if role == claims.Role {
+		if role == parsedRole {
 			i.logger.Info("Successfully authorized")
 			return nil
 		}
 	}
 
-	i.logger.Errorf("Permission denied - invalid request role: %v", claims.Role)
+	i.logger.Errorf("Permission denied - invalid request role: %v", parsedRole)
 
 	return errors.E(opError, errors.PermissionDenied)
 }
