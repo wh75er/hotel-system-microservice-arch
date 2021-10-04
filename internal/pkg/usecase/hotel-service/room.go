@@ -211,7 +211,6 @@ func (u *RoomUsecase) changeRoomAmount(roomUuid string, lambda int) (e error) {
 	return
 }
 
-
 func (u *RoomUsecase) DeleteRoom(roomUuid string) (e error) {
 	var opError errors.Op = "usecase.DeleteRoom"
 

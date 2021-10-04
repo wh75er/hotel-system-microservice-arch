@@ -9,22 +9,22 @@ import (
 type ReservationStatus string
 
 const (
-	ActiveReservationStatus = ReservationStatus("active")
+	ActiveReservationStatus   = ReservationStatus("active")
 	CanceledReservationStatus = ReservationStatus("canceled")
 )
 
 type Reservation struct {
 	ReservationUuid uuid.UUID
-	RoomUuid uuid.UUID
-	UserUuid uuid.UUID
-	PaymentUuid uuid.UUID
-	Date time.Time
-	Status ReservationStatus
+	RoomUuid        uuid.UUID
+	UserUuid        uuid.UUID
+	PaymentUuid     uuid.UUID
+	Date            time.Time
+	Status          ReservationStatus
 }
 
 type ReservationRepositoryI interface {
 	CreateReservation(v *Reservation) (tx *sqlx.Tx, e error)
-	PatchReservation(v *Reservation) (tx *sqlx.Tx,e error)
+	PatchReservation(v *Reservation) (tx *sqlx.Tx, e error)
 	GetReservation(reservationUuid uuid.UUID) (v *Reservation, e error)
 	GetReservationsByUser(userUuid uuid.UUID) (v []Reservation, e error)
 }

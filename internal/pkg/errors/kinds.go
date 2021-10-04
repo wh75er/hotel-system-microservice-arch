@@ -66,6 +66,7 @@ const (
 	ReservationUuidValidationErr
 	ReservationNotFound
 	ReservationPaymentExists
+	ReservationCreateInvalidRequestErr
 )
 
 func (k Kind) String() string {
@@ -188,6 +189,8 @@ func (k Kind) String() string {
 		return "Reservation not found"
 	case ReservationPaymentExists:
 		return "Payment for requested reservation already exists"
+	case ReservationCreateInvalidRequestErr:
+		return "User uuid or room uuid cannot be empty values"
 	}
 
 	return "Unimplemented error"
@@ -226,6 +229,7 @@ func GetHttpError(err error) int {
 		UserPasswordCharsValidationError,
 		ReservationUuidValidationErr,
 		ReservationPaymentExists,
+		ReservationCreateInvalidRequestErr,
 	}
 
 	UnauthorizedErrors := []Kind{

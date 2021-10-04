@@ -26,8 +26,8 @@ type ReservationUsecase struct {
 
 func NewReservationUsecase(
 	reservationR models.ReservationRepositoryI,
-	hotelClient       hotel_proto.HotelServiceClient,
-	paymentClient     payment_proto.PaymentServiceClient,
+	hotelClient hotel_proto.HotelServiceClient,
+	paymentClient payment_proto.PaymentServiceClient,
 	userClient users_proto.AuthServiceClient,
 	userLoyaltyClient loyalty_proto.LoyaltyServiceClient,
 	logger logs.LoggerInterface,
@@ -42,14 +42,19 @@ func NewReservationUsecase(
 	}
 }
 
-
 func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationUuid uuid.UUID, e error) {
 	var opError errors.Op = "usecase.AddReservation"
+
+	if r.UserUuid == uuid.Nil || r.RoomUuid == uuid.Nil {
+		e = errors.E(opError, errors.ReservationCreateInvalidRequestErr)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
 
 	reservationUuid = uuid.New()
 
 	// Check user uuid
-	_, err := u.UserServiceClient.GetUser(context.Background(), &commonProto.UUID{ Value: r.UserUuid.String() })
+	_, err := u.UserServiceClient.GetUser(context.Background(), &commonProto.UUID{Value: r.UserUuid.String()})
 	if err != nil {
 		if status.Code(err) < errors.MaxGrpcCodeValue {
 			e = errors.E(opError, errors.AuthServiceUnavailable, err)
@@ -61,7 +66,7 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 		return
 	}
 	// Check room uuid and that's it available
-	room, err := u.HotelServiceClient.GetRoom(context.Background(), &commonProto.UUID{ Value: r.RoomUuid.String() })
+	room, err := u.HotelServiceClient.GetRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
 	if err != nil {
 		if status.Code(err) < errors.MaxGrpcCodeValue {
 			e = errors.E(opError, errors.HotelServiceUnavailable, err)
@@ -82,7 +87,7 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 	//		If not available drop everything and create reservation with empty paymentUuid
 	//		(there is no point to set price without discount)
 	var loyaltyServiceFailed bool
-	loyalty, err := u.UserLoyaltyServiceClient.GetDiscount(context.Background(), &commonProto.UUID{ Value: r.UserUuid.String() })
+	loyalty, err := u.UserLoyaltyServiceClient.GetDiscount(context.Background(), &commonProto.UUID{Value: r.UserUuid.String()})
 	if err != nil {
 		loyaltyServiceFailed = true
 		if status.Code(err) < errors.MaxGrpcCodeValue {
@@ -104,8 +109,8 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 		paymentUuid, err := u.PaymentServiceClient.CreatePayment(
 			context.Background(),
 			&payment_proto.CreatePaymentRequest{
-				UserUuid: &commonProto.UUID{ Value: r.UserUuid.String() },
-				Value: priceWithDiscount ,
+				UserUuid: &commonProto.UUID{Value: r.UserUuid.String()},
+				Value:    priceWithDiscount,
 			},
 		)
 		if err != nil {
@@ -143,7 +148,7 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 	}
 
 	// Take one available room
-	_, err = u.HotelServiceClient.TakeRoom(context.Background(), &commonProto.UUID{ Value: r.RoomUuid.String() })
+	_, err = u.HotelServiceClient.TakeRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
 	if err != nil {
 		_ = tx.Rollback()
 		if status.Code(err) < errors.MaxGrpcCodeValue {
@@ -167,7 +172,7 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 	// If commit failed try to store room back to stock
 	//   If dismiss failed need to store request to queue and try it later
 	if commitFailed {
-		_, _ = u.HotelServiceClient.DismissRoom(context.Background(), &commonProto.UUID{ Value: r.RoomUuid.String() })
+		_, _ = u.HotelServiceClient.DismissRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
 	}
 
 	return
@@ -203,7 +208,7 @@ func (u *ReservationUsecase) CancelReservation(reservationUuid string) (e error)
 		return
 	}
 
-	_, err = u.HotelServiceClient.DismissRoom(context.Background(), &commonProto.UUID{ Value: r.RoomUuid.String() })
+	_, err = u.HotelServiceClient.DismissRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
 	if err != nil {
 		_ = tx.Rollback()
 		if status.Code(err) < errors.MaxGrpcCodeValue {
@@ -309,7 +314,7 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 	}
 
 	// Get reservation room
-	room, err := u.HotelServiceClient.GetRoom(context.Background(), &commonProto.UUID{ Value: r.RoomUuid.String() })
+	room, err := u.HotelServiceClient.GetRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
 	if err != nil {
 		if status.Code(err) < errors.MaxGrpcCodeValue {
 			e = errors.E(opError, errors.HotelServiceUnavailable, err)
@@ -324,7 +329,7 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 	// Try to access discount service and take user's current discount in percentage
 	//		If not available return, we're not able to calculate proper price
 	//		(there is no point to set price without discount)
-	loyalty, err := u.UserLoyaltyServiceClient.GetDiscount(context.Background(), &commonProto.UUID{ Value: r.UserUuid.String() })
+	loyalty, err := u.UserLoyaltyServiceClient.GetDiscount(context.Background(), &commonProto.UUID{Value: r.UserUuid.String()})
 	if err != nil {
 		if status.Code(err) < errors.MaxGrpcCodeValue {
 			e = errors.E(opError, errors.UserLoyaltyServiceUnavailable, err)
@@ -343,8 +348,8 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 	protoPaymentUuid, err := u.PaymentServiceClient.CreatePayment(
 		context.Background(),
 		&payment_proto.CreatePaymentRequest{
-			UserUuid: &commonProto.UUID{ Value: r.UserUuid.String() },
-			Value: priceWithDiscount ,
+			UserUuid: &commonProto.UUID{Value: r.UserUuid.String()},
+			Value:    priceWithDiscount,
 		},
 	)
 	if err != nil {
@@ -390,5 +395,5 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 }
 
 func (u *ReservationUsecase) calculatePriceWithDiscount(price int64, discount int64) int64 {
-	return price - (price * discount/100)
+	return price - (price * discount / 100)
 }

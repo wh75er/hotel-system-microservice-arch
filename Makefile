@@ -38,6 +38,11 @@ gen-proto-payment:
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     internal/pkg/delivery/grpc/payment-service/proto/scheme.proto
 
+gen-proto-reservation:
+	protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    internal/pkg/delivery/grpc/reservation-service/proto/scheme.proto
+
 fmt:
 	go fmt ./internal/... && go fmt ./cmd/...
 
