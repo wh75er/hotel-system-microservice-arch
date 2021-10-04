@@ -18,10 +18,17 @@ func NewReservationRepository(db *sqlx.DB, logger logs.LoggerInterface) models.R
 	return &ReservationRepository{db, logger}
 }
 
-func (r *ReservationRepository) CreateReservation(v *models.Reservation) (e error) {
+func (r *ReservationRepository) CreateReservation(v *models.Reservation) (tx *sqlx.Tx, e error) {
 	var opError errors.Op = "postgres.AddPayment"
 
-	_, err := r.Db.Exec("INSERT INTO "+
+	tx, err := r.Db.Beginx()
+	if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+		return
+	}
+
+	_, err = tx.Exec("INSERT INTO "+
 		"reservations(ReservationUuid, RoomUuid, UserUuid, PaymentUuid, Date, Status) VALUES ($1, $2, $3, $4, $5, $6)",
 		v.ReservationUuid, v.RoomUuid, v.UserUuid, v.PaymentUuid, v.Date, v.Status,
 	)
@@ -42,24 +49,35 @@ func (r *ReservationRepository) CreateReservation(v *models.Reservation) (e erro
 	return
 }
 
-func (r *ReservationRepository) PatchReservation(v *models.Reservation) (e error) {
+func (r *ReservationRepository) PatchReservation(v *models.Reservation) (tx *sqlx.Tx, e error) {
+	var opError errors.Op = "postgres.PatchReservation"
 
+	tx, err := r.Db.Beginx()
+	if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+		return
+	}
+
+	_, err = tx.Exec(
+		"UPDATE reservations SET status = $1, paymentUuid = $2 WHERE ReservationUuid = $3",
+		v.Status, v.PaymentUuid, v.ReservationUuid,
+	)
+	if err == sql.ErrConnDone {
+		e = errors.E(opError, errors.RepositoryDownErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	} else if err != nil {
+		e = errors.E(opError, errors.RepositoryQueryErr, err)
+		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
+	}
+
+	return
 }
 
 func (r *ReservationRepository) GetReservation(reservationUuid uuid.UUID) (v *models.Reservation, e error) {
+	var opError errors.Op = "postgres.GetReservation"
 
-}
-
-func (r *ReservationRepository) GetReservationsByUser(userUuid uuid.UUID) (v []models.Reservation, e error) {
-
-}
-
-func (r *PaymentRepository) AddPayment(p *models.Payment) (e error) {
-	var opError errors.Op = "postgres.AddPayment"
-
-	_, err := r.Db.Exec("INSERT INTO "+
-		"payments(userUuid, paymentUuid, status, price, timeUpdated) VALUES ($1, $2, $3, $4)",
-		p.UserUuid, p.PaymentUuid, p.Status, p.Price, p.TimeUpdated)
+	err := r.Db.Get(v, "SELECT ReservationUuid, RoomUuid, PaymentUuid, Status, Date FROM reservations WHERE reservationUuid = $1", reservationUuid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
@@ -77,28 +95,10 @@ func (r *PaymentRepository) AddPayment(p *models.Payment) (e error) {
 	return
 }
 
-func (r *PaymentRepository) ChangePaymentStatus(p *models.Payment) (e error) {
-	var opError errors.Op = "postgres.ChangePaymentStatus"
+func (r *ReservationRepository) GetReservationsByUser(userUuid uuid.UUID) (v []models.Reservation, e error) {
+	var opError errors.Op = "postgres.GetReservationsByUser"
 
-	_, err := r.Db.Exec(
-		"UPDATE payments SET status = $1, timeUpdated = $2 WHERE paymentUuid = $3",
-		p.Status, p.TimeUpdated, p.PaymentUuid,
-	)
-	if err == sql.ErrConnDone {
-		e = errors.E(opError, errors.RepositoryDownErr, err)
-		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
-	} else if err != nil {
-		e = errors.E(opError, errors.RepositoryQueryErr, err)
-		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
-	}
-
-	return
-}
-
-func (r *PaymentRepository) GetPayment(paymentUuid uuid.UUID) (p *models.Payment, e error) {
-	var opError errors.Op = "postgres.GetPayment"
-
-	err := r.Db.Get(p, "SELECT userUuid, paymentUuid, status, price, dateUpdated FROM payments WHERE paymentUuid = $1", paymentUuid)
+	err := r.Db.Select(v, "SELECT ReservationUuid, RoomUuid, PaymentUuid, Status, Date FROM reservations WHERE userUuid = $1", userUuid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))

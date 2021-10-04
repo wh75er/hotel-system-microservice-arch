@@ -17,6 +17,7 @@ service HotelService {
 
   rpc AddRoom (Room) returns (common.Empty) {}
   rpc GetRooms (common.UUID) returns (RoomsResponse) {}
+  rpc GetRoom (common.UUID) returns (Room) {}
   rpc TakeRoom (common.UUID) returns (common.Empty) {}
   rpc DismissRoom (common.UUID) returns (common.Empty) {}
   rpc PatchRoom (Room) returns (common.Empty) {}

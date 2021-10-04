@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS reservations(
     ReservationUUID UNIQUE NOT NULL,
     RoomUuid UUID NOT NULL,
     UserUuid UUID NOT NULL,
-    PaymentUuid UUID,
+    PaymentUuid UUID UNIQUE,
     Date DATE NOT NULL
     Status VARCHAR(64) NOT NULL,
 );

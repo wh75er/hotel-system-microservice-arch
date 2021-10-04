@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -18,12 +19,12 @@ type Reservation struct {
 	UserUuid uuid.UUID
 	PaymentUuid uuid.UUID
 	Date time.Time
-	Status string
+	Status ReservationStatus
 }
 
 type ReservationRepositoryI interface {
-	CreateReservation(v *Reservation) (e error)
-	PatchReservation(v *Reservation) (e error)
+	CreateReservation(v *Reservation) (tx *sqlx.Tx, e error)
+	PatchReservation(v *Reservation) (tx *sqlx.Tx,e error)
 	GetReservation(reservationUuid uuid.UUID) (v *Reservation, e error)
 	GetReservationsByUser(userUuid uuid.UUID) (v []Reservation, e error)
 }
@@ -33,4 +34,5 @@ type ReservationUsecaseI interface {
 	CancelReservation(reservationUuid string) (e error)
 	GetReservation(reservationUuid string) (r *Reservation, e error)
 	GetReservationsByUser(userUuid string) (r []Reservation, e error)
+	CreatePayment(reservationUuid string) (paymentUuid uuid.UUID, e error)
 }

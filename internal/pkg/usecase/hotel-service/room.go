@@ -55,6 +55,26 @@ func (u *RoomUsecase) GetRooms(hotelUuid string) (r []models.Room, e error) {
 	return
 }
 
+func (u *RoomUsecase) GetRoom(roomUuid string) (r *models.Room, e error) {
+	var opError errors.Op = "usecase.GetRoom"
+
+	validRoomUuid, err := uuid.Parse(roomUuid)
+	if e != nil {
+		e = errors.E(opError, errors.RoomUuidValidationErr, err)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	*r, err = u.RoomRepository.GetRoom(validRoomUuid)
+	if e != nil {
+		e = errors.E(opError, errors.RoomNotFoundErr, err)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	return
+}
+
 func (u *RoomUsecase) AddRoom(r *models.Room) (e error) {
 	var opError errors.Op = "usecase.AddRoom"
 

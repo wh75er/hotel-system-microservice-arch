@@ -62,6 +62,10 @@ const (
 	RepositoryUserErr
 	FailedToHashPassword
 	RoomUnavailableErr
+	RepositoryReservationErr
+	ReservationUuidValidationErr
+	ReservationNotFound
+	ReservationPaymentExists
 )
 
 func (k Kind) String() string {
@@ -176,6 +180,14 @@ func (k Kind) String() string {
 		return "Failed to hash password error"
 	case RoomUnavailableErr:
 		return "Room is unavailable"
+	case RepositoryReservationErr:
+		return "Something wrong with reservation repository"
+	case ReservationUuidValidationErr:
+		return "Reservation uuid is not valid"
+	case ReservationNotFound:
+		return "Reservation not found"
+	case ReservationPaymentExists:
+		return "Payment for requested reservation already exists"
 	}
 
 	return "Unimplemented error"
@@ -212,6 +224,8 @@ func GetHttpError(err error) int {
 		UserLoginCharsValidationError,
 		UserLoginUniqueValidationError,
 		UserPasswordCharsValidationError,
+		ReservationUuidValidationErr,
+		ReservationPaymentExists,
 	}
 
 	UnauthorizedErrors := []Kind{
@@ -232,6 +246,7 @@ func GetHttpError(err error) int {
 		RoomNotFoundErr,
 		HotelNotFoundErr,
 		UserNotFoundErr,
+		ReservationNotFound,
 	}
 
 	unprocessibleEntity := []Kind{
@@ -254,6 +269,7 @@ func GetHttpError(err error) int {
 		RepositoryHotelErr,
 		RepositoryRoomErr,
 		RepositoryUserErr,
+		RepositoryReservationErr,
 		FailedToHashPassword,
 	}
 
