@@ -114,6 +114,8 @@ func (a *App) Run(configFilename string) {
 	go a.serveHTTP(httpl)
 	go a.serveHTTP(httpV2)
 
+	a.logger.Infof("Starting server on port: %v", a.conf.Server.Port)
+
 	err = m.Serve()
 	if err != nil {
 		a.logger.Fatalf("Failed to serve cmux listener: %v", err)

@@ -4,12 +4,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/status"
-	"hotel-booking-system/internal/pkg/delivery/grpc/commonProto"
 	hotel_service "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
 	pb "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
@@ -61,12 +58,12 @@ func main() {
 	//}
 
 	/* Get all hotels case */
-	hotels, err := client.GetHotels(context.Background(), &commonProto.Empty{})
-	if err != nil {
-		fmt.Printf("Failed to get hotels: %v, code: %v\n", err, status.Code(err))
-	}
-
-	fmt.Println("Hotels: ", hotels)
+	//hotels, err := client.GetHotels(context.Background(), &commonProto.Empty{})
+	//if err != nil {
+	//	fmt.Printf("Failed to get hotels: %v, code: %v\n", err, status.Code(err))
+	//}
+	//
+	//fmt.Println("Hotels: ", hotels)
 
 	/* Get hotel by uuid */
 	//hotel, err := client.GetHotel(context.Background(), &pb.UUID{Value: "85bf1386-e41b-4cfd-9cff-f4448c057ce2"})

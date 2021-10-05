@@ -6,5 +6,5 @@ import (
 
 func main() {
 	a := reservationService.New()
-	a.Run("release.toml")
+	a.Run("develop.toml")
 }

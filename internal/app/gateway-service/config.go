@@ -41,7 +41,6 @@ type duration struct {
 
 type config struct {
 	Server             Server
-	Storage            Storage
 	AdminCredentials   models.Credentials
 	UserLoyaltyService DependencyService
 	HotelService       DependencyService
@@ -56,19 +55,10 @@ type Server struct {
 	TokenDuration duration
 }
 
-type Storage struct {
-	Url         string
-	MaxPoolConn int
-}
-
 func newConfig() *config {
 	return &config{
 		Server: Server{
 			Port: 3000,
-		},
-		Storage: Storage{
-			"postgresql://postgres:postgres@localhost:5432/postgres",
-			30,
 		},
 		AdminCredentials: models.Credentials{},
 	}
@@ -223,21 +213,21 @@ func (c *config) setReservationServiceFromEnv() error {
 		return err
 	}
 
-	c.UserService.Url = url
+	c.ReservationService.Url = url
 
 	id, err := getEnvVariable(reservationServiceAdminIdEnv)
 	if err != nil {
 		return err
 	}
 
-	c.UserService.Credentials.Id = id
+	c.ReservationService.Credentials.Id = id
 
 	secret, err := getEnvVariable(reservationServiceAdminSecretEnv)
 	if err != nil {
 		return err
 	}
 
-	c.UserService.Credentials.Secret = secret
+	c.ReservationService.Credentials.Secret = secret
 
 	return nil
 }

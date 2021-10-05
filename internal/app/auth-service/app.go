@@ -74,6 +74,9 @@ func (a *App) Run(configFilename string) {
 	)
 
 	pb.RegisterAuthServiceServer(a.server, authS)
+
+	a.logger.Infof("Starting server on port: %v", a.conf.Server.Port)
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)

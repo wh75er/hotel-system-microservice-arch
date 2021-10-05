@@ -92,6 +92,9 @@ func (a *App) Run(configFilename string) {
 	)
 
 	pb.RegisterReservationServiceServer(a.server, reservationS)
+
+	a.logger.Infof("Starting server on port: %v", a.conf.Server.Port)
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)
@@ -151,6 +154,10 @@ func (a *App) setupApp() {
 	a.logger.Infof("Loaded JWT Key: %v***", a.conf.Server.JWTSecret[:2])
 	a.logger.Infof("Loaded Admin Id: %v", a.conf.AdminCredentials.Id)
 	a.logger.Infof("Loaded Admin Secret: %v***", a.conf.AdminCredentials.Secret[:2])
+	a.logger.Infof("Loaded Loyalty service data: %v", a.conf.UserLoyaltyService)
+	a.logger.Infof("Loaded Payment service data: %v", a.conf.PaymentService)
+	a.logger.Infof("Loaded User service data: %v", a.conf.UserService)
+	a.logger.Infof("Loaded Hotel service data: %v", a.conf.HotelService)
 }
 
 func (a *App) establishClientConnectWithAllDependentServices() func() {

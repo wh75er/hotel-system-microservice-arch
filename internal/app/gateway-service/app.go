@@ -20,7 +20,6 @@ import (
 	reservation_proto "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
-	"hotel-booking-system/internal/pkg/repository/postgres"
 	"hotel-booking-system/internal/pkg/usecase"
 	"net"
 )
@@ -56,7 +55,6 @@ func New() *App {
 func (a *App) Run(configFilename string) {
 	a.configName = configFilename
 	a.setupApp()
-	a.setupStorage()
 	connectionsCloseFunction := a.establishClientConnectWithAllDependentServices()
 	defer func() {
 		connectionsCloseFunction()
@@ -69,7 +67,7 @@ func (a *App) Run(configFilename string) {
 			interceptors.NewAuthServiceInterceptor(
 				jwtTokenManager,
 				a.UsersClient,
-				reservationService.AccessibleReservationServicePaths(),
+				gateway_service.AccessibleGatewayServicePaths(),
 				a.logger,
 			).Unary(),
 		),
@@ -88,6 +86,9 @@ func (a *App) Run(configFilename string) {
 	)
 
 	proto.RegisterGatewayServiceServer(a.server, gatewayS)
+
+	a.logger.Infof("Starting server on port: %v", a.conf.Server.Port)
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.conf.Server.Port))
 	if err != nil {
 		a.logger.Fatalf("Failed to listen: %v", err)
@@ -97,16 +98,6 @@ func (a *App) Run(configFilename string) {
 	if err != nil {
 		a.logger.Fatalf("Failed to serve GRPC listener: %v", err)
 	}
-}
-
-func (a *App) setupStorage() {
-	a.db = postgres.EstablishDbConnection(a.logger, a.conf.Storage.Url, a.conf.Storage.MaxPoolConn)
-
-	a.logger.Info("Successfully established connection with database")
-
-	postgres.RunMigrations(a.logger, "file://init/migrations/payment-service", a.conf.Storage.Url)
-
-	a.logger.Info("Successfully ran migrations")
 }
 
 func (a *App) setupApp() {
@@ -150,6 +141,11 @@ func (a *App) setupApp() {
 	a.logger.Infof("Loaded JWT Key: %v***", a.conf.Server.JWTSecret[:2])
 	a.logger.Infof("Loaded Admin Id: %v", a.conf.AdminCredentials.Id)
 	a.logger.Infof("Loaded Admin Secret: %v***", a.conf.AdminCredentials.Secret[:2])
+	a.logger.Infof("Loaded Loyalty service data: %v", a.conf.UserLoyaltyService)
+	a.logger.Infof("Loaded Payment service data: %v", a.conf.PaymentService)
+	a.logger.Infof("Loaded User service data: %v", a.conf.UserService)
+	a.logger.Infof("Loaded Hotel service data: %v", a.conf.HotelService)
+	a.logger.Infof("Loaded Reservation service data: %v", a.conf.ReservationService)
 }
 
 func (a *App) establishClientConnectWithAllDependentServices() func() {

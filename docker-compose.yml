@@ -1,15 +1,85 @@
 version: "3.9"
 services:
+  gateway-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./build/gateway.Dockerfile
+    ports:
+      - "${GATEWAY_SERVICE_PORT-3000}:3000"
+  reservation-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./build/reservation.Dockerfile
+    ports:
+      - "${RESERVATION_SERVICE_PORT-3001}:3000"
+    depends_on:
+      - db
+  auth-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./build/auth.Dockerfile
+    ports:
+      - "${AUTH_SERVICE_PORT-3002}:3000"
+    depends_on:
+      - db
+  hotel-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./build/hotel.Dockerfile
+    ports:
+      - "${HOTEL_SERVICE_PORT-3003}:3000"
+    depends_on:
+      - db
+  loyalty-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./build/loyalty.Dockerfile
+    ports:
+      - "${LOYALTY_SERVICE_PORT-3004}:3000"
+    depends_on:
+      - db
   payment-service:
     environment:
       JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
       ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
       ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./build/payment.Dockerfile
     ports:
-      - "3000:3000"
+      - "${PAYMENT_SERVICE_PORT-3005}:3000"
     depends_on:
       - db
   db:
