@@ -25,7 +25,7 @@ type Payment struct {
 type PaymentRepositoryI interface {
 	AddPayment(p *Payment) (e error)
 	ChangePaymentStatus(p *Payment) (e error)
-	GetPayment(paymentUuid uuid.UUID) (p *Payment, e error)
+	GetPayment(paymentUuid uuid.UUID) (p Payment, e error)
 }
 
 type PaymentUsecaseI interface {

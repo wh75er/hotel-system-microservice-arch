@@ -31,7 +31,7 @@ type Loyalty struct {
 }
 
 type LoyaltyRepositoryI interface {
-	GetLoyalty(userUid uuid.UUID) (l *Loyalty, e error)
+	GetLoyalty(userUid uuid.UUID) (l Loyalty, e error)
 	AddLoyalty(l *Loyalty) (e error)
 	UpdateLoyalty(l *Loyalty) (e error)
 }

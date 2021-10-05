@@ -1,6 +1,8 @@
 // Package errors Marwan Sulaiman GopherCon 2019
 package errors
 
+import "github.com/labstack/gommon/log"
+
 type Kind int64
 type Op string
 
@@ -29,7 +31,7 @@ func E(args ...interface{}) error {
 		case error:
 			e.Err = arg
 		default:
-			panic("unknown behaviour while constructing Error struct")
+			log.Warnf("unknown behaviour while constructing Error struct: %v", arg)
 		}
 	}
 

@@ -24,7 +24,7 @@ const (
 	userServiceUrlEnv                = "USER_SERVICE_URL"
 	userServiceAdminIdEnv            = "USER_SERVICE_ADMIN_ID"
 	userServiceAdminSecretEnv        = "USER_SERVICE_ADMIN_SECRET"
-	configDst                        = "configs/payment-service/"
+	configDst                        = "configs/reservation-service/"
 )
 
 type DependencyService struct {

@@ -109,7 +109,7 @@ func (u *PaymentUsecase) MakePayment(paymentUuid string) (e error) {
 	p.TimeUpdated = time.Now()
 	p.Status = models.PaidPaymentStatus
 
-	err = u.PaymentRepository.ChangePaymentStatus(p)
+	err = u.PaymentRepository.ChangePaymentStatus(&p)
 	if err != nil {
 		e = errors.E(opError, errors.RepositoryPaymentErr, err)
 		u.Logger.Error("Usecase error: ", e)
@@ -151,7 +151,7 @@ func (u *PaymentUsecase) GetPayment(paymentUuid string) (p *models.Payment, e er
 		return
 	}
 
-	p, err = u.PaymentRepository.GetPayment(validPaymentUuid)
+	*p, err = u.PaymentRepository.GetPayment(validPaymentUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			e = errors.E(opError, errors.PaymentNotFoundErr, err)

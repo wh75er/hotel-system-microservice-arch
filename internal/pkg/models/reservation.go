@@ -25,7 +25,7 @@ type Reservation struct {
 type ReservationRepositoryI interface {
 	CreateReservation(v *Reservation) (tx *sqlx.Tx, e error)
 	PatchReservation(v *Reservation) (tx *sqlx.Tx, e error)
-	GetReservation(reservationUuid uuid.UUID) (v *Reservation, e error)
+	GetReservation(reservationUuid uuid.UUID) (v Reservation, e error)
 	GetReservationsByUser(userUuid uuid.UUID) (v []Reservation, e error)
 }
 

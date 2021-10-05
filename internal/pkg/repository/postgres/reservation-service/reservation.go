@@ -74,10 +74,10 @@ func (r *ReservationRepository) PatchReservation(v *models.Reservation) (tx *sql
 	return
 }
 
-func (r *ReservationRepository) GetReservation(reservationUuid uuid.UUID) (v *models.Reservation, e error) {
+func (r *ReservationRepository) GetReservation(reservationUuid uuid.UUID) (v models.Reservation, e error) {
 	var opError errors.Op = "postgres.GetReservation"
 
-	err := r.Db.Get(v, "SELECT ReservationUuid, RoomUuid, PaymentUuid, Status, Date FROM reservations WHERE reservationUuid = $1", reservationUuid)
+	err := r.Db.Get(&v, "SELECT ReservationUuid, RoomUuid, PaymentUuid, Status, Date FROM reservations WHERE reservationUuid = $1", reservationUuid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))

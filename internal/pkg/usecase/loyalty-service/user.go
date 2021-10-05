@@ -29,7 +29,7 @@ func (u *LoyaltyUsecase) GetDiscount(userUid string) (l *models.Loyalty, e error
 		return
 	}
 
-	l, err = u.loyaltyRepository.GetLoyalty(validUserUuid)
+	*l, err = u.loyaltyRepository.GetLoyalty(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			e = errors.E(opError, errors.LoyaltyNotFoundErr, err)
@@ -54,9 +54,11 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 		return
 	}
 
-	foundLoyalty, err := u.loyaltyRepository.GetLoyalty(validUserUuid)
+	found := true
+	_, err = u.loyaltyRepository.GetLoyalty(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
+			found = false
 			err = nil
 		} else {
 			e = errors.E(opError, errors.RepositoryLoyaltyErr, err)
@@ -64,7 +66,7 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 			return
 		}
 	}
-	if foundLoyalty != nil {
+	if found {
 		e = errors.E(opError, errors.LoyaltyExistsErr, err)
 		u.logger.Error("Usecase error: %v", e)
 		return
@@ -112,7 +114,7 @@ func (u *LoyaltyUsecase) UpdateDiscount(userUid string, contribution int) (e err
 	l.ContributionAmount += contribution
 	l.UpdateStatus()
 
-	err = u.loyaltyRepository.UpdateLoyalty(l)
+	err = u.loyaltyRepository.UpdateLoyalty(&l)
 	if e != nil {
 		e = errors.E(opError, errors.RepositoryLoyaltyErr, e)
 		u.logger.Error("Usecase error: ", e)

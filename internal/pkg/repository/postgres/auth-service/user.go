@@ -41,10 +41,10 @@ func (r *UserRepository) AddUser(user *models.User) (e error) {
 	return
 }
 
-func (r *UserRepository) GetUserByUuid(uid uuid.UUID) (user *models.User, e error) {
+func (r *UserRepository) GetUserByUuid(uid uuid.UUID) (user models.User, e error) {
 	var opError errors.Op = "postgres.GetUser"
 
-	err := r.Db.Get(user, "SELECT userUuid, login, password, role FROM users WHERE userUuid = $1", uid)
+	err := r.Db.Get(&user, "SELECT userUuid, login, password, role FROM users WHERE userUuid = $1", uid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))
@@ -62,10 +62,10 @@ func (r *UserRepository) GetUserByUuid(uid uuid.UUID) (user *models.User, e erro
 	return
 }
 
-func (r *UserRepository) GetUserByLogin(login string) (user *models.User, e error) {
+func (r *UserRepository) GetUserByLogin(login string) (user models.User, e error) {
 	var opError errors.Op = "postgres.GetUser"
 
-	err := r.Db.Get(user, "SELECT userUuid, login, password, role FROM users WHERE login = $1", login)
+	err := r.Db.Get(&user, "SELECT userUuid, login, password, role FROM users WHERE login = $1", login)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))

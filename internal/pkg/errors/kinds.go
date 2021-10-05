@@ -142,7 +142,7 @@ func (k Kind) String() string {
 	case UserExistsErr:
 		return "User exists cannot add new user"
 	case UserPasswordLengthValidationError:
-		return "Password length should be less than 128 characters"
+		return "Password length should be more than 10 symbols and less than 128 characters"
 	case UserLoginLengthValidationError:
 		return "Login should be more than 6 symbols and less than 24 characters"
 	case UserLoginCharsValidationError:

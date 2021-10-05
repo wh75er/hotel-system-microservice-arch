@@ -59,10 +59,10 @@ func (r *PaymentRepository) ChangePaymentStatus(p *models.Payment) (e error) {
 	return
 }
 
-func (r *PaymentRepository) GetPayment(paymentUuid uuid.UUID) (p *models.Payment, e error) {
+func (r *PaymentRepository) GetPayment(paymentUuid uuid.UUID) (p models.Payment, e error) {
 	var opError errors.Op = "postgres.GetPayment"
 
-	err := r.Db.Get(p, "SELECT userUuid, paymentUuid, status, price, dateUpdated FROM payments WHERE paymentUuid = $1", paymentUuid)
+	err := r.Db.Get(&p, "SELECT userUuid, paymentUuid, status, price, dateUpdated FROM payments WHERE paymentUuid = $1", paymentUuid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))

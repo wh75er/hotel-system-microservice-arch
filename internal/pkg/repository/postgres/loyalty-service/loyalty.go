@@ -18,10 +18,10 @@ func NewLoyaltyRepository(db *sqlx.DB, logger logs.LoggerInterface) models.Loyal
 	return &LoyaltyRepository{db, logger}
 }
 
-func (r *LoyaltyRepository) GetLoyalty(userUid uuid.UUID) (l *models.Loyalty, e error) {
+func (r *LoyaltyRepository) GetLoyalty(userUid uuid.UUID) (l models.Loyalty, e error) {
 	var opError errors.Op = "postgres.GetLoyalty"
 
-	err := r.Db.Get(l, "SELECT userUuid, status, discount, contributionAmount FROM loyalty WHERE userUuid = $1", userUid)
+	err := r.Db.Get(&l, "SELECT userUuid, status, discount, contributionAmount FROM loyalty WHERE userUuid = $1", userUid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))

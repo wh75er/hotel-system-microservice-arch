@@ -33,8 +33,8 @@ type UserUsecaseI interface {
 
 type UserRepositoryI interface {
 	AddUser(user *User) (e error)
-	GetUserByUuid(uid uuid.UUID) (user *User, e error)
-	GetUserByLogin(login string) (user *User, e error)
+	GetUserByUuid(uid uuid.UUID) (user User, e error)
+	GetUserByLogin(login string) (user User, e error)
 }
 
 func (u *User) HashPassword() (e error) {

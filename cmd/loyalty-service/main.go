@@ -6,5 +6,5 @@ import (
 
 func main() {
 	a := loyalty_service.New()
-	a.Run("release.toml")
+	a.Run("develop.toml")
 }

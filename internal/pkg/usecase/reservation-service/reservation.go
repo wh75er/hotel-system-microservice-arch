@@ -201,7 +201,7 @@ func (u *ReservationUsecase) CancelReservation(reservationUuid string) (e error)
 	}
 
 	r.Status = models.CanceledReservationStatus
-	tx, err := u.ReservationRepository.PatchReservation(r)
+	tx, err := u.ReservationRepository.PatchReservation(&r)
 	if err != nil {
 		e = errors.E(opError, errors.RepositoryReservationErr, err)
 		u.Logger.Error("Usecase error: ", e)
@@ -244,7 +244,7 @@ func (u *ReservationUsecase) GetReservation(reservationUuid string) (r *models.R
 		return
 	}
 
-	r, err = u.ReservationRepository.GetReservation(validReservationUuid)
+	*r, err = u.ReservationRepository.GetReservation(validReservationUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			e = errors.E(opError, errors.ReservationNotFound, err)
@@ -374,7 +374,7 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 
 	r.PaymentUuid = paymentUuid
 
-	tx, err := u.ReservationRepository.PatchReservation(r)
+	tx, err := u.ReservationRepository.PatchReservation(&r)
 	if err != nil {
 		e = errors.E(opError, errors.RepositoryReservationErr, err)
 		u.Logger.Error("Usecase error: ", e)

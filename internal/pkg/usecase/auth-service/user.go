@@ -38,7 +38,7 @@ func (u *UserUsecase) GetUser(uid string) (user *models.User, e error) {
 		return
 	}
 
-	user, err = u.UserRepository.GetUserByUuid(validUserUuid)
+	*user, err = u.UserRepository.GetUserByUuid(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
 			e = errors.E(opError, errors.UserNotFoundErr, err)
@@ -68,9 +68,11 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 		return
 	}
 
-	foundUser, err := u.UserRepository.GetUserByLogin(user.Login)
+	found := true
+	_, err = u.UserRepository.GetUserByLogin(user.Login)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {
+			found = false
 			e = nil
 		} else {
 			e = errors.E(opError, errors.RepositoryUserErr, err)
@@ -78,8 +80,8 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 			return
 		}
 	}
-	if foundUser != nil {
-		e = errors.E(opError, errors.UserExistsErr, err)
+	if found {
+		e = errors.E(opError, errors.UserExistsErr)
 		u.Logger.Error("Usecase error: %v", e)
 		return
 	}
