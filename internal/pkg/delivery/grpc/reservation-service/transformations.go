@@ -12,6 +12,10 @@ import (
 func ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
 	var opError errors.Op = "reservation-service.ProtoToReservation"
 
+	if pr == nil {
+		return &models.Reservation{}, nil
+	}
+
 	var validReservationUuid uuid.UUID
 	if len(pr.ReservationUuid.Value) != 0 {
 		var err error

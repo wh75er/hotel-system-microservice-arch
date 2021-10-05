@@ -87,7 +87,7 @@ func (u *User) ValidateLogin() error {
 	}
 
 	validatorRegex := regexp.MustCompile(`^[a-zA-Z0-9]+$`)
-	if match := validatorRegex.MatchString(u.Password); match == false {
+	if match := validatorRegex.MatchString(u.Login); match == false {
 		return errors.E(opError, errors.UserLoginCharsValidationError)
 	}
 

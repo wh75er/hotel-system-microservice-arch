@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	auth_service "hotel-booking-system/internal/pkg/delivery/grpc/auth-service"
 	users_proto "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
 	gateway_service "hotel-booking-system/internal/pkg/delivery/grpc/gateway-service"
@@ -86,6 +87,7 @@ func (a *App) Run(configFilename string) {
 	)
 
 	proto.RegisterGatewayServiceServer(a.server, gatewayS)
+	reflection.Register(a.server)
 
 	a.logger.Infof("Starting server on port: %v", a.conf.Server.Port)
 

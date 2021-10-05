@@ -11,10 +11,19 @@ import (
 func ProtoToUser(pu *proto.User) (*models.User, error) {
 	var opError errors.Op = "auth-service.ProtoToUser"
 
-	validUserUuid, err := uuid.Parse(pu.UserUuid.Value)
-	if err != nil {
-		e := errors.E(opError, errors.UserUuidValidationErr, err)
-		return nil, e
+	if pu == nil {
+		return &models.User{}, nil
+	}
+
+	extractedUserUuid := commonProto.ProtoToUuid(pu.UserUuid)
+	var validUserUuid uuid.UUID
+	if len(extractedUserUuid) != 0 {
+		var err error
+		validUserUuid, err = uuid.Parse(extractedUserUuid)
+		if err != nil {
+			e := errors.E(opError, errors.UserUuidValidationErr, err)
+			return nil, e
+		}
 	}
 
 	return &models.User{

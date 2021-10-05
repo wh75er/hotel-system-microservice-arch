@@ -45,16 +45,28 @@ func HotelToProto(h *models.Hotel) *proto.Hotel {
 func ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 	var opError errors.Op = "hotel-service.ProtoToRoom"
 
-	validRoomUuid, err := uuid.Parse(pr.RoomUuid)
-	if err != nil {
-		e = errors.E(opError, errors.RoomUuidValidationErr, err)
-		return
+	if pr == nil {
+		return &models.Room{}, nil
 	}
 
-	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
-	if err != nil {
-		e = errors.E(opError, errors.HotelUuidValidationErr, err)
-		return
+	var validRoomUuid uuid.UUID
+	if len(pr.RoomUuid) != 0 {
+		var err error
+		validRoomUuid, err = uuid.Parse(pr.RoomUuid)
+		if err != nil {
+			e = errors.E(opError, errors.RoomUuidValidationErr, err)
+			return
+		}
+	}
+
+	var validHotelUuid uuid.UUID
+	if len(pr.HotelUuid) != 0 {
+		var err error
+		validHotelUuid, err = uuid.Parse(pr.HotelUuid)
+		if err != nil {
+			e = errors.E(opError, errors.HotelUuidValidationErr, err)
+			return
+		}
 	}
 
 	r = &models.Room{
@@ -74,10 +86,18 @@ func ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 func ProtoToHotel(pr *proto.Hotel) (r *models.Hotel, e error) {
 	var opError errors.Op = "hotel-service.ProtoToHotel"
 
-	validHotelUuid, err := uuid.Parse(pr.HotelUuid)
-	if err != nil {
-		e = errors.E(opError, errors.HotelUuidValidationErr, err)
-		return
+	if pr == nil {
+		return &models.Hotel{}, nil
+	}
+
+	var validHotelUuid uuid.UUID
+	if len(pr.HotelUuid) != 0 {
+		var err error
+		validHotelUuid, err = uuid.Parse(pr.HotelUuid)
+		if err != nil {
+			e = errors.E(opError, errors.HotelUuidValidationErr, err)
+			return
+		}
 	}
 
 	var rooms []models.Room

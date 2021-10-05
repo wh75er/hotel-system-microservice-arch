@@ -6,5 +6,5 @@ import (
 
 func main() {
 	a := payment_service.New()
-	a.Run("develop.toml")
+	a.Run("release.toml")
 }

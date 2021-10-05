@@ -176,6 +176,8 @@ func (a *App) setupApp() {
 	a.logger.Infof("Loaded JWT Key: %v***", a.conf.Server.JWTSecret[:2])
 	a.logger.Infof("Loaded Admin Id: %v", a.conf.AdminCredentials.Id)
 	a.logger.Infof("Loaded Admin Secret: %v***", a.conf.AdminCredentials.Secret[:2])
+	a.logger.Infof("Loaded Loyalty service data: %v", a.conf.UserLoyaltyService)
+	a.logger.Infof("Loaded User service data: %v", a.conf.UserService)
 }
 
 func (a *App) establishClientConnectWithAllDependentServices() func() {

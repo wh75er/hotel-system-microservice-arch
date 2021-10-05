@@ -12,6 +12,8 @@ services:
       dockerfile: ./build/gateway.Dockerfile
     ports:
       - "${GATEWAY_SERVICE_PORT-3000}:3000"
+    extra_hosts:
+      - "localhost:192.168.31.112"
   reservation-service:
     environment:
       JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
@@ -24,6 +26,8 @@ services:
       dockerfile: ./build/reservation.Dockerfile
     ports:
       - "${RESERVATION_SERVICE_PORT-3001}:3000"
+    extra_hosts:
+      - "localhost:192.168.31.112"
     depends_on:
       - db
   auth-service:
@@ -38,6 +42,8 @@ services:
       dockerfile: ./build/auth.Dockerfile
     ports:
       - "${AUTH_SERVICE_PORT-3002}:3000"
+    extra_hosts:
+      - "localhost:192.168.31.112"
     depends_on:
       - db
   hotel-service:
@@ -52,6 +58,8 @@ services:
       dockerfile: ./build/hotel.Dockerfile
     ports:
       - "${HOTEL_SERVICE_PORT-3003}:3000"
+    extra_hosts:
+      - "localhost:192.168.31.112"
     depends_on:
       - db
   loyalty-service:
@@ -66,6 +74,8 @@ services:
       dockerfile: ./build/loyalty.Dockerfile
     ports:
       - "${LOYALTY_SERVICE_PORT-3004}:3000"
+    extra_hosts:
+      - "localhost:192.168.31.112"
     depends_on:
       - db
   payment-service:
@@ -80,14 +90,18 @@ services:
       dockerfile: ./build/payment.Dockerfile
     ports:
       - "${PAYMENT_SERVICE_PORT-3005}:3000"
+    extra_hosts:
+      - "localhost:192.168.31.112"
     depends_on:
       - db
   db:
     image: postgres
     volumes:
       - ./data/db:/var/lib/postgresql/data
+      - ./init/init-scripts:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_DB=postgres
+      - POSTGRES_MULTIPLE_DATABASES=authdb,hoteldb,loyaltydb,paymentdb,reservationdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:

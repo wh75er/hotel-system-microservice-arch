@@ -15,3 +15,14 @@ func PaymentToProto(p *models.Payment) *proto.Payment {
 		TimeUpdated: p.TimeUpdated.Unix(),
 	}
 }
+
+func ProtoToCreatePaymentRequest(p *proto.CreatePaymentRequest) (uuid string, value int64) {
+	if p == nil {
+		return
+	}
+
+	uuid = commonProto.ProtoToUuid(p.UserUuid)
+	value = p.Value
+
+	return
+}

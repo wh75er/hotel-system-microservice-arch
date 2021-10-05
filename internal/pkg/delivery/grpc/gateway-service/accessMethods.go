@@ -5,7 +5,7 @@ import (
 )
 
 func AccessibleGatewayServicePaths() map[string][]models.Role {
-	const gatewayServicePath = "/proto.gatewayService/"
+	const gatewayServicePath = "/proto.GatewayService/"
 
 	return map[string][]models.Role{
 		gatewayServicePath + "AddReservation":        {models.USER, models.ADMIN},

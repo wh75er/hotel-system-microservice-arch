@@ -14,3 +14,14 @@ func LoyaltyToProto(l *models.Loyalty) *proto.Loyalty {
 		ContributionAmount: int64(l.ContributionAmount),
 	}
 }
+
+func ProtoToUpdatedDiscountRequest(p *proto.UpdateDiscountRequest) (uuid string, contribution int64) {
+	if p == nil {
+		return
+	}
+
+	uuid = commonProto.ProtoToUuid(p.UserUid)
+	contribution = p.Contribution
+
+	return
+}

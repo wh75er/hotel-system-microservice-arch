@@ -75,7 +75,8 @@ func (s *AuthServer) AddUser(ctx context.Context, pu *proto.User) (*commonProto.
 }
 
 func (s *AuthServer) GetUser(ctx context.Context, pUuid *commonProto.UUID) (*proto.User, error) {
-	user, err := s.UserUsecase.GetUser(pUuid.Value)
+	extractedUuid := commonProto.ProtoToUuid(pUuid)
+	user, err := s.UserUsecase.GetUser(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())

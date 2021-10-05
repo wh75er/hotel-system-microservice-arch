@@ -77,7 +77,8 @@ func (s *ReservationServer) AddReservation(ctx context.Context, pr *proto.Reserv
 }
 
 func (s *ReservationServer) CancelReservation(ctx context.Context, pu *commonProto.UUID) (*commonProto.Empty, error) {
-	err := s.ReservationUsecase.CancelReservation(pu.Value)
+	extractedUuid := commonProto.ProtoToUuid(pu)
+	err := s.ReservationUsecase.CancelReservation(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -88,7 +89,8 @@ func (s *ReservationServer) CancelReservation(ctx context.Context, pu *commonPro
 }
 
 func (s *ReservationServer) GetReservation(ctx context.Context, pu *commonProto.UUID) (*proto.Reservation, error) {
-	r, err := s.ReservationUsecase.GetReservation(pu.Value)
+	extractedUuid := commonProto.ProtoToUuid(pu)
+	r, err := s.ReservationUsecase.GetReservation(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -99,7 +101,8 @@ func (s *ReservationServer) GetReservation(ctx context.Context, pu *commonProto.
 }
 
 func (s *ReservationServer) GetReservationsByUser(ctx context.Context, pu *commonProto.UUID) (*proto.Reservations, error) {
-	r, err := s.ReservationUsecase.GetReservationsByUser(pu.Value)
+	extractedUuid := commonProto.ProtoToUuid(pu)
+	r, err := s.ReservationUsecase.GetReservationsByUser(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -110,7 +113,8 @@ func (s *ReservationServer) GetReservationsByUser(ctx context.Context, pu *commo
 }
 
 func (s *ReservationServer) CreatePayment(ctx context.Context, pu *commonProto.UUID) (*commonProto.UUID, error) {
-	paymentUuid, err := s.ReservationUsecase.CreatePayment(pu.Value)
+	extractedUuid := commonProto.ProtoToUuid(pu)
+	paymentUuid, err := s.ReservationUsecase.CreatePayment(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())

@@ -57,7 +57,8 @@ func (s *LoyaltyServer) GetToken(ctx context.Context, pc *commonProto.Credential
 }
 
 func (s *LoyaltyServer) GetDiscount(ctx context.Context, pu *commonProto.UUID) (*proto.Loyalty, error) {
-	l, err := s.LoyaltyUsecase.GetDiscount(pu.Value)
+	extractedUuid := commonProto.ProtoToUuid(pu)
+	l, err := s.LoyaltyUsecase.GetDiscount(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -68,7 +69,8 @@ func (s *LoyaltyServer) GetDiscount(ctx context.Context, pu *commonProto.UUID) (
 }
 
 func (s *LoyaltyServer) AddUser(ctx context.Context, pu *commonProto.UUID) (*commonProto.Empty, error) {
-	err := s.LoyaltyUsecase.AddUser(pu.Value)
+	extractedUuid := commonProto.ProtoToUuid(pu)
+	err := s.LoyaltyUsecase.AddUser(extractedUuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
@@ -79,7 +81,8 @@ func (s *LoyaltyServer) AddUser(ctx context.Context, pu *commonProto.UUID) (*com
 }
 
 func (s *LoyaltyServer) UpdateDiscount(ctx context.Context, pr *proto.UpdateDiscountRequest) (*commonProto.Empty, error) {
-	err := s.LoyaltyUsecase.UpdateDiscount(pr.UserUid.Value, int(pr.Contribution))
+	uuid, contribution := ProtoToUpdatedDiscountRequest(pr)
+	err := s.LoyaltyUsecase.UpdateDiscount(uuid, int(contribution))
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
