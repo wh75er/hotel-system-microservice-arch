@@ -2,7 +2,10 @@
   <div class="header">
     <div class="start-block">
       <div class="start-block__label">
-        <span class="header-text label-text">Booktle</span>
+        <router-link to="/"
+                     style="text-decoration: none; color: inherit;">
+          <span class="header-text label-text">Booktle</span>
+        </router-link>
       </div>
     </div>
     <div class="end-block">
@@ -11,8 +14,12 @@
         <el-button type="danger">Log out</el-button>
       </div>
       <div v-else class="signup-buttons end-block__item">
-        <el-button type="primary">Log in</el-button>
-        <el-button type="warning">Sign up</el-button>
+        <router-link to="/signin" class="signup-buttons__item">
+          <el-button type="primary">Log in</el-button>
+        </router-link>
+        <router-link to="/signup" class="signup-buttons__item">
+          <el-button type="warning">Sign up</el-button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -49,5 +56,8 @@ export default {
   .user-data__login {
     font-size: 20px;
     padding: 0 10px;
+  }
+  .signup-buttons__item {
+    margin-left: 10px
   }
 </style>

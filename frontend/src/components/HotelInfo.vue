@@ -17,6 +17,9 @@
       <span class="small-title">Address:</span>
       <div class="box-card__caption caption-text">{{hotel.Address}}</div>
     </div>
+    <div class="box-card__item">
+      <DatePicker/>
+    </div>
   </el-card>
 </template>
 
@@ -28,8 +31,12 @@
 </style>
 
 <script>
+import DatePicker from "./DatePicker.vue";
 export default {
   name: "Header",
+  components: {
+    DatePicker,
+  },
   props: {
   },
   data() {

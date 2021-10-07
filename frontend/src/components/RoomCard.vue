@@ -46,6 +46,7 @@ export default {
   methods: {
     clicked(index, rows) {
       console.log(index, rows)
+      console.log(rows[0])
     }
   }
 }

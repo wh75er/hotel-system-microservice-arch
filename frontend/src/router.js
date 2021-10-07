@@ -2,6 +2,7 @@ import Layout from './components/Layout.vue'
 import Hotels from './components/Hotels.vue'
 import HotelView from './components/HotelView.vue'
 import SignUpForm from './components/SignUpForm.vue'
+import SignInForm from './components/SignInForm.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -20,11 +21,16 @@ const routes = [
             },
             {
                 path: 'hotels/:id',
+                name: 'hotel',
                 component: HotelView
             },
             {
                 path: 'signup',
                 component: SignUpForm,
+            },
+            {
+                path: 'signin',
+                component: SignInForm,
             }
         ],
     },

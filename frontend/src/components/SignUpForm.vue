@@ -26,7 +26,7 @@
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submitForm('ruleForm')"
-      >Submit</el-button
+      >Sign Up</el-button
       >
       <el-button @click="resetForm('ruleForm')">Reset</el-button>
     </el-form-item>
@@ -41,7 +41,6 @@ export default {
         return callback(new Error('Please input the login'))
       }
       setTimeout(() => {
-        console.log(value)
         if (value.length < 6) {
           callback(new Error('Login length must be more than 6 characters'))
         } else {

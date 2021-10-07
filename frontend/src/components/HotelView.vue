@@ -1,19 +1,21 @@
 <template>
   <div class="hotel-view">
     <HotelInfo/>
-    <RoomCard/>
+    <ReservationCard/>
   </div>
 </template>
 
 <script>
 import HotelInfo from './HotelInfo.vue'
-import RoomCard from './RoomCard.vue'
+// import RoomCard from './RoomCard.vue'
+import ReservationCard from './ReservationCard.vue'
 
 export default {
   name: "HotelView",
   components: {
     HotelInfo,
-    RoomCard,
+    // RoomCard,
+    ReservationCard,
   }
 }
 </script>
