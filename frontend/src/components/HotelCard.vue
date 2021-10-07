@@ -27,17 +27,18 @@
 <script>
 export default {
   name: "Header",
-  props: {
-  },
-  data() {
-    return {
-      hotel: {
-        Name: 'HOTEL TEST NAME',
-        Description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi, dignissimos dolore, enim exercitationem facilis hic inventore magni maiores maxime molestias natus omnis optio perspiciatis porro provident repudiandae ullam ut voluptate?',
-        City: 'Moscow',
-      }
-    }
-  }
+  props: [
+    'hotel',
+  ],
+  // data() {
+  //   return {
+  //     hotel: {
+  //       Name: 'HOTEL TEST NAME',
+  //       Description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi, dignissimos dolore, enim exercitationem facilis hic inventore magni maiores maxime molestias natus omnis optio perspiciatis porro provident repudiandae ullam ut voluptate?',
+  //       City: 'Moscow',
+  //     }
+  //   }
+  // }
 }
 </script>
 

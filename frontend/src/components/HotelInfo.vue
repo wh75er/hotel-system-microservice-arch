@@ -31,13 +31,21 @@
 </style>
 
 <script>
+import { ref } from 'vue';
 import DatePicker from "./DatePicker.vue";
+import Events from "../consts/events.js";
 export default {
   name: "Header",
   components: {
     DatePicker,
   },
   props: {
+  },
+  setup() {
+    const pickedDate = ref(0)
+    return {
+      pickedDate
+    }
   },
   data() {
     return {
@@ -47,8 +55,17 @@ export default {
         City: 'Moscow',
         Country: 'Russia',
         Address: 'Pushkina, 24',
-      }
+      },
     }
+  },
+  methods: {
+  },
+  mounted() {
+    this.emitter.on(Events.reservationDateChanged, (newDate) => {
+      console.log('ROOM CARD RECEIVER GOT NEW DATE: ', newDate)
+      this.pickedDate = newDate;
+      console.log('Value in reference: ', this.pickedDate)
+    })
   }
 }
 </script>
