@@ -9,7 +9,7 @@
         <el-button
           type="text"
           size="small"
-          @click.prevent="clicked(scope.$index, rooms)"
+          @click.prevent="clicked(scope.$index, rooms, reservationDate)"
         >
           Reserve
         </el-button>
@@ -41,12 +41,14 @@ export default {
           Price: 150,
         },
       ],
+      reservationDate: 0,
     }
   },
   methods: {
-    clicked(index, rows) {
+    clicked(index, rows, reservationDate) {
       console.log(index, rows)
       console.log(rows[0])
+      console.log(reservationDate)
     }
   }
 }
