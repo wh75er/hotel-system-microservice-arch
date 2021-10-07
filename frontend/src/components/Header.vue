@@ -10,7 +10,9 @@
     </div>
     <div class="end-block">
       <div v-if="login" class="user-data end-block__item">
-        <span class="user-data__login">{{login}}</span>
+        <router-link to="profile" style="text-decoration: none; color: inherit;">
+          <span class="user-data__login">{{login}}</span>
+        </router-link>
         <el-button type="danger">Log out</el-button>
       </div>
       <div v-else class="signup-buttons end-block__item">

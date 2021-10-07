@@ -11,7 +11,7 @@
     </div>
     <div class="box-card__text box-card__item">
       <span class="small-title">Discount status:</span>
-      <div class="box-card__caption caption-text">{{loyalty.Status}}</div>
+      <div class="box-card__caption caption-text">{{user.LoyaltyStatus}}</div>
     </div>
   </el-card>
 </template>
@@ -28,19 +28,9 @@ export default {
   name: "Header",
   components: {
   },
-  props: {
-  },
-  data() {
-    return {
-      user: {
-        Login: 'cool login',
-        Role: 'user',
-      },
-      loyalty: {
-        Status: 'Bronze',
-      }
-    }
-  }
+  props: [
+    'user'
+  ],
 }
 </script>
 
