@@ -13,7 +13,7 @@
         <router-link to="profile" style="text-decoration: none; color: inherit;">
           <span class="user-data__login">{{login}}</span>
         </router-link>
-        <el-button type="danger">Log out</el-button>
+        <el-button @click="onLogout" type="danger">Log out</el-button>
       </div>
       <div v-else class="signup-buttons end-block__item">
         <router-link to="/signin" class="signup-buttons__item">
@@ -28,10 +28,17 @@
 </template>
 
 <script>
+import Events from '../consts/events.js';
+
 export default {
   name: "Header",
   props: {
     login: String
+  },
+  methods: {
+    onLogout() {
+      this.emitter.emit(Events.userLoggedOut)
+    }
   }
 }
 </script>

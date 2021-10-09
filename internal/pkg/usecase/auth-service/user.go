@@ -127,13 +127,13 @@ func (u *UserUsecase) Login(user *models.User) (authToken string, e error) {
 
 	err := user.ValidateLogin()
 	if err != nil {
-		e = err
+		e = errors.E(opError, errors.AuthorizationErr, err)
 		return
 	}
 
 	err = user.ValidatePassword()
 	if err != nil {
-		e = err
+		e = errors.E(opError, errors.AuthorizationErr, err)
 		return
 	}
 

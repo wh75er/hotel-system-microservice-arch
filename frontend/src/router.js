@@ -17,6 +17,7 @@ const routes = [
             },
             {
                 path: 'hotels',
+                name: 'home',
                 alias: '/',
                 component: Hotels,
             },

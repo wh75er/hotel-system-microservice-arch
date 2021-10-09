@@ -27,7 +27,12 @@
 </template>
 
 <script>
+import { ElNotification } from 'element-plus'
+import Events from '../consts/events.js'
+
 export default {
+  mounted() {
+  },
   data() {
     const checkLogin = (rule, value, callback) => {
       if (!value) {
@@ -58,9 +63,33 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          this.gatewayClient.login({
+            login: this.ruleForm.login,
+            password: this.ruleForm.pass
+          }, function(error, response) {
+            if (error) {
+              ElNotification({
+                title: 'Error',
+                message: error.message,
+                type: 'error',
+              })
+            } else {
+              ElNotification({
+                title: 'Success',
+                message: 'You logged in',
+                type: 'success',
+              })
+              const token = response.getValue()
+              console.log('token: ', token)
+              this.emitter.emit(Events.userLoggedIn, token)
+            }
+          }.bind(this))
         } else {
-          console.log('error submit!!')
+          ElNotification({
+            title: 'Error',
+            message: 'Failed to submit',
+            type: 'error',
+          })
           return false
         }
       })
@@ -71,3 +100,6 @@ export default {
   },
 }
 </script>
+
+<style>
+</style>

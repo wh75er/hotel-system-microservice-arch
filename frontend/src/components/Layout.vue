@@ -7,17 +7,32 @@
 
 <script>
 import Header from './Header.vue'
+import Events from "@/consts/events";
+import { ref } from 'vue';
 
 export default {
   name: 'Layout',
   components: {
     Header,
   },
-  data() {
+  setup() {
+    const login = ref('')
     return {
-      login: 'hello'
+      login,
     }
-  }
+  },
+  mounted() {
+    this.emitter.on(Events.userLoggedIn, (token) => {
+      this.userSingletone.login(token)
+      this.$router.push({name: 'home'})
+      this.login = this.userSingletone.claims.login
+    })
+    this.emitter.on(Events.userLoggedOut, () => {
+      this.userSingletone.logout()
+      this.$router.push({name: 'home'})
+      this.login = ''
+    })
+  },
 }
 </script>
 

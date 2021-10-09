@@ -54,6 +54,29 @@ gen-proto-gateway:
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     internal/pkg/delivery/grpc/gateway-service/proto/scheme.proto
 
+gen-proto-frontend:
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/gateway-service/proto/scheme.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/reservation-service/proto/scheme.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/payment-service/proto/scheme.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/loyalty-service/proto/scheme.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/auth-service/proto/scheme.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/hotel-service/proto/scheme.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+	internal/pkg/delivery/grpc/commonProto/common.proto
+
 fmt:
 	go fmt ./internal/... && go fmt ./cmd/...
 

@@ -1,0 +1,1 @@
+export const tokenLocalStorageKey = 'hotel-booking-service-token'

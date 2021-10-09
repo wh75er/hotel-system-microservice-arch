@@ -117,7 +117,8 @@ func (s *GatewayServer) Login(ctx context.Context, pUser *proto1.User) (*commonP
 	token, err := s.UserServiceClient.Login(context.Background(), pUser)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(stat.Code(), stat.Message())
 		return nil, err
 	}
 

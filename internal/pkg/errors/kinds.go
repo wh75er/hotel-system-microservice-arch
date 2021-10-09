@@ -1,6 +1,9 @@
 package errors
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 const (
 	MaxGrpcCodeValue = 17
@@ -278,6 +281,8 @@ func GetHttpError(err error) int {
 	}
 
 	kind := GetKind(err)
+
+	fmt.Println("KIND OF ERROR: ", kind)
 
 	if Contains(badRequestErrors, kind) {
 		return http.StatusBadRequest
