@@ -20,6 +20,7 @@ service GatewayService {
 
   rpc AddUser (proto.User) returns (common.Empty) {}
   rpc Login(proto.User) returns (common.Token) {}
+  rpc CheckAuth (common.Token) returns (Role) {}
 
   rpc AddHotel (proto.Hotel) returns (common.Empty) {}
   rpc GetHotel (common.UUID) returns (proto.Hotel) {}

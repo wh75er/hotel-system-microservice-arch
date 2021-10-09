@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -281,8 +280,6 @@ func GetHttpError(err error) int {
 	}
 
 	kind := GetKind(err)
-
-	fmt.Println("KIND OF ERROR: ", kind)
 
 	if Contains(badRequestErrors, kind) {
 		return http.StatusBadRequest

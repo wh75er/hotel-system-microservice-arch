@@ -106,7 +106,8 @@ func (s *GatewayServer) AddUser(ctx context.Context, pUser *proto1.User) (*commo
 	plug, err := s.UserServiceClient.AddUser(context.Background(), pUser)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(stat.Code(), stat.Message())
 		return nil, err
 	}
 
@@ -123,6 +124,18 @@ func (s *GatewayServer) Login(ctx context.Context, pUser *proto1.User) (*commonP
 	}
 
 	return token, nil
+}
+
+func (s *GatewayServer) CheckAuth(ctx context.Context, pToken *commonProto.Token) (*proto1.Role, error) {
+	role, err := s.UserServiceClient.CheckAuth(context.Background(), pToken)
+	if err != nil {
+		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
+		stat, _ := status.FromError(err)
+		err = status.Error(stat.Code(), stat.Message())
+		return nil, err
+	}
+
+	return role, nil
 }
 
 func (s *GatewayServer) AddHotel(ctx context.Context, ph *proto2.Hotel) (*commonProto.Empty, error) {

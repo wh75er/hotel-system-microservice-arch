@@ -31,6 +31,7 @@ type GatewayServiceClient interface {
 	CreatePayment(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.UUID, error)
 	AddUser(ctx context.Context, in *proto1.User, opts ...grpc.CallOption) (*commonProto.Empty, error)
 	Login(ctx context.Context, in *proto1.User, opts ...grpc.CallOption) (*commonProto.Token, error)
+	CheckAuth(ctx context.Context, in *commonProto.Token, opts ...grpc.CallOption) (*proto1.Role, error)
 	AddHotel(ctx context.Context, in *proto2.Hotel, opts ...grpc.CallOption) (*commonProto.Empty, error)
 	GetHotel(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*proto2.Hotel, error)
 	GetHotels(ctx context.Context, in *commonProto.Empty, opts ...grpc.CallOption) (*proto2.HotelsResponse, error)
@@ -110,6 +111,15 @@ func (c *gatewayServiceClient) AddUser(ctx context.Context, in *proto1.User, opt
 func (c *gatewayServiceClient) Login(ctx context.Context, in *proto1.User, opts ...grpc.CallOption) (*commonProto.Token, error) {
 	out := new(commonProto.Token)
 	err := c.cc.Invoke(ctx, "/proto.GatewayService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayServiceClient) CheckAuth(ctx context.Context, in *commonProto.Token, opts ...grpc.CallOption) (*proto1.Role, error) {
+	out := new(proto1.Role)
+	err := c.cc.Invoke(ctx, "/proto.GatewayService/CheckAuth", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -235,6 +245,7 @@ type GatewayServiceServer interface {
 	CreatePayment(context.Context, *commonProto.UUID) (*commonProto.UUID, error)
 	AddUser(context.Context, *proto1.User) (*commonProto.Empty, error)
 	Login(context.Context, *proto1.User) (*commonProto.Token, error)
+	CheckAuth(context.Context, *commonProto.Token) (*proto1.Role, error)
 	AddHotel(context.Context, *proto2.Hotel) (*commonProto.Empty, error)
 	GetHotel(context.Context, *commonProto.UUID) (*proto2.Hotel, error)
 	GetHotels(context.Context, *commonProto.Empty) (*proto2.HotelsResponse, error)
@@ -274,6 +285,9 @@ func (UnimplementedGatewayServiceServer) AddUser(context.Context, *proto1.User) 
 }
 func (UnimplementedGatewayServiceServer) Login(context.Context, *proto1.User) (*commonProto.Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedGatewayServiceServer) CheckAuth(context.Context, *commonProto.Token) (*proto1.Role, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckAuth not implemented")
 }
 func (UnimplementedGatewayServiceServer) AddHotel(context.Context, *proto2.Hotel) (*commonProto.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddHotel not implemented")
@@ -446,6 +460,24 @@ func _GatewayService_Login_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GatewayServiceServer).Login(ctx, req.(*proto1.User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GatewayService_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(commonProto.Token)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).CheckAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.GatewayService/CheckAuth",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).CheckAuth(ctx, req.(*commonProto.Token))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -700,6 +732,10 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _GatewayService_Login_Handler,
+		},
+		{
+			MethodName: "CheckAuth",
+			Handler:    _GatewayService_CheckAuth_Handler,
 		},
 		{
 			MethodName: "AddHotel",
