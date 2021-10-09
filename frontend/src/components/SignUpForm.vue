@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import {ElNotification} from "element-plus";
+
 export default {
   data() {
     const checkLogin = (rule, value, callback) => {
@@ -103,9 +105,31 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          this.gatewayClient.signup({
+            login: this.ruleForm.login,
+            password: this.ruleForm.pass
+          }, function(error) {
+            if (error) {
+              ElNotification({
+                title: 'Error',
+                message: error.message,
+                type: 'error',
+              })
+            } else {
+              ElNotification({
+                title: 'Success',
+                message: 'You successfully signed up',
+                type: 'success',
+              })
+              this.$router.push({name: 'signIn'})
+            }
+          }.bind(this))
         } else {
-          console.log('error submit!!')
+          ElNotification({
+            title: 'Error',
+            message: 'Failed to submit',
+            type: 'error',
+          })
           return false
         }
       })

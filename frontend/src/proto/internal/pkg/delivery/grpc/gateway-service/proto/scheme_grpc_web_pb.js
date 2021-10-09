@@ -645,6 +645,86 @@ proto.proto.GatewayServicePromiseClient.prototype.login =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.common.Token,
+ *   !proto.proto.Role>}
+ */
+const methodDescriptor_GatewayService_CheckAuth = new grpc.web.MethodDescriptor(
+  '/proto.GatewayService/CheckAuth',
+  grpc.web.MethodType.UNARY,
+  internal_pkg_delivery_grpc_commonProto_common_pb.Token,
+  internal_pkg_delivery_grpc_auth$service_proto_scheme_pb.Role,
+  /**
+   * @param {!proto.common.Token} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  internal_pkg_delivery_grpc_auth$service_proto_scheme_pb.Role.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.common.Token,
+ *   !proto.proto.Role>}
+ */
+const methodInfo_GatewayService_CheckAuth = new grpc.web.AbstractClientBase.MethodInfo(
+  internal_pkg_delivery_grpc_auth$service_proto_scheme_pb.Role,
+  /**
+   * @param {!proto.common.Token} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  internal_pkg_delivery_grpc_auth$service_proto_scheme_pb.Role.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.common.Token} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.proto.Role)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.proto.Role>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.proto.GatewayServiceClient.prototype.checkAuth =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/proto.GatewayService/CheckAuth',
+      request,
+      metadata || {},
+      methodDescriptor_GatewayService_CheckAuth,
+      callback);
+};
+
+
+/**
+ * @param {!proto.common.Token} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.proto.Role>}
+ *     Promise that resolves to the response
+ */
+proto.proto.GatewayServicePromiseClient.prototype.checkAuth =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/proto.GatewayService/CheckAuth',
+      request,
+      metadata || {},
+      methodDescriptor_GatewayService_CheckAuth);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.proto.Hotel,
  *   !proto.common.Empty>}
  */

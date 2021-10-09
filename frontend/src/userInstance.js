@@ -11,7 +11,11 @@ class User {
         this.token = localStorage.getItem(tokenLocalStorageKey);
         if (this.token) {
             console.log('Found token - using it')
-            this.extractClaims(this.token)
+            try {
+                this.extractClaims(this.token)
+            } catch (e) {
+                console.error('failed to parse the found token: ', e)
+            }
         }
     }
 

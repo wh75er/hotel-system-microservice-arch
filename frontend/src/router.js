@@ -13,11 +13,11 @@ const routes = [
         children: [
             {
                 path: '/',
+                name: 'home',
                 component: Hotels,
             },
             {
                 path: 'hotels',
-                name: 'home',
                 alias: '/',
                 component: Hotels,
             },
@@ -32,6 +32,7 @@ const routes = [
             },
             {
                 path: 'signin',
+                name: 'signIn',
                 component: SignInForm,
             },
             {

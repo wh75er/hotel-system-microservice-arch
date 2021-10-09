@@ -32,6 +32,16 @@ export default {
       this.$router.push({name: 'home'})
       this.login = ''
     })
+    if (this.userSingletone.token) {
+      console.log('Found token: checking authorization')
+      this.gatewayClient.checkAuth(this.userSingletone.token, function(error) {
+        if (error) {
+          this.emitter.emit(Events.userLoggedOut)
+        } else {
+          this.login = this.userSingletone.claims.login
+        }
+      }.bind(this))
+    }
   },
 }
 </script>
