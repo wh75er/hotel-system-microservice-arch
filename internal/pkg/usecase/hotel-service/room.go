@@ -65,6 +65,8 @@ func (u *RoomUsecase) GetRoom(roomUuid string) (r *models.Room, e error) {
 		return
 	}
 
+	r = &models.Room{}
+
 	*r, err = u.RoomRepository.GetRoom(validRoomUuid)
 	if e != nil {
 		e = errors.E(opError, errors.RoomNotFoundErr, err)

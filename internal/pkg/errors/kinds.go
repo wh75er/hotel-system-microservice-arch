@@ -69,6 +69,9 @@ const (
 	ReservationNotFound
 	ReservationPaymentExists
 	ReservationCreateInvalidRequestErr
+	ReservationDateValidationLateErr
+	ReservationDateValidationFarErr
+	ReservationDateValidationErr
 )
 
 func (k Kind) String() string {
@@ -193,6 +196,12 @@ func (k Kind) String() string {
 		return "Payment for requested reservation already exists"
 	case ReservationCreateInvalidRequestErr:
 		return "User uuid or room uuid cannot be empty values"
+	case ReservationDateValidationLateErr:
+		return "Reservation date is too old"
+	case ReservationDateValidationFarErr:
+		return "You cannot reserve room this far(reservation available only 1 month far)"
+	case ReservationDateValidationErr:
+		return "Date validation error"
 	}
 
 	return "Unimplemented error"
@@ -232,6 +241,9 @@ func GetHttpError(err error) int {
 		ReservationUuidValidationErr,
 		ReservationPaymentExists,
 		ReservationCreateInvalidRequestErr,
+		ReservationDateValidationLateErr,
+		ReservationDateValidationFarErr,
+		ReservationDateValidationErr,
 	}
 
 	UnauthorizedErrors := []Kind{

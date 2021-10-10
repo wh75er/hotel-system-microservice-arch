@@ -29,6 +29,8 @@ func (u *LoyaltyUsecase) GetDiscount(userUid string) (l *models.Loyalty, e error
 		return
 	}
 
+	l = &models.Loyalty{}
+
 	*l, err = u.loyaltyRepository.GetLoyalty(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {

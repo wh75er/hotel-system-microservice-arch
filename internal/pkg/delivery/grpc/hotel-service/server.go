@@ -165,6 +165,20 @@ func (s *HotelServer) GetRooms(ctx context.Context, u *commonProto.UUID) (*proto
 	return pr, nil
 }
 
+func (s *HotelServer) GetRoom(ctx context.Context, u *commonProto.UUID) (*proto.Room, error) {
+	extractedUuid := commonProto.ProtoToUuid(u)
+	r, err := s.RoomUsecase.GetRoom(extractedUuid)
+	if err != nil {
+		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
+		return nil, err
+	}
+
+	pr := RoomToProto(r)
+
+	return pr, nil
+}
+
 func (s *HotelServer) TakeRoom(ctx context.Context, roomUuid *commonProto.UUID) (*commonProto.Empty, error) {
 	extractedUuid := commonProto.ProtoToUuid(roomUuid)
 	err := s.RoomUsecase.TakeRoom(extractedUuid)

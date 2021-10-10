@@ -24,6 +24,7 @@ const routes = [
             {
                 path: 'hotels/:id',
                 name: 'hotel',
+                props: true,
                 component: HotelView
             },
             {

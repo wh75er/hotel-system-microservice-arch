@@ -19,37 +19,86 @@
 </template>
 
 <script>
+import {ref} from "vue";
+import Events from "@/consts/events";
+import {ElNotification} from "element-plus";
+
 export default {
-  data() {
+  setup() {
+    const reservationDate = ref(0)
     return {
-      rooms: [
-        {
-          RoomType: 'Family',
-          Beds: 4,
-          Offers: [
-              "food included",
-              "pool included",
-          ],
-          Price: 400,
-        },
-        {
-          RoomType: 'Lone wolf',
-          Beds: 1,
-          Offers: [
-            "food included",
-          ],
-          Price: 150,
-        },
-      ],
-      reservationDate: 0,
+      reservationDate
     }
   },
+  props: [
+      'rooms'
+  ],
+  // data() {
+  //   return {
+  //     rooms: [
+  //       {
+  //         RoomType: 'Family',
+  //         Beds: 4,
+  //         Offers: [
+  //             "food included",
+  //             "pool included",
+  //         ],
+  //         Price: 400,
+  //       },
+  //       {
+  //         RoomType: 'Lone wolf',
+  //         Beds: 1,
+  //         Offers: [
+  //           "food included",
+  //         ],
+  //         Price: 150,
+  //       },
+  //     ],
+  //   }
+  // },
   methods: {
     clicked(index, rows, reservationDate) {
+      if (!reservationDate) {
+        ElNotification({
+          title: 'Error',
+          message: 'Please pick a reservation date',
+          type: 'error',
+        })
+        return
+      }
       console.log(index, rows)
       console.log(rows[0])
       console.log(reservationDate)
+      this.gatewayClient.reserveRoom({
+        userUuid: this.userSingletone.claims.userUuid,
+        roomUuid: rows[index].RoomUuid,
+        date: reservationDate * 0.001,
+        token: this.userSingletone.token,
+      }, function (error, response) {
+        if (error) {
+          console.log('reservation error: ', error)
+          ElNotification({
+            title: 'Error',
+            message: error.message,
+            type: 'error',
+          })
+        } else {
+          console.log('response is: ', response)
+          ElNotification({
+            title: 'Success',
+            message: `Successfully reserved room with uuid:`, //${response.getValue()}`,
+            type: 'success',
+          })
+        }
+      }.bind(this))
     }
+  },
+  mounted() {
+    this.emitter.on(Events.reservationDateChanged, (newDate) => {
+      console.log('ROOM CARD RECEIVER GOT NEW DATE: ', newDate)
+      this.reservationDate = newDate;
+      console.log('Value in reference: ', this.reservationDate)
+    })
   }
 }
 </script>

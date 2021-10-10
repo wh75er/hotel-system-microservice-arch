@@ -47,7 +47,7 @@ func (i *AuthServiceInterceptor) Unary() grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		log.Println("server unary interceptor: ", info.FullMethod)
+		log.Println("client unary interceptor: ", info.FullMethod)
 
 		err := i.authorize(ctx, info.FullMethod)
 		if err != nil {
@@ -85,8 +85,9 @@ func (i *AuthServiceInterceptor) authorize(ctx context.Context, method string) e
 	userRole, err := i.UserServiceClient.CheckAuth(context.Background(), &commonProto.Token{Value: accessToken})
 	if err != nil {
 		i.logger.Errorf("Authorization error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
-		return err
+		stat, _ := status.FromError(err)
+		//err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
+		return errors.E(opError, errors.Kind(stat.Code()))
 	}
 
 	parsedRole := models.Role(userRole.Value)

@@ -24,3 +24,7 @@ body {
     overflow: hidden;
 }
 
+.text-wrapping {
+    word-break: break-word;
+}
+

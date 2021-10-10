@@ -22,7 +22,7 @@ func (r *PaymentRepository) AddPayment(p *models.Payment) (e error) {
 	var opError errors.Op = "postgres.AddPayment"
 
 	_, err := r.Db.Exec("INSERT INTO "+
-		"payments(userUuid, paymentUuid, status, price, timeUpdated) VALUES ($1, $2, $3, $4)",
+		"payments(userUuid, paymentUuid, status, price, timeUpdated) VALUES ($1, $2, $3, $4, $5)",
 		p.UserUuid, p.PaymentUuid, p.Status, p.Price, p.TimeUpdated)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)

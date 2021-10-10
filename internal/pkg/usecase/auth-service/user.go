@@ -38,6 +38,8 @@ func (u *UserUsecase) GetUser(uid string) (user *models.User, e error) {
 		return
 	}
 
+	user = &models.User{}
+
 	*user, err = u.UserRepository.GetUserByUuid(validUserUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {

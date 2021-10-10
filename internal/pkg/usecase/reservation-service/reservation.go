@@ -12,7 +12,6 @@ import (
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
-	"time"
 )
 
 type ReservationUsecase struct {
@@ -44,6 +43,12 @@ func NewReservationUsecase(
 
 func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationUuid uuid.UUID, e error) {
 	var opError errors.Op = "usecase.AddReservation"
+
+	if err := r.ValidateDate(); err != nil {
+		e = err
+		u.Logger.Error("Usecase error: ", err)
+		return
+	}
 
 	if r.UserUuid == uuid.Nil || r.RoomUuid == uuid.Nil {
 		e = errors.E(opError, errors.ReservationCreateInvalidRequestErr)
@@ -125,7 +130,8 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 			e = nil
 		}
 
-		validPaymentUuid, err := uuid.Parse(paymentUuid.Value)
+		value := commonProto.ProtoToUuid(paymentUuid)
+		validPaymentUuid, err := uuid.Parse(value)
 		if err != nil {
 			e = errors.E(opError, errors.PaymentUuidValidationErr, err)
 			u.Logger.Error("Usecase error: ", e)
@@ -136,7 +142,6 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 	}
 
 	r.ReservationUuid = reservationUuid
-	r.Date = time.Now()
 	r.Status = models.ActiveReservationStatus
 
 	// Add reservation to repository

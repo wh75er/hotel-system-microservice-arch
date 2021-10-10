@@ -17,7 +17,7 @@ func ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
 	}
 
 	var validReservationUuid uuid.UUID
-	if len(pr.ReservationUuid.Value) != 0 {
+	if pr.GetReservationUuid() != nil && len(pr.ReservationUuid.Value) != 0 {
 		var err error
 		validReservationUuid, err = uuid.Parse(pr.ReservationUuid.Value)
 		if err != nil {
@@ -27,7 +27,7 @@ func ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
 	}
 
 	var validUserUuid uuid.UUID
-	if len(pr.UserUuid.Value) != 0 {
+	if pr.GetUserUuid() != nil && len(pr.UserUuid.Value) != 0 {
 		var err error
 		validUserUuid, err = uuid.Parse(pr.UserUuid.Value)
 		if err != nil {
@@ -37,7 +37,7 @@ func ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
 	}
 
 	var validRoomUuid uuid.UUID
-	if len(pr.UserUuid.Value) != 0 {
+	if pr.GetRoomUuid() != nil && len(pr.RoomUuid.Value) != 0 {
 		var err error
 		validRoomUuid, err = uuid.Parse(pr.RoomUuid.Value)
 		if err != nil {
@@ -47,7 +47,7 @@ func ProtoToReservation(pr *proto.Reservation) (*models.Reservation, error) {
 	}
 
 	var validPaymentUuid uuid.UUID
-	if len(pr.PaymentUuid.Value) != 0 {
+	if pr.GetPaymentUuid() != nil && len(pr.PaymentUuid.Value) != 0 {
 		var err error
 		validPaymentUuid, err = uuid.Parse(pr.PaymentUuid.Value)
 		if err != nil {

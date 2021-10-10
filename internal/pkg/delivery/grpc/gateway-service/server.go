@@ -51,7 +51,8 @@ func (s *GatewayServer) AddReservation(ctx context.Context, pr *proto5.Reservati
 	uuid, err := s.ReservationServiceClient.AddReservation(context.Background(), pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -62,7 +63,8 @@ func (s *GatewayServer) CancelReservation(ctx context.Context, pu *commonProto.U
 	plug, err := s.ReservationServiceClient.CancelReservation(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -73,7 +75,8 @@ func (s *GatewayServer) GetReservation(ctx context.Context, pu *commonProto.UUID
 	r, err := s.ReservationServiceClient.GetReservation(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -84,7 +87,8 @@ func (s *GatewayServer) GetReservationsByUser(ctx context.Context, pu *commonPro
 	r, err := s.ReservationServiceClient.GetReservationsByUser(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -95,7 +99,8 @@ func (s *GatewayServer) CreatePayment(ctx context.Context, pu *commonProto.UUID)
 	uuid, err := s.ReservationServiceClient.CreatePayment(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -107,7 +112,7 @@ func (s *GatewayServer) AddUser(ctx context.Context, pUser *proto1.User) (*commo
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		stat, _ := status.FromError(err)
-		err = status.Error(stat.Code(), stat.Message())
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -119,7 +124,7 @@ func (s *GatewayServer) Login(ctx context.Context, pUser *proto1.User) (*commonP
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		stat, _ := status.FromError(err)
-		err = status.Error(stat.Code(), stat.Message())
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -131,7 +136,7 @@ func (s *GatewayServer) CheckAuth(ctx context.Context, pToken *commonProto.Token
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		stat, _ := status.FromError(err)
-		err = status.Error(stat.Code(), stat.Message())
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -142,7 +147,8 @@ func (s *GatewayServer) AddHotel(ctx context.Context, ph *proto2.Hotel) (*common
 	plug, err := s.HotelServiceClient.AddHotel(context.Background(), ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -153,7 +159,8 @@ func (s *GatewayServer) GetHotel(ctx context.Context, pu *commonProto.UUID) (*pr
 	h, err := s.HotelServiceClient.GetHotel(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -164,7 +171,8 @@ func (s *GatewayServer) GetHotels(ctx context.Context, empty *commonProto.Empty)
 	h, err := s.HotelServiceClient.GetHotels(context.Background(), empty)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -175,7 +183,8 @@ func (s *GatewayServer) PatchHotel(ctx context.Context, ph *proto2.Hotel) (*comm
 	plug, err := s.HotelServiceClient.PatchHotel(context.Background(), ph)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -186,7 +195,8 @@ func (s *GatewayServer) DeleteHotel(ctx context.Context, pu *commonProto.UUID) (
 	plug, err := s.HotelServiceClient.DeleteHotel(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -197,7 +207,8 @@ func (s *GatewayServer) AddRoom(ctx context.Context, pr *proto2.Room) (*commonPr
 	plug, err := s.HotelServiceClient.AddRoom(context.Background(), pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -208,7 +219,8 @@ func (s *GatewayServer) GetRooms(ctx context.Context, pu *commonProto.UUID) (*pr
 	r, err := s.HotelServiceClient.GetRooms(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -219,7 +231,8 @@ func (s *GatewayServer) GetRoom(ctx context.Context, pu *commonProto.UUID) (*pro
 	r, err := s.HotelServiceClient.GetRoom(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -230,7 +243,8 @@ func (s *GatewayServer) PatchRoom(ctx context.Context, pr *proto2.Room) (*common
 	plug, err := s.HotelServiceClient.PatchRoom(context.Background(), pr)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -241,7 +255,8 @@ func (s *GatewayServer) DeleteRoom(ctx context.Context, pu *commonProto.UUID) (*
 	plug, err := s.HotelServiceClient.DeleteRoom(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -252,7 +267,8 @@ func (s *GatewayServer) GetDiscount(ctx context.Context, pu *commonProto.UUID) (
 	l, err := s.UserLoyaltyServiceClient.GetDiscount(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 
@@ -263,7 +279,8 @@ func (s *GatewayServer) GetPayment(ctx context.Context, pu *commonProto.UUID) (*
 	p, err := s.PaymentServiceClient.GetPayment(context.Background(), pu)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
 		return nil, err
 	}
 

@@ -16,6 +16,8 @@ class User {
             } catch (e) {
                 console.error('failed to parse the found token: ', e)
             }
+        } else {
+            this.token = ''
         }
     }
 
@@ -26,7 +28,7 @@ class User {
     }
 
     logout() {
-        this.token = null
+        this.token = ''
         for (const values in Object.entries(this.claims)) {
             const key = values[0]
             this.claims[key] = ''

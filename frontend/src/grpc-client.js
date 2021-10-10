@@ -1,6 +1,7 @@
 import { GatewayServiceClient } from './proto/internal/pkg/delivery/grpc/gateway-service/proto/scheme_grpc_web_pb.js'
 import { User } from './proto/internal/pkg/delivery/grpc/auth-service/proto/scheme_pb.js'
-import { Token } from './proto/internal/pkg/delivery/grpc/commonProto/common_pb.js'
+import { Reservation } from './proto/internal/pkg/delivery/grpc/reservation-service/proto/scheme_pb.js'
+import { Token, Empty, UUID } from './proto/internal/pkg/delivery/grpc/commonProto/common_pb.js'
 import { gatewayLocation }  from './consts/config.js'
 
 export default class GatewayClient {
@@ -12,7 +13,6 @@ export default class GatewayClient {
      *
      * @param {{login: String, password: String}} payload
      * @param {function} callback
-     * @returns {Promise<void>}
      */
     login(payload, callback) {
         console.log('Login payload: ', payload)
@@ -32,7 +32,6 @@ export default class GatewayClient {
      *
      * @param {{login: String, password: String}} payload
      * @param {function} callback
-     * @returns {Promise<void>}
      */
     signup(payload, callback) {
         console.log('signup payload: ', payload)
@@ -40,5 +39,38 @@ export default class GatewayClient {
         req.setLogin(payload.login)
         req.setPassword(payload.password)
         this.client.addUser(req, {}, callback)
+    }
+
+    getHotels(callback) {
+        const req = new Empty()
+        this.client.getHotels(req, {}, callback)
+    }
+
+    getHotel(uuid, callback) {
+        console.log('getHotel uuid is: ', uuid)
+        const req = new UUID()
+        req.setValue(uuid)
+        this.client.getHotel(req, {}, callback)
+    }
+
+    /**
+     *
+     * @param {{userUuid, roomUuid, date, token}} payload
+     * @param callback
+     */
+    reserveRoom(payload, callback) {
+        console.log('reserveRoom payload: ', payload)
+        const userUuid = new UUID
+        userUuid.setValue(payload.userUuid)
+
+        const roomUuid = new UUID
+        roomUuid.setValue(payload.roomUuid)
+
+        const req = new Reservation()
+        req.setUseruuid(userUuid)
+        req.setRoomuuid(roomUuid)
+        req.setDate(payload.date)
+
+        this.client.addReservation(req, {"authorization": payload.token}, callback)
     }
 }

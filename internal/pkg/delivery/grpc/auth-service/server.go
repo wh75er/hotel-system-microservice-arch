@@ -112,7 +112,7 @@ func (s *AuthServer) CheckAuth(ctx context.Context, pt *commonProto.Token) (*pro
 	role, err := s.UserUsecase.CheckAuth(string(*token))
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
-		err = status.Error(codes.Code(errors.GetHttpError(err)), err.Error())
+		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())
 		return nil, err
 	}
 
