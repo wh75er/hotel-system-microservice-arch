@@ -74,7 +74,7 @@ function getHotel(gatewayClient, currentReservation, updateCallback) {
     })
 }
 
-function getPayment(gatewayClient, currentReservation, token, updateCallback) {
+export function getPayment(gatewayClient, currentReservation, token, updateCallback) {
     if (!(currentReservation && currentReservation.PaymentUuid)) { return }
     gatewayClient.getPayment({ paymentUuid: currentReservation.PaymentUuid, token: token},
         function(error, response) {

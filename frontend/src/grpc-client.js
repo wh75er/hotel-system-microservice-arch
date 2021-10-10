@@ -119,4 +119,17 @@ export default class GatewayClient {
 
         this.client.getDiscount(req, {"authorization": payload.token}, callback)
     }
+
+    /**
+     *
+     * @param {{reservationUuid, token}} payload
+     * @param callback
+     */
+    createPayment(payload, callback) {
+        console.log('createPayment payload: ', payload)
+        const req = new UUID()
+        req.setValue(payload.reservationUuid)
+
+        this.client.createPayment(req, {"authorization": payload.token}, callback)
+    }
 }

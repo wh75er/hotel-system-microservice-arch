@@ -2,6 +2,7 @@ package reservation_service
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/status"
 	users_proto "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto"
@@ -330,6 +331,8 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 		e = errors.E(opError, serviceKind)
 		return
 	}
+
+	fmt.Println("RESERVATION FROM REPOSITORY: ", r)
 
 	// Try to access discount service and take user's current discount in percentage
 	//		If not available return, we're not able to calculate proper price

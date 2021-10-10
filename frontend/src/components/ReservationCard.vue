@@ -39,11 +39,12 @@
 import Events from "@/consts/events";
 import getHeavyReservations from "@/helpers/heavyReservations";
 import { ref } from 'vue';
+import {ElNotification} from "element-plus";
+import {getPayment} from '../helpers/heavyReservations.js';
 
 export default {
   props: [
       'user',
-      // 'reservations',
   ],
   setup() {
     let reservations = ref([])
@@ -52,7 +53,6 @@ export default {
     }
   },
   mounted() {
-    console.log("INSIDE RESERVATION CARD: ", this.reservations)
     if (!this.userSingletone.claims.userUuid) {
       this.emitter.emit(Events.unauthorizedRedirect)
     }
@@ -88,6 +88,26 @@ export default {
     createPaymentClicked(index, rows) {
       console.log('Payment creation button clicked')
       console.log(index, rows)
+      console.log(rows[index].ReservationUuid)
+      this.gatewayClient.createPayment(
+          {reservationUuid: rows[index].ReservationUuid, token: this.userSingletone.token},
+          function (error, response) {
+            if (error) {
+              console.log('Failed to create payment for reservation: ', error)
+              ElNotification({
+                title: 'Error',
+                message: 'Failed to create payment for that reservation. Try later',
+                type: 'error',
+              })
+            } else {
+              rows[index].PaymentUuid = response.getValue()
+              getPayment(this.gatewayClient, rows[index], this.userSingletone.token, () => {
+                this.reservations = rows
+              })
+
+            }
+          }.bind(this)
+      )
     }
   }
 }
