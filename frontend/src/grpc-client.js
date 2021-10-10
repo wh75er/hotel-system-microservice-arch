@@ -53,6 +53,13 @@ export default class GatewayClient {
         this.client.getHotel(req, {}, callback)
     }
 
+    getRoom(uuid, callback) {
+        console.log('getHotel uuid is: ', uuid)
+        const req = new UUID()
+        req.setValue(uuid)
+        this.client.getRoom(req, {}, callback)
+    }
+
     /**
      *
      * @param {{userUuid, roomUuid, date, token}} payload
@@ -60,10 +67,10 @@ export default class GatewayClient {
      */
     reserveRoom(payload, callback) {
         console.log('reserveRoom payload: ', payload)
-        const userUuid = new UUID
+        const userUuid = new UUID()
         userUuid.setValue(payload.userUuid)
 
-        const roomUuid = new UUID
+        const roomUuid = new UUID()
         roomUuid.setValue(payload.roomUuid)
 
         const req = new Reservation()
@@ -72,5 +79,44 @@ export default class GatewayClient {
         req.setDate(payload.date)
 
         this.client.addReservation(req, {"authorization": payload.token}, callback)
+    }
+
+    /**
+     *
+     * @param {{userUuid, token}} payload
+     * @param callback
+     */
+    getReservations(payload, callback) {
+        console.log('getReservations payload: ', payload)
+        const req = new UUID()
+        req.setValue(payload.userUuid)
+
+        this.client.getReservationsByUser(req, {"authorization": payload.token}, callback)
+    }
+
+    /**
+     *
+     * @param {{paymentUuid, token}} payload
+     * @param callback
+     */
+    getPayment(payload, callback) {
+        console.log('getPayment payload: ', payload)
+        const req = new UUID()
+        req.setValue(payload.paymentUuid)
+
+        this.client.getPayment(req, {"authorization": payload.token}, callback)
+    }
+
+    /**
+     *
+     * @param {{userUuid, token}} payload
+     * @param callback
+     */
+    getLoyalty(payload, callback) {
+        console.log('getLoyalty payload: ', payload)
+        const req = new UUID()
+        req.setValue(payload.userUuid)
+
+        this.client.getDiscount(req, {"authorization": payload.token}, callback)
     }
 }

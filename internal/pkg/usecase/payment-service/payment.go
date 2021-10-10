@@ -151,6 +151,8 @@ func (u *PaymentUsecase) GetPayment(paymentUuid string) (p *models.Payment, e er
 		return
 	}
 
+	p = &models.Payment{}
+
 	*p, err = u.PaymentRepository.GetPayment(validPaymentUuid)
 	if err != nil {
 		if errors.GetKind(err) == errors.RepositoryNoRows {

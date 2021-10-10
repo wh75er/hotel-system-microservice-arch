@@ -11,7 +11,8 @@
     </div>
     <div class="box-card__text box-card__item">
       <span class="small-title">Discount status:</span>
-      <div class="box-card__caption caption-text">{{user.LoyaltyStatus}}</div>
+      <div v-if="user.LoyaltyStatus" class="box-card__caption caption-text">{{user.LoyaltyStatus}}</div>
+      <div v-else class="box-card__caption caption-text">Failed to retrieve information</div>
     </div>
   </el-card>
 </template>
@@ -25,7 +26,7 @@
 
 <script>
 export default {
-  name: "Header",
+  name: "UserInfo",
   components: {
   },
   props: [

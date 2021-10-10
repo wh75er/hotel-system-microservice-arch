@@ -98,7 +98,7 @@ func (r *ReservationRepository) GetReservation(reservationUuid uuid.UUID) (v mod
 func (r *ReservationRepository) GetReservationsByUser(userUuid uuid.UUID) (v []models.Reservation, e error) {
 	var opError errors.Op = "postgres.GetReservationsByUser"
 
-	err := r.Db.Select(v, "SELECT ReservationUuid, RoomUuid, PaymentUuid, Status, Date FROM reservations WHERE userUuid = $1", userUuid)
+	err := r.Db.Select(&v, "SELECT ReservationUuid, RoomUuid, PaymentUuid, Status, Date FROM reservations WHERE userUuid = $1", userUuid)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
 		r.logger.Errorf("Database error: %v - %v", e, errors.SourceDetails(e))

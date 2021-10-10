@@ -74,11 +74,6 @@ export default {
                 type: 'error',
               })
             } else {
-              ElNotification({
-                title: 'Success',
-                message: 'You logged in',
-                type: 'success',
-              })
               const token = response.getValue()
               console.log('token: ', token)
               this.emitter.emit(Events.userLoggedIn, token)

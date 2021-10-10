@@ -116,11 +116,6 @@ export default {
                 type: 'error',
               })
             } else {
-              ElNotification({
-                title: 'Success',
-                message: 'You successfully signed up',
-                type: 'success',
-              })
               this.$router.push({name: 'signIn'})
             }
           }.bind(this))

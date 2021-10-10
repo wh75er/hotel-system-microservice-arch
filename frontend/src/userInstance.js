@@ -47,8 +47,8 @@ class User {
         if (body && body.Login) {
             this.claims.login =  body.Login
         }
-        if (body && body.Role) {
-            this.claims.role =  body.Role
+        if (body && body.role) {
+            this.claims.role =  body.role
         }
     }
 }
