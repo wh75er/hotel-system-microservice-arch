@@ -10,7 +10,6 @@ import UserInfo from './UserInfo.vue'
 import ReservationCard from './ReservationCard.vue'
 import Events from '../consts/events.js'
 import {ref} from "vue";
-import {ElNotification} from "element-plus";
 
 export default {
   name: "UserView",
@@ -54,11 +53,6 @@ export default {
         function (error, response) {
           if (error) {
             console.log('Failed to retrieve discount information: ', error)
-            ElNotification({
-              title: 'Error',
-              message: `Failed to retrieve discount status`,
-              type: 'error',
-            })
           } else {
             this.user.LoyaltyStatus = response.getStatus()
           }

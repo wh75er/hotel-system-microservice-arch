@@ -124,6 +124,47 @@ func (u *UserUsecase) AddUser(user *models.User) (e error) {
 	return
 }
 
+func (u *UserUsecase) AddAdmin(user *models.User) (e error) {
+	var opError errors.Op = "usecase.AddAdmin"
+
+	found := true
+	_, err := u.UserRepository.GetUserByLogin(user.Login)
+	if err != nil {
+		if errors.GetKind(err) == errors.RepositoryNoRows {
+			found = false
+			e = nil
+		} else {
+			e = errors.E(opError, errors.RepositoryUserErr, err)
+			u.Logger.Error("Usecase error: %v", e)
+			return
+		}
+	}
+	if found {
+		e = errors.E(opError, errors.UserExistsErr)
+		u.Logger.Error("Usecase error: %v", e)
+		return
+	}
+
+	user.UserUuid = uuid.New()
+
+	user.Role = string(models.ADMIN)
+	err = user.HashPassword()
+	if err != nil {
+		e = err
+		u.Logger.Error("Usecase error: %v", e)
+		return
+	}
+
+	e = u.UserRepository.AddUser(user)
+	if e != nil {
+		e = errors.E(opError, errors.RepositoryUserErr, e)
+		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	return
+}
+
 func (u *UserUsecase) Login(user *models.User) (authToken string, e error) {
 	var opError errors.Op = "usecase.Login"
 

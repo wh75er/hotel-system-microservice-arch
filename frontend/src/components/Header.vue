@@ -10,7 +10,7 @@
     </div>
     <div class="end-block">
       <div v-if="login" class="user-data end-block__item">
-        <router-link to="profile" style="text-decoration: none; color: inherit;">
+        <router-link to="/profile" style="text-decoration: none; color: inherit;">
           <span class="user-data__login">{{login}}</span>
         </router-link>
         <el-button @click="onLogout" type="danger">Log out</el-button>

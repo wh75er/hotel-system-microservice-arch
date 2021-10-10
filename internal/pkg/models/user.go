@@ -26,6 +26,7 @@ type User struct {
 
 type UserUsecaseI interface {
 	AddUser(user *User) (e error)
+	AddAdmin(user *User) (e error)
 	GetUser(uid string) (user *User, e error)
 	Login(user *User) (authToken string, e error)
 	CheckAuth(jwtToken string) (role Role, e error)

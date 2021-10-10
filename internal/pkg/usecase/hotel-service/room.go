@@ -195,7 +195,7 @@ func (u *RoomUsecase) changeRoomAmount(roomUuid string, lambda int) (e error) {
 		return
 	}
 
-	if r.Amount == 0 {
+	if r.Amount == 0 && lambda < 0 {
 		e = errors.E(opError, errors.RoomUnavailableErr)
 		u.Logger.Error("Usecase error: ", e)
 		return

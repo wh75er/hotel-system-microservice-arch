@@ -9,15 +9,17 @@
       </template>
     </el-table-column>
     <el-table-column prop="Room.RoomType" label="Room Type" width="180" />
+    <el-table-column prop="Status" label="Status" width="80" />
     <el-table-column prop="Payment.PaymentUuid" label="PaymentUuid" />
-    <el-table-column prop="Payment.Price" label="Price" width="180" />
-    <el-table-column prop="Payment.Status" label="Status" width="180" />
+    <el-table-column prop="Payment.Price" label="Price" width="80" />
+    <el-table-column prop="Payment.Status" label="Payment Status" width="80" />
+    <el-table-column prop="Date" label="Date" width="100" />
     <el-table-column width="75" >
       <template #default="scope">
         <el-button
           type="text"
           size="small"
-          v-if='reservations[scope.$index] && reservations[scope.$index].Payment && reservations[scope.$index].Payment.Status === "New"'
+          v-if="reservations[scope.$index] && reservations[scope.$index].Payment && reservations[scope.$index].Payment.Status === 'New' && reservations[scope.$index].Status !== 'canceled'"
           @click.prevent="payClicked(scope.$index, reservations)"
         >
           Pay
@@ -25,10 +27,18 @@
         <el-button
             type="text"
             size="small"
-            v-else
+            v-else-if="reservations[scope.$index] && reservations[scope.$index].Status && reservations[scope.$index].Status !== 'canceled'"
             @click.prevent="createPaymentClicked(scope.$index, reservations)"
         >
             create<br>paycheck
+        </el-button>
+        <el-button
+            type="text"
+            size="small"
+            v-if="reservations[scope.$index].Status && reservations[scope.$index].Status !== 'canceled'"
+            @click.prevent="cancelClicked(scope.$index, reservations)"
+        >
+          Cancel
         </el-button>
       </template>
     </el-table-column>
@@ -107,6 +117,24 @@ export default {
 
             }
           }.bind(this)
+      )
+    },
+    cancelClicked(index, rows) {
+      if (!(rows && rows[index] && rows[index].ReservationUuid && rows[index].Status)) { return }
+      this.gatewayClient.cancelReservation(
+          { reservationUuid: rows[index].ReservationUuid, token: this.userSingletone.token },
+          function (error) {
+            if (error) {
+              console.log('Failed to cancel reservation: ', error)
+              ElNotification({
+                title: 'Error',
+                message: 'Failed to cancel reservation. Try later',
+                type: 'error',
+              })
+            } else {
+              rows[index].Status = 'canceled'
+            }
+          }
       )
     }
   }

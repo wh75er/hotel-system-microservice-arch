@@ -13,13 +13,14 @@ export default function getHeavyReservations(payload, gatewayClient, reservation
             console.log('response from server: ', response)
             const prs = response.getValueList()
             for (const pr of prs) {
+                const rawDate = new Date(pr.getDate() * 1000)
                 let currentReservation = {
                     ReservationUuid: pr.getReservationuuid().getValue(),
                     RoomUuid: pr.getRoomuuid().getValue(),
                     UserUuid: pr.getUseruuid().getValue(),
                     PaymentUuid: pr.getPaymentuuid().getValue(),
                     Status: pr.getStatus(),
-                    Date: pr.getDate() * 1000,
+                    Date: `${rawDate.getDate()}-${rawDate.getMonth()+1}-${rawDate.getFullYear()}`,
                 }
 
                 getRoomAndHotel(gatewayClient, currentReservation, updateCallback)

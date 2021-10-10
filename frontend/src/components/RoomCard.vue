@@ -2,6 +2,7 @@
   <el-table class="room-card" :data="rooms" border style="width: 100%">
     <el-table-column prop="RoomType" label="Room Type" width="180" />
     <el-table-column prop="Beds" label="Beds" width="180" />
+    <el-table-column prop="Amount" label="Amount" width="180" />
     <el-table-column prop="Offers" label="Offers" />
     <el-table-column prop="Price" label="Price" width="180" />
     <el-table-column width="75" >

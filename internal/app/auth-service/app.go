@@ -11,8 +11,10 @@ import (
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
 	loyalty_service "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service"
 	loyalty_proto "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
+	"hotel-booking-system/internal/pkg/errors"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
+	"hotel-booking-system/internal/pkg/models"
 	"hotel-booking-system/internal/pkg/repository/postgres"
 	userRepositories "hotel-booking-system/internal/pkg/repository/postgres/auth-service"
 	"hotel-booking-system/internal/pkg/usecase"
@@ -65,6 +67,8 @@ func (a *App) Run(configFilename string) {
 
 	userUsecase := userUsecases.NewUserUsecase(userRepository, a.UserLoyaltyClient, jwtTokenManager, a.logger)
 	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
+
+	a.setupAdminUser(userUsecase)
 
 	authS := authServer.NewAuthServer(
 		userUsecase,
@@ -162,4 +166,21 @@ func (a *App) setupUserLoyaltyServiceConnection(jwtTokenManager *jwtManager.JWTM
 	a.UserLoyaltyClient = client
 
 	return func() { conn.Close() }
+}
+
+func (a *App) setupAdminUser(userU models.UserUsecaseI) {
+	admin := &models.User{
+		Login: "superadmin",
+		Password: "admin12345",
+	}
+	err := userU.AddAdmin(admin)
+	if err != nil {
+		if errors.GetKind(err) == errors.UserExistsErr {
+			a.logger.Info("Admin user already exists, ignoring...")
+			return
+		}
+		a.logger.Fatalf("Failed to create admin user: %v - %v", err, errors.Ops(err))
+	}
+
+	a.logger.Info("Admin user created")
 }

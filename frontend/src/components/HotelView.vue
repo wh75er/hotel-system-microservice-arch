@@ -50,6 +50,7 @@ export default {
                 RoomUuid: rh.getRoomuuid(),
                 HotelUuid: rh.getHoteluuid(),
                 RoomType: rh.getRoomtype(),
+                Amount: rh.getAmount(),
                 Beds: rh.getBeds(),
                 Offers: rh.getOffersList(),
                 Price: rh.getNightprice(),

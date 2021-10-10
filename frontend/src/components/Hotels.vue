@@ -1,5 +1,9 @@
 <template>
   <div class="hotels">
+    <div v-if="this.userSingletone.claims.role === 'admin'" class="hotels__item hotels__admin-block">
+      <el-button round>Add Hotel</el-button>
+      <el-button type="info" round>Get statistics</el-button>
+    </div>
     <div v-if="hotels.length === 0">There's nothing here yet</div>
     <HotelCard class="hotels__item"
         :to="{ name: 'hotel', params: { id: hotel.HotelUuid}}"
@@ -112,5 +116,11 @@ export default {
 
   .hotels__item {
     margin: 0 0 10px 0;
+  }
+
+  .hotels__admin-block {
+    display: flex;
+    width: 100%;
+    justify-content: right;
   }
 </style>
