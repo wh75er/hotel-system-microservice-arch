@@ -4,6 +4,7 @@ import HotelView from './components/HotelView.vue'
 import SignUpForm from './components/SignUpForm.vue'
 import SignInForm from './components/SignInForm.vue'
 import UserView from './components/UserView.vue'
+import HotelForm from './components/HotelForm.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -39,6 +40,10 @@ const routes = [
             {
                 path: 'profile',
                 component: UserView,
+            },
+            {
+                path: 'hotels/create',
+                component: HotelForm,
             }
         ],
     },

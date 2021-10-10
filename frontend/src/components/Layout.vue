@@ -9,7 +9,6 @@
 import Header from './Header.vue'
 import Events from "@/consts/events";
 import { ref } from 'vue';
-import {ElNotification} from "element-plus";
 
 export default {
   name: 'Layout',
@@ -34,11 +33,6 @@ export default {
       this.login = ''
     })
     this.emitter.on(Events.unauthorizedRedirect, () => {
-      ElNotification({
-        title: 'Error',
-        message: 'You need to log in to access this page',
-        type: 'error',
-      })
       this.$router.push({ name: 'home' })
     })
     if (this.userSingletone.token) {

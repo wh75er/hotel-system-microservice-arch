@@ -1,5 +1,6 @@
 import { GatewayServiceClient } from './proto/internal/pkg/delivery/grpc/gateway-service/proto/scheme_grpc_web_pb.js'
 import { User } from './proto/internal/pkg/delivery/grpc/auth-service/proto/scheme_pb.js'
+import { Hotel } from './proto/internal/pkg/delivery/grpc/hotel-service/proto/scheme_pb.js'
 import { Reservation } from './proto/internal/pkg/delivery/grpc/reservation-service/proto/scheme_pb.js'
 import { Token, Empty, UUID } from './proto/internal/pkg/delivery/grpc/commonProto/common_pb.js'
 import { gatewayLocation }  from './consts/config.js'
@@ -144,5 +145,22 @@ export default class GatewayClient {
         req.setValue(payload.reservationUuid)
 
         this.client.cancelReservation(req, {"authorization": payload.token}, callback)
+    }
+
+    /**
+     *
+     * @param {{hotel: {name, description, country, city, address}, token}} payload
+     * @param callback
+     */
+    createHotel(payload, callback) {
+        console.log('createHotel payload: ', payload)
+        const req = new Hotel()
+        req.setName(payload.hotel.name)
+        req.setDescription(payload.hotel.description)
+        req.setCountry(payload.hotel.country)
+        req.setCity(payload.hotel.city)
+        req.setAddress(payload.hotel.address)
+
+        this.client.addHotel(req, {"authorization": payload.token}, callback)
     }
 }

@@ -1,8 +1,11 @@
 <template>
   <div class="hotels">
     <div v-if="this.userSingletone.claims.role === 'admin'" class="hotels__item hotels__admin-block">
-      <el-button round>Add Hotel</el-button>
-      <el-button type="info" round>Get statistics</el-button>
+      <router-link to="/hotels/create"
+                   style="text-decoration: none; color: inherit;">
+        <el-button class="hotels__buttons" round>Add Hotel</el-button>
+      </router-link>
+      <el-button class="hotels__buttons" type="info" round>Get statistics</el-button>
     </div>
     <div v-if="hotels.length === 0">There's nothing here yet</div>
     <HotelCard class="hotels__item"
@@ -122,5 +125,8 @@ export default {
     display: flex;
     width: 100%;
     justify-content: right;
+  }
+  .hotels__buttons {
+    margin: 0 0 0 10px;
   }
 </style>

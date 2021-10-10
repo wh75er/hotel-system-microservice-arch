@@ -14,6 +14,14 @@
         >
           Reserve
         </el-button>
+        <el-button
+            type="text"
+            size="small"
+            v-if="this.userSingletone.claims.role === 'admin'"
+            @click.prevent="editClicked(scope.$index, rooms)"
+        >
+          Edit
+        </el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -92,6 +100,9 @@ export default {
           })
         }
       }.bind(this))
+    },
+    editClicked(index, rows) {
+      console.log('EDIT CLICKED with: ', index, rows)
     }
   },
   mounted() {

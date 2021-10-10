@@ -158,27 +158,27 @@ func (u *HotelUsecase) DeleteHotel(hotelUuid string) (e error) {
 }
 
 func (u *HotelUsecase) validateHotel(opError errors.Op, h *models.Hotel) (e error) {
-	if len(h.Name) > 250 {
+	if len(h.Name) > 250 || len(h.Name) == 0 {
 		e = errors.E(opError, errors.HotelNameValidationError, e)
 		return
 	}
 
-	if len(h.Description) > 1000 {
+	if len(h.Description) > 1000 || len(h.Description) == 0 {
 		e = errors.E(opError, errors.HotelDescriptionValidationError, e)
 		return
 	}
 
-	if len(h.Country) > 100 {
+	if len(h.Country) > 100 || len(h.Country) == 0 {
 		e = errors.E(opError, errors.HotelCountryValidationError, e)
 		return
 	}
 
-	if len(h.City) > 100 {
+	if len(h.City) > 100 || len(h.City) == 0 {
 		e = errors.E(opError, errors.HotelCityValidationError, e)
 		return
 	}
 
-	if len(h.Address) > 250 {
+	if len(h.Address) > 250 || len(h.Address) == 0 {
 		e = errors.E(opError, errors.HotelAddressValidationError, e)
 		return
 	}

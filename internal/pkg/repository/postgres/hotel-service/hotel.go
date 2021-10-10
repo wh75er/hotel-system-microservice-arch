@@ -91,7 +91,7 @@ func (r *HotelRepository) AddHotel(h *models.Hotel) (e error) {
 
 	_, err := r.Db.Exec("INSERT INTO "+
 		"hotels(name, hotelUuid, description, country, city, address, isReady, creationDate) "+
-		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
 		h.Name, h.HotelUuid, h.Description, h.Country, h.City, h.Address, h.IsReady, h.CreationDate)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
