@@ -14,20 +14,18 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy loyalty
         uses: appleboy/ssh-action@master
-        env:
-          JWT_KEY=${{ secrets.LOYALTY_JWT_KEY }}
-          ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }}
-          ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
-          LOYALTY_SERVICE_PORT=${{ secrets.LOYALTY_SERVICE_PORT }}
         with:
           host: loyalty.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, LOYALTY_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
+            export JWT_KEY=${{ secrets.LOYALTY_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
+              LOYALTY_SERVICE_PORT=${{ secrets.LOYALTY_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d loyalty-service
 
@@ -38,23 +36,22 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy auth
         uses: appleboy/ssh-action@master
-        env:
-          JWT_KEY=${{ secrets.AUTH_JWT_KEY }}
-          ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }}
-          ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }}
-          USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }}
-          USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }}
-          USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
-          AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
         with:
           host: auth.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, USER_LOYALTY_SERVICE_URL, USER_LOYALTY_SERVICE_ADMIN_ID, USER_LOYALTY_SERVICE_ADMIN_SECRET, AUTH_SERVICE_PORT
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET, USER_LOYALTY_SERVICE_URL, USER_LOYALTY_SERVICE_ADMIN_ID, USER_LOYALTY_SERVICE_ADMIN_SECRET, AUTH_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
+            export JWT_KEY=${{ secrets.AUTH_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
+              USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }} \
+              USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
+              USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
+              AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d auth-service
             
@@ -65,20 +62,18 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy hotel
         uses: appleboy/ssh-action@master
-        env:
-          JWT_KEY=${{ secrets.HOTEL_JWT_KEY }}
-          ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }}
-          ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }}
-          HOTEL_SERVICE_PORT=${{ secrets.HOTEL_SERVICE_PORT }}
         with:
           host: hotel.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, HOTEL_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
+            export JWT_KEY=${{ secrets.HOTEL_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
+              HOTEL_SERVICE_PORT=${{ secrets.HOTEL_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d hotel-service
             
@@ -89,33 +84,24 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy payment
         uses: appleboy/ssh-action@master
-        env:
-          JWT_KEY=${{ secrets.PAYMENT_JWT_KEY }}
-          ADMIN_ID=${{ secrets.PAYMENT_SERVICE_ADMIN_ID }}
-          ADMIN_SECRET=${{ secrets.PAYMENT_SERVICE_ADMIN_SECRET }}
-          USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }}
-          USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }}
-          USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
-          USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}
-          USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }}
-          USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }}
-          PAYMENT_SERVICE_PORT=${{ secrets.PAYMENT_SERVICE_PORT }}
         with:
           host: payment.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, 
-            USER_LOYALTY_SERVICE_URL, 
-            USER_LOYALTY_SERVICE_ADMIN_ID, 
-            USER_LOYALTY_SERVICE_ADMIN_SECRET, 
-            USER_SERVICE_URL, 
-            USER_SERVICE_ADMIN_ID, 
-            USER_SERVICE_ADMIN_SECRET, 
-            PAYMENT_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
+            export JWT_KEY=${{ secrets.PAYMENT_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.PAYMENT_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.PAYMENT_SERVICE_ADMIN_SECRET }} \
+              USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }} \
+              USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
+              USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
+              USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }} \
+              USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }} \
+              USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
+              PAYMENT_SERVICE_PORT=${{ secrets.PAYMENT_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d payment-service
             
@@ -126,48 +112,30 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy reservation
         uses: appleboy/ssh-action@master
-        env:
-          JWT_KEY=${{ secrets.RESERVATION_JWT_KEY }}
-          ADMIN_ID=${{ secrets.RESERVATION_SERVICE_ADMIN_ID }}
-          ADMIN_SECRET=${{ secrets.RESERVATION_SERVICE_ADMIN_SECRET }}
-          USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }}
-          USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }}
-          USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
-          USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}
-          USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }}
-          USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }}
-          PAYMENT_SERVICE_URL=${{ secrets.PAYMENT_SERVICE_URL }}
-          PAYMENT_SERVICE_ADMIN_ID=${{ secrets.PAYMENT_SERVICE_ADMIN_ID }}
-          PAYMENT_SERVICE_ADMIN_SECRET=${{ secrets.PAYMENT_SERVICE_ADMIN_SECRET }}
-          HOTEL_SERVICE_URL=${{ secrets.HOTEL_SERVICE_URL }}
-          HOTEL_SERVICE_ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }}
-          HOTEL_SERVICE_ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }}
-          RESERVATION_SERVICE_PORT=${{ secrets.RESERVATION_SERVICE_PORT }}
         with:
           host: reservation.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, 
-            USER_LOYALTY_SERVICE_URL, 
-            USER_LOYALTY_SERVICE_ADMIN_ID, 
-            USER_LOYALTY_SERVICE_ADMIN_SECRET, 
-            USER_SERVICE_URL, 
-            USER_SERVICE_ADMIN_ID, 
-            USER_LOYALTY_SERVICE_ADMIN_SECRET, 
-            USER_SERVICE_URL, 
-            USER_SERVICE_ADMIN_ID,
-            USER_SERVICE_ADMIN_SECRET,
-            PAYMENT_SERVICE_URL,
-            PAYMENT_SERVICE_ADMIN_ID,
-            PAYMENT_SERVICE_ADMIN_SECRET,
-            HOTEL_SERVICE_URL,
-            HOTEL_SERVICE_ADMIN_ID,
-            HOTEL_SERVICE_ADMIN_SECRET,
-            RESERVATION_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
+            export JWT_KEY=${{ secrets.RESERVATION_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.RESERVATION_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.RESERVATION_SERVICE_ADMIN_SECRET }} \
+              USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }} \
+              USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
+              USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
+              USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }} \
+              USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }} \
+              USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
+              PAYMENT_SERVICE_URL=${{ secrets.PAYMENT_SERVICE_URL }} \
+              PAYMENT_SERVICE_ADMIN_ID=${{ secrets.PAYMENT_SERVICE_ADMIN_ID }} \
+              PAYMENT_SERVICE_ADMIN_SECRET=${{ secrets.PAYMENT_SERVICE_ADMIN_SECRET }} \
+              HOTEL_SERVICE_URL=${{ secrets.HOTEL_SERVICE_URL }} \
+              HOTEL_SERVICE_ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }} \
+              HOTEL_SERVICE_ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
+              RESERVATION_SERVICE_PORT=${{ secrets.RESERVATION_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d reservation-service
             
@@ -178,59 +146,37 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy gateway
         uses: appleboy/ssh-action@master
-        env:
-          JWT_KEY=${{ secrets.GATEWAY_JWT_KEY }}
-          ADMIN_ID=${{ secrets.GATEWAY_SERVICE_ADMIN_ID }}
-          ADMIN_SECRET=${{ secrets.GATEWAY_SERVICE_ADMIN_SECRET }}
-          USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }}
-          USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }}
-          USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
-          USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}
-          USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }}
-          USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }}
-          PAYMENT_SERVICE_URL=${{ secrets.PAYMENT_SERVICE_URL }}
-          PAYMENT_SERVICE_ADMIN_ID=${{ secrets.PAYMENT_SERVICE_ADMIN_ID }}
-          PAYMENT_SERVICE_ADMIN_SECRET=${{ secrets.PAYMENT_SERVICE_ADMIN_SECRET }}
-          HOTEL_SERVICE_URL=${{ secrets.HOTEL_SERVICE_URL }}
-          HOTEL_SERVICE_ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }}
-          HOTEL_SERVICE_ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }}
-          RESERVATION_SERVICE_URL=${{ secrets.RESERVATION_SERVICE_URL }}
-          RESERVATION_SERVICE_ADMIN_ID=${{ secrets.RESERVATION_SERVICE_ADMIN_ID }}
-          RESERVATION_SERVICE_ADMIN_SECRET=${{ secrets.RESERVATION_SERVICE_ADMIN_SECRET }}
-          GATEWAY_ADDRESS=${{ secrets.GATEWAY_ADDRESS }}
-          GATEWAY_SERVICE_PORT=${{ secrets.GATEWAY_SERVICE_PORT }}
         with:
           host: gateway.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET,
-            USER_LOYALTY_SERVICE_URL, 
-            USER_LOYALTY_SERVICE_ADMIN_ID, 
-            USER_LOYALTY_SERVICE_ADMIN_SECRET, 
-            USER_SERVICE_URL, 
-            USER_SERVICE_ADMIN_ID, 
-            USER_LOYALTY_SERVICE_ADMIN_SECRET, 
-            USER_SERVICE_URL, 
-            USER_SERVICE_ADMIN_ID,
-            USER_SERVICE_ADMIN_SECRET,
-            PAYMENT_SERVICE_URL,
-            PAYMENT_SERVICE_ADMIN_ID,
-            PAYMENT_SERVICE_ADMIN_SECRET,
-            HOTEL_SERVICE_URL,
-            HOTEL_SERVICE_ADMIN_ID,
-            HOTEL_SERVICE_ADMIN_SECRET,
-            RESERVATION_SERVICE_URL,
-            RESERVATION_SERVICE_ADMIN_ID,
-            RESERVATION_SERVICE_ADMIN_SECRET,
-            GATEWAY_ADDRESS,
-            GATEWAY_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
+            export JWT_KEY=${{ secrets.GATEWAY_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.GATEWAY_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.GATEWAY_SERVICE_ADMIN_SECRET }} \
+              USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }} \
+              USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
+              USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
+              USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }} \
+              USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }} \
+              USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
+              PAYMENT_SERVICE_URL=${{ secrets.PAYMENT_SERVICE_URL }} \
+              PAYMENT_SERVICE_ADMIN_ID=${{ secrets.PAYMENT_SERVICE_ADMIN_ID }} \
+              PAYMENT_SERVICE_ADMIN_SECRET=${{ secrets.PAYMENT_SERVICE_ADMIN_SECRET }} \
+              HOTEL_SERVICE_URL=${{ secrets.HOTEL_SERVICE_URL }} \
+              HOTEL_SERVICE_ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }} \
+              HOTEL_SERVICE_ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
+              RESERVATION_SERVICE_URL=${{ secrets.RESERVATION_SERVICE_URL }} \
+              RESERVATION_SERVICE_ADMIN_ID=${{ secrets.RESERVATION_SERVICE_ADMIN_ID }} \
+              RESERVATION_SERVICE_ADMIN_SECRET=${{ secrets.RESERVATION_SERVICE_ADMIN_SECRET }} \
+              GATEWAY_ADDRESS=${{ secrets.GATEWAY_ADDRESS }} \
+              GATEWAY_SERVICE_PORT=${{ secrets.GATEWAY_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d gateway-service
-            ./scripts/gen-envoy-conf
+            ./scripts/gen-envoy-conf.sh
             sudo docker-compose run --service-ports -d envoy
             
   Deploy-frontend:
@@ -241,10 +187,9 @@ jobs:
       - name: Deploy frontend
         uses: appleboy/ssh-action@master
         with:
-          host: gateway.bookinghotelservice.ru
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET
+          host: bookinghotelservice.ru
+          username: ${{ secrets.FRONTUSER }}
+          password: ${{ secrets.FRONTUSER }}
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
