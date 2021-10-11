@@ -26,6 +26,7 @@ jobs:
               ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
               ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
               LOYALTY_SERVICE_PORT=${{ secrets.LOYALTY_SERVICE_PORT }}
+            env > envfile
             sudo docker-compose down
             sudo docker-compose build
             sudo docker-compose --env-file ./envfile run --service-ports -d loyalty-service
