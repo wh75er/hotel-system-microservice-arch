@@ -12,8 +12,7 @@ services:
       dockerfile: ./build/gateway.Dockerfile
     ports:
       - "${GATEWAY_SERVICE_PORT-3000}:3000"
-    extra_hosts:
-      - "localhost:192.168.31.112"
+    restart: on-failure
   reservation-service:
     environment:
       JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
@@ -26,8 +25,7 @@ services:
       dockerfile: ./build/reservation.Dockerfile
     ports:
       - "${RESERVATION_SERVICE_PORT-3001}:3000"
-    extra_hosts:
-      - "localhost:192.168.31.112"
+    restart: on-failure
     depends_on:
       - db
   auth-service:
@@ -42,8 +40,7 @@ services:
       dockerfile: ./build/auth.Dockerfile
     ports:
       - "${AUTH_SERVICE_PORT-3002}:3000"
-    extra_hosts:
-      - "localhost:192.168.31.112"
+    restart: on-failure
     depends_on:
       - db
   hotel-service:
@@ -58,8 +55,7 @@ services:
       dockerfile: ./build/hotel.Dockerfile
     ports:
       - "${HOTEL_SERVICE_PORT-3003}:3000"
-    extra_hosts:
-      - "localhost:192.168.31.112"
+    restart: on-failure
     depends_on:
       - db
   loyalty-service:
@@ -74,8 +70,7 @@ services:
       dockerfile: ./build/loyalty.Dockerfile
     ports:
       - "${LOYALTY_SERVICE_PORT-3004}:3000"
-    extra_hosts:
-      - "localhost:192.168.31.112"
+    restart: on-failure
     depends_on:
       - db
   payment-service:
@@ -90,8 +85,7 @@ services:
       dockerfile: ./build/payment.Dockerfile
     ports:
       - "${PAYMENT_SERVICE_PORT-3005}:3000"
-    extra_hosts:
-      - "localhost:192.168.31.112"
+    restart: on-failure
     depends_on:
       - db
   db:
@@ -106,11 +100,12 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
-        version: '3'
+    restart: on-failure
   envoy:
     image: envoyproxy/envoy:v1.20-latest
     ports:
       - "10000:10000"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+    restart: on-failure
 
