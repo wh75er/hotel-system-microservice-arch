@@ -176,7 +176,7 @@ jobs:
               GATEWAY_SERVICE_PORT=${{ secrets.GATEWAY_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d gateway-service
-            ./scripts/gen-envoy-conf
+            ./scripts/gen-envoy-conf.sh
             sudo docker-compose run --service-ports -d envoy
             
   Deploy-frontend:
