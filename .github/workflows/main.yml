@@ -187,10 +187,9 @@ jobs:
       - name: Deploy frontend
         uses: appleboy/ssh-action@master
         with:
-          host: gateway.bookinghotelservice.ru
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET
+          host: bookinghotelservice.ru
+          username: ${{ secrets.FRONTUSER }}
+          password: ${{ secrets.FRONTUSER }}
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
