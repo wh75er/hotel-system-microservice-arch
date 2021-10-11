@@ -28,7 +28,7 @@ jobs:
               LOYALTY_SERVICE_PORT=${{ secrets.LOYALTY_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose build
-            sudo docker-compose run --service-ports -d loyalty-service
+            sudo docker-compose run --env-file ./envfile --service-ports -d loyalty-service
 
   Deploy-auth-service:
     name: auth-service
@@ -80,7 +80,7 @@ jobs:
             env > envfile
             sudo docker-compose down
             sudo docker-compose build
-            sudo docker-compose run --env-file ./envfile run --service-ports -d hotel-service
+            sudo docker-compose --env-file ./envfile run --service-ports -d hotel-service
             
   Deploy-payment-service:
     name: payment-service
@@ -110,7 +110,7 @@ jobs:
             env > envfile
             sudo docker-compose down
             sudo docker-compose build
-            sudo docker-compose run --env-file ./envfile run --service-ports -d payment-service
+            sudo docker-compose --env-file ./envfile run --service-ports -d payment-service
             
   Deploy-reservation-service:
     name: reservation-service
@@ -146,7 +146,7 @@ jobs:
             env > envfile
             sudo docker-compose down
             sudo docker-compose build
-            sudo docker-compose run --env-file ./envfile run --service-ports -d reservation-service
+            sudo docker-compose --env-file ./envfile run --service-ports -d reservation-service
             
   Deploy-gateway-service:
     name: gateway-service
@@ -186,7 +186,7 @@ jobs:
             env > envfile
             sudo docker-compose down
             sudo docker-compose build
-            sudo docker-compose run --env-file ./envfile run --service-ports -d gateway-service
+            sudo docker-compose --env-file ./envfile run --service-ports -d gateway-service
             ./scripts/gen-envoy-conf.sh
             sudo docker-compose run --service-ports -d envoy
             
