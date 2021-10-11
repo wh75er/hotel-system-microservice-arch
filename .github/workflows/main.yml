@@ -27,6 +27,7 @@ jobs:
               ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
               LOYALTY_SERVICE_PORT=${{ secrets.LOYALTY_SERVICE_PORT }}
             sudo docker-compose down
+            sudo docker-compose build
             sudo docker-compose run --service-ports -d loyalty-service
 
   Deploy-auth-service:
@@ -53,6 +54,7 @@ jobs:
               USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
               AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
             sudo docker-compose down
+            sudo docker-compose build
             sudo docker-compose run --service-ports -d auth-service
             
   Deploy-hotel-service:
@@ -75,6 +77,7 @@ jobs:
               ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
               HOTEL_SERVICE_PORT=${{ secrets.HOTEL_SERVICE_PORT }}
             sudo docker-compose down
+            sudo docker-compose build
             sudo docker-compose run --service-ports -d hotel-service
             
   Deploy-payment-service:
@@ -103,6 +106,7 @@ jobs:
               USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
               PAYMENT_SERVICE_PORT=${{ secrets.PAYMENT_SERVICE_PORT }}
             sudo docker-compose down
+            sudo docker-compose build
             sudo docker-compose run --service-ports -d payment-service
             
   Deploy-reservation-service:
@@ -137,6 +141,7 @@ jobs:
               HOTEL_SERVICE_ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
               RESERVATION_SERVICE_PORT=${{ secrets.RESERVATION_SERVICE_PORT }}
             sudo docker-compose down
+            sudo docker-compose build
             sudo docker-compose run --service-ports -d reservation-service
             
   Deploy-gateway-service:
@@ -175,6 +180,7 @@ jobs:
               GATEWAY_ADDRESS=${{ secrets.GATEWAY_ADDRESS }} \
               GATEWAY_SERVICE_PORT=${{ secrets.GATEWAY_SERVICE_PORT }}
             sudo docker-compose down
+            sudo docker-compose build
             sudo docker-compose run --service-ports -d gateway-service
             ./scripts/gen-envoy-conf.sh
             sudo docker-compose run --service-ports -d envoy
