@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto";
+
+package proto;
+
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
+service ReservationService {
+  rpc GetToken (common.Credentials) returns (common.Token) {}
+
+  rpc AddReservation (Reservation) returns (common.UUID) {}
+  rpc CancelReservation (common.UUID) returns (common.Empty) {}
+  rpc GetReservation (common.UUID) returns (Reservation) {}
+  rpc GetReservationsByUser (common.UUID) returns (Reservations) {}
+  rpc CreatePayment (common.UUID) returns (common.UUID) {}
+}
+
+message Reservation {
+  common.UUID ReservationUuid = 1;
+  common.UUID RoomUuid = 2;
+  common.UUID UserUuid = 3;
+  common.UUID PaymentUuid = 4;
+  string Status = 5;
+  int64 date = 6;
+}
+
+message Reservations {
+  repeated Reservation Value = 1;
+}

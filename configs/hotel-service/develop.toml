@@ -1,0 +1,7 @@
+[server]
+port = 3003
+tokenDuration = "30m"
+
+[storage]
+url = "postgresql://postgres:postgres@localhost:5432/hoteldb?sslmode=disable"
+maxPoolConn = 50

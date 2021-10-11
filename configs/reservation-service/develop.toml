@@ -1,0 +1,7 @@
+[server]
+port = 3001
+tokenDuration = "30m"
+
+[storage]
+url = "postgresql://postgres:postgres@localhost:5432/reservationdb?sslmode=disable"
+maxPoolConn = 50

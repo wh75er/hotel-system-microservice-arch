@@ -1,0 +1,135 @@
+version: "3"
+services:
+  gateway-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+      USER_LOYALTY_SERVICE_URL: ${USER_LOYALTY_SERVICE_URL}
+      USER_LOYALTY_SERVICE_ADMIN_ID: ${USER_LOYALTY_SERVICE_ADMIN_ID}
+      USER_LOYALTY_SERVICE_ADMIN_SECRET: ${USER_LOYALTY_SERVICE_ADMIN_SECRET}
+      HOTEL_SERVICE_URL: ${HOTEL_SERVICE_URL}
+      HOTEL_SERVICE_ADMIN_ID: ${HOTEL_SERVICE_ADMIN_ID}
+      HOTEL_SERVICE_ADMIN_SECRET: ${HOTEL_SERVICE_ADMIN_SECRET}
+      PAYMENT_SERVICE_URL: ${PAYMENT_SERVICE_URL}
+      PAYMENT_SERVICE_ADMIN_ID: ${PAYMENT_SERVICE_ADMIN_ID}
+      PAYMENT_SERVICE_ADMIN_SECRET: ${PAYMENT_SERVICE_ADMIN_SECRET}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+      USER_SERVICE_ADMIN_ID: ${USER_SERVICE_ADMIN_ID}
+      USER_SERVICE_ADMIN_SECRET: ${USER_SERVICE_ADMIN_SECRET}
+      RESERVATION_SERVICE_URL: ${RESERVATION_SERVICE_URL}
+      RESERVATION_SERVICE_ADMIN_ID: ${RESERVATION_SERVICE_ADMIN_ID}
+      RESERVATION_SERVICE_ADMIN_SECRET: ${RESERVATION_SERVICE_ADMIN_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/gateway.Dockerfile
+    ports:
+      - "${GATEWAY_SERVICE_PORT-3000}:3000"
+    restart: on-failure
+  reservation-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+      USER_LOYALTY_SERVICE_URL: ${USER_LOYALTY_SERVICE_URL}
+      USER_LOYALTY_SERVICE_ADMIN_ID: ${USER_LOYALTY_SERVICE_ADMIN_ID}
+      USER_LOYALTY_SERVICE_ADMIN_SECRET: ${USER_LOYALTY_SERVICE_ADMIN_SECRET}
+      HOTEL_SERVICE_URL: ${HOTEL_SERVICE_URL}
+      HOTEL_SERVICE_ADMIN_ID: ${HOTEL_SERVICE_ADMIN_ID}
+      HOTEL_SERVICE_ADMIN_SECRET: ${HOTEL_SERVICE_ADMIN_SECRET}
+      PAYMENT_SERVICE_URL: ${PAYMENT_SERVICE_URL}
+      PAYMENT_SERVICE_ADMIN_ID: ${PAYMENT_SERVICE_ADMIN_ID}
+      PAYMENT_SERVICE_ADMIN_SECRET: ${PAYMENT_SERVICE_ADMIN_SECRET}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+      USER_SERVICE_ADMIN_ID: ${USER_SERVICE_ADMIN_ID}
+      USER_SERVICE_ADMIN_SECRET: ${USER_SERVICE_ADMIN_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/reservation.Dockerfile
+    ports:
+      - "${RESERVATION_SERVICE_PORT-3001}:3000"
+    restart: on-failure
+    depends_on:
+      - db
+  auth-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+      USER_LOYALTY_SERVICE_URL: ${USER_LOYALTY_SERVICE_URL}
+      USER_LOYALTY_SERVICE_ADMIN_ID: ${USER_LOYALTY_SERVICE_ADMIN_ID}
+      USER_LOYALTY_SERVICE_ADMIN_SECRET: ${USER_LOYALTY_SERVICE_ADMIN_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/auth.Dockerfile
+    ports:
+      - "${AUTH_SERVICE_PORT-3002}:3000"
+    restart: on-failure
+    depends_on:
+      - db
+  hotel-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/hotel.Dockerfile
+    ports:
+      - "${HOTEL_SERVICE_PORT-3003}:3000"
+    restart: on-failure
+    depends_on:
+      - db
+  loyalty-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/loyalty.Dockerfile
+    ports:
+      - "${LOYALTY_SERVICE_PORT-3004}:3000"
+    restart: on-failure
+    depends_on:
+      - db
+  payment-service:
+    environment:
+      JWT_KEY: ${JWT_KEY-DEVELOP_KEY}
+      ADMIN_ID: ${ADMIN_ID-DEVELOP_ID}
+      ADMIN_SECRET: ${ADMIN_SECRET-DEVELOP_SECRET}
+      USER_LOYALTY_SERVICE_URL: ${USER_LOYALTY_SERVICE_URL}
+      USER_LOYALTY_SERVICE_ADMIN_ID: ${USER_LOYALTY_SERVICE_ADMIN_ID}
+      USER_LOYALTY_SERVICE_ADMIN_SECRET: ${USER_LOYALTY_SERVICE_ADMIN_SECRET}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+      USER_SERVICE_ADMIN_ID: ${USER_SERVICE_ADMIN_ID}
+      USER_SERVICE_ADMIN_SECRET: ${USER_SERVICE_ADMIN_SECRET}
+    build:
+      context: .
+      dockerfile: ./build/payment.Dockerfile
+    ports:
+      - "${PAYMENT_SERVICE_PORT-3005}:3000"
+    restart: on-failure
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+      - ./init/init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_MULTIPLE_DATABASES=authdb,hoteldb,loyaltydb,paymentdb,reservationdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    restart: on-failure
+  envoy:
+    image: envoyproxy/envoy:v1.20-latest
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    restart: on-failure
+

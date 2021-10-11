@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/auth-service/proto";
+
+package proto;
+
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
+service AuthService {
+  rpc GetToken (common.Credentials) returns (common.Token) {}
+
+  rpc AddUser (User) returns (common.Empty) {}
+  rpc GetUser (common.UUID) returns (User) {}
+  rpc Login(User) returns (common.Token) {}
+  rpc CheckAuth (common.Token) returns (Role) {}
+}
+
+message Role {
+  string Value = 1;
+}
+
+message User {
+  common.UUID UserUuid = 1;
+  string Login = 2;
+  string Password = 3;
+  string Role = 4;
+}

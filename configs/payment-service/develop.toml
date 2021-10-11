@@ -1,0 +1,7 @@
+[server]
+port = 3005
+tokenDuration = "30m"
+
+[storage]
+url = "postgresql://postgres:postgres@localhost:5432/paymentdb?sslmode=disable"
+maxPoolConn = 50

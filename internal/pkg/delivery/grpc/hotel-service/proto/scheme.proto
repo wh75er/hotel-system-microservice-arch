@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto";
+
+package proto;
+
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
+service HotelService {
+  rpc GetToken (common.Credentials) returns (common.Token) {}
+
+  rpc AddHotel (Hotel) returns (common.Empty) {}
+  rpc GetHotel (common.UUID) returns (Hotel) {}
+  rpc GetHotels (common.Empty) returns (HotelsResponse) {}
+  rpc PatchHotel (Hotel) returns (common.Empty) {}
+  rpc DeleteHotel (common.UUID) returns (common.Empty) {}
+
+  rpc AddRoom (Room) returns (common.Empty) {}
+  rpc GetRooms (common.UUID) returns (RoomsResponse) {}
+  rpc GetRoom (common.UUID) returns (Room) {}
+  rpc TakeRoom (common.UUID) returns (common.Empty) {}
+  rpc DismissRoom (common.UUID) returns (common.Empty) {}
+  rpc PatchRoom (Room) returns (common.Empty) {}
+  rpc DeleteRoom (common.UUID) returns (common.Empty) {}
+}
+
+message Room {
+  string RoomType = 1;
+  int64 Amount = 2;
+  int64 Beds = 3;
+  string hotelUuid = 4;
+  string roomUuid = 5;
+  int64 CreationDate = 6;
+  repeated string Offers = 7;
+  int64 NightPrice = 8;
+}
+
+message Hotel {
+  string Name = 1;
+  string HotelUuid = 2;
+  string Description = 4;
+  string Country = 5;
+  string City = 6;
+  string Address = 7;
+  bool IsReady = 8;
+  int64 CreationDate = 9;
+  repeated Room rooms = 10;
+}
+
+message HotelsResponse {
+  repeated Hotel Hotels = 1;
+}
+
+message RoomsResponse {
+  repeated Room Rooms = 1;
+}

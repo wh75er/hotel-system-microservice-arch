@@ -1,0 +1,22 @@
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.box-card__text {
+    font-size: var(--el-font-size-base);
+}
+
+.box-card__item {
+    display: flex;
+    margin-bottom: 18px;
+}
+
+.box-card__caption {
+    margin-left: 4px
+}
+
+.card-header__label {
+    font-size: var(--el-font-size-medium);
+}
