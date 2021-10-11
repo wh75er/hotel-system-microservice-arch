@@ -22,10 +22,6 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull -f
-            export JWT_KEY=${{ secrets.LOYALTY_JWT_KEY }} \
-              ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
-              ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
-              LOYALTY_SERVICE_PORT=${{ secrets.LOYALTY_SERVICE_PORT }}
             sudo docker-compose down
             sudo docker-compose run --service-ports -d loyalty-service
 
