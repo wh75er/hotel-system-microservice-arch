@@ -1,1 +1,1 @@
-export const gatewayLocation = "http://localhost:10000"
+export const gatewayLocation = "http://gateway.bookinghotelservice.ru:10000"
