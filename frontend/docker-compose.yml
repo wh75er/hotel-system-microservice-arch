@@ -1,8 +1,0 @@
-version: '3'
-services:
-  envoy:
-    image: envoyproxy/envoy:v1.20-latest
-    ports:
-      - "10000:10000"
-    volumes:
-      - ./envoy.yaml:/etc/envoy/envoy.yaml

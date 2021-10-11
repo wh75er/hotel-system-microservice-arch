@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3"
 services:
   gateway-service:
     environment:
@@ -106,3 +106,11 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+        version: '3'
+  envoy:
+    image: envoyproxy/envoy:v1.20-latest
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+
