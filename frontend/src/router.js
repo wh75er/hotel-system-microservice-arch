@@ -7,6 +7,7 @@ import UserView from './components/UserView.vue'
 import HotelForm from './components/HotelForm.vue'
 import RoomForm from './components/RoomForm.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import RoomEditForm from "@/components/RoomEditForm";
 
 const routes = [
     {
@@ -50,6 +51,11 @@ const routes = [
                 path: 'hotels/:id/rooms/create',
                 name: 'roomCreate',
                 component: RoomForm,
+            },
+            {
+                path: 'hotels/:id/rooms/:roomUuid/patch',
+                name: 'roomPatch',
+                component: RoomEditForm,
             }
         ],
     },

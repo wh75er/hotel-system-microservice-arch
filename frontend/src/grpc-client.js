@@ -181,4 +181,23 @@ export default class GatewayClient {
 
         this.client.addRoom(req, {"authorization": payload.token}, callback)
     }
+
+    /**
+     *
+     * @param {{room: {hotelUuid, roomUuid, roomType, amount, beds, offers, nightPrice}, token}} payload
+     * @param callback
+     */
+    patchRoom(payload, callback) {
+        console.log('patchRoom payload: ', payload)
+        const req = new Room()
+        req.setHoteluuid(payload.room.hotelUuid)
+        req.setRoomuuid(payload.room.roomUuid)
+        req.setRoomtype(payload.room.roomType)
+        req.setAmount(payload.room.amount)
+        req.setBeds(payload.room.beds)
+        req.setOffersList(payload.room.offers)
+        req.setNightprice(payload.room.nightPrice)
+
+        this.client.patchRoom(req, {"authorization": payload.token}, callback)
+    }
 }

@@ -103,6 +103,7 @@ export default {
     },
     editClicked(index, rows) {
       console.log('EDIT CLICKED with: ', index, rows)
+      this.$router.push({ name: 'roomPatch', params: { id: rows[index].HotelUuid, roomUuid: rows[index].RoomUuid }})
     }
   },
   mounted() {
