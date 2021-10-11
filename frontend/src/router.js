@@ -5,6 +5,7 @@ import SignUpForm from './components/SignUpForm.vue'
 import SignInForm from './components/SignInForm.vue'
 import UserView from './components/UserView.vue'
 import HotelForm from './components/HotelForm.vue'
+import RoomForm from './components/RoomForm.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -44,6 +45,11 @@ const routes = [
             {
                 path: 'hotels/create',
                 component: HotelForm,
+            },
+            {
+                path: 'hotels/:id/rooms/create',
+                name: 'roomCreate',
+                component: RoomForm,
             }
         ],
     },

@@ -1,6 +1,6 @@
 import { GatewayServiceClient } from './proto/internal/pkg/delivery/grpc/gateway-service/proto/scheme_grpc_web_pb.js'
 import { User } from './proto/internal/pkg/delivery/grpc/auth-service/proto/scheme_pb.js'
-import { Hotel } from './proto/internal/pkg/delivery/grpc/hotel-service/proto/scheme_pb.js'
+import { Hotel, Room } from './proto/internal/pkg/delivery/grpc/hotel-service/proto/scheme_pb.js'
 import { Reservation } from './proto/internal/pkg/delivery/grpc/reservation-service/proto/scheme_pb.js'
 import { Token, Empty, UUID } from './proto/internal/pkg/delivery/grpc/commonProto/common_pb.js'
 import { gatewayLocation }  from './consts/config.js'
@@ -162,5 +162,23 @@ export default class GatewayClient {
         req.setAddress(payload.hotel.address)
 
         this.client.addHotel(req, {"authorization": payload.token}, callback)
+    }
+
+    /**
+     *
+     * @param {{room: {hotelUuid, roomType, amount, beds, offers, nightPrice}, token}} payload
+     * @param callback
+     */
+    createRoom(payload, callback) {
+        console.log('createRoom payload: ', payload)
+        const req = new Room()
+        req.setHoteluuid(payload.room.hotelUuid)
+        req.setRoomtype(payload.room.roomType)
+        req.setAmount(payload.room.amount)
+        req.setBeds(payload.room.beds)
+        req.setOffersList(payload.room.offers)
+        req.setNightprice(payload.room.nightPrice)
+
+        this.client.addRoom(req, {"authorization": payload.token}, callback)
     }
 }

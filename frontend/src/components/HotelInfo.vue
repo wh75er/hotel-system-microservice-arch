@@ -20,6 +20,9 @@
     <div class="box-card__item">
       <DatePicker/>
     </div>
+    <div class="box-card__item box-card__admin-buttons">
+      <el-button @click="onAddHotelClick" round>Add Room</el-button>
+    </div>
   </el-card>
 </template>
 
@@ -27,6 +30,11 @@
 @import '../../public/main.css';
 .hotel-info {
   width: 100%;
+}
+.box-card__admin-buttons {
+  display: flex;
+  width: 100%;
+  justify-content: right;
 }
 </style>
 
@@ -52,6 +60,9 @@ export default {
   //   }
   // },
   methods: {
+    onAddHotelClick() {
+      this.$router.push({name: 'roomCreate', params: { id: this.hotel.HotelUuid }})
+    }
   },
 }
 </script>

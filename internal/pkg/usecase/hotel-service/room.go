@@ -234,22 +234,22 @@ func (u *RoomUsecase) DeleteRoom(roomUuid string) (e error) {
 }
 
 func (u *RoomUsecase) validateRoom(opError errors.Op, r *models.Room) (e error) {
-	if len(r.RoomType) > 250 {
+	if len(r.RoomType) > 250 || len(r.RoomType) == 0 {
 		e = errors.E(opError, errors.RoomTypeValidationErr, e)
 		return
 	}
 
-	if r.Amount < 0 {
+	if r.Amount <= 0  {
 		e = errors.E(opError, errors.RoomAmountValidationErr, e)
 		return
 	}
 
-	if r.Beds < 0 {
+	if r.Beds <= 0 {
 		e = errors.E(opError, errors.RoomBedsValidationErr, e)
 		return
 	}
 
-	if r.NightPrice < 0 {
+	if r.NightPrice <= 0 {
 		e = errors.E(opError, errors.RoomNightPriceValidationErr, e)
 		return
 	}
