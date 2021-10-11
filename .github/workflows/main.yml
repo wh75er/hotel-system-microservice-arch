@@ -105,6 +105,7 @@ jobs:
               USER_SERVICE_ADMIN_ID=${{ secrets.USER_SERVICE_ADMIN_ID }} \
               USER_SERVICE_ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
               PAYMENT_SERVICE_PORT=${{ secrets.PAYMENT_SERVICE_PORT }}
+            env
             sudo docker-compose down
             sudo docker-compose build
             sudo docker-compose run --service-ports -d payment-service
