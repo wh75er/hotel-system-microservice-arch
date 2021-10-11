@@ -23,7 +23,7 @@ jobs:
           host: loyalty.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, LOYALTY_SERVICE_PORT
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET, LOYALTY_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
@@ -50,7 +50,7 @@ jobs:
           host: auth.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, USER_LOYALTY_SERVICE_URL, USER_LOYALTY_SERVICE_ADMIN_ID, USER_LOYALTY_SERVICE_ADMIN_SECRET, AUTH_SERVICE_PORT
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET, USER_LOYALTY_SERVICE_URL, USER_LOYALTY_SERVICE_ADMIN_ID, USER_LOYALTY_SERVICE_ADMIN_SECRET, AUTH_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
@@ -74,7 +74,7 @@ jobs:
           host: hotel.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, HOTEL_SERVICE_PORT
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET, HOTEL_SERVICE_PORT
           script_stop: true
           script: |
             cd ${{ secrets.PROJECT_DIR }}
@@ -104,7 +104,7 @@ jobs:
           host: payment.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, 
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET, 
             USER_LOYALTY_SERVICE_URL, 
             USER_LOYALTY_SERVICE_ADMIN_ID, 
             USER_LOYALTY_SERVICE_ADMIN_SECRET, 
@@ -147,7 +147,7 @@ jobs:
           host: reservation.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET, 
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET, 
             USER_LOYALTY_SERVICE_URL, 
             USER_LOYALTY_SERVICE_ADMIN_ID, 
             USER_LOYALTY_SERVICE_ADMIN_SECRET, 
@@ -203,7 +203,7 @@ jobs:
           host: gateway.bookinghotelservice.ru
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          env: JWT_KEY, ADMIN_ID, ADMIN_SECRET,
+          envs: JWT_KEY, ADMIN_ID, ADMIN_SECRET,
             USER_LOYALTY_SERVICE_URL, 
             USER_LOYALTY_SERVICE_ADMIN_ID, 
             USER_LOYALTY_SERVICE_ADMIN_SECRET, 
