@@ -118,7 +118,7 @@ export default {
             hotel: {
               name: this.ruleForm.name,
               description: this.ruleForm.description,
-              country: this.ruleForm.description,
+              country: this.ruleForm.country,
               city: this.ruleForm.city,
               address: this.ruleForm.address,
             },
