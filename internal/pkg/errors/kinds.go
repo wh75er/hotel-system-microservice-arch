@@ -72,6 +72,8 @@ const (
 	ReservationDateValidationLateErr
 	ReservationDateValidationFarErr
 	ReservationDateValidationErr
+	RepositoryStatErr
+	StatServiceUnavailable
 )
 
 func (k Kind) String() string {
@@ -202,6 +204,10 @@ func (k Kind) String() string {
 		return "You cannot reserve room this far(reservation available only 1 month far)"
 	case ReservationDateValidationErr:
 		return "Date validation error"
+	case RepositoryStatErr:
+		return "Something wrong with stat repository"
+	case StatServiceUnavailable:
+		return "Stat service unavailable"
 	}
 
 	return "Unimplemented error"
@@ -272,6 +278,7 @@ func GetHttpError(err error) int {
 		PaymentServiceUnavailable,
 		UserLoyaltyServiceUnavailable,
 		HotelServiceUnavailable,
+		StatServiceUnavailable,
 	}
 
 	internalError := []Kind{
@@ -289,6 +296,7 @@ func GetHttpError(err error) int {
 		RepositoryUserErr,
 		RepositoryReservationErr,
 		FailedToHashPassword,
+		RepositoryStatErr,
 	}
 
 	kind := GetKind(err)

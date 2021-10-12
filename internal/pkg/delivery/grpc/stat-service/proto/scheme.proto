@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto";
+
+package proto;
+
+import "internal/pkg/delivery/grpc/commonProto/common.proto";
+
+service StatService {
+  rpc GetToken (common.Credentials) returns (common.Token) {}
+
+  rpc GetStat (common.Empty) returns (Stat) {}
+  rpc UpdateRoomsAmount (Delta) returns (common.Empty) {}
+  rpc UpdateReservationsAmount (Delta) returns (common.Empty) {}
+}
+
+message Delta {
+  int64 Value = 1;
+}
+
+message Stat {
+  int64 RoomsAmount = 1;
+  int64 ReservationsAmount = 2;
+}

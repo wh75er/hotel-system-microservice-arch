@@ -19,6 +19,8 @@ import (
 	payment_proto "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
 	reservationService "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service"
 	reservation_proto "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto"
+	stat_service "hotel-booking-system/internal/pkg/delivery/grpc/stat-service"
+	stat_proto "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/usecase"
@@ -35,6 +37,7 @@ type App struct {
 	PaymentClient     payment_proto.PaymentServiceClient
 	UserLoyaltyClient loyalty_proto.LoyaltyServiceClient
 	UsersClient       users_proto.AuthServiceClient
+	StatClient       stat_proto.StatServiceClient
 	logger            logs.LoggerInterface
 }
 
@@ -44,6 +47,7 @@ func New() *App {
 		newConfig(),
 		"",
 		&grpc.Server{},
+		nil,
 		nil,
 		nil,
 		nil,
@@ -83,6 +87,7 @@ func (a *App) Run(configFilename string) {
 		a.UserLoyaltyClient,
 		a.PaymentClient,
 		a.ReservationClient,
+		a.StatClient,
 		a.logger,
 	)
 
@@ -136,7 +141,12 @@ func (a *App) setupApp() {
 	if err := a.conf.setPaymentServiceFromEnv(); err != nil {
 		a.logger.Fatal(err)
 	}
+
 	if err := a.conf.setReservationServiceFromEnv(); err != nil {
+		a.logger.Fatal(err)
+	}
+
+	if err := a.conf.setStatServiceFromEnv(); err != nil {
 		a.logger.Fatal(err)
 	}
 
@@ -148,6 +158,7 @@ func (a *App) setupApp() {
 	a.logger.Infof("Loaded User service data: %v", a.conf.UserService)
 	a.logger.Infof("Loaded Hotel service data: %v", a.conf.HotelService)
 	a.logger.Infof("Loaded Reservation service data: %v", a.conf.ReservationService)
+	a.logger.Infof("Loaded Stat service data: %v", a.conf.StatService)
 }
 
 func (a *App) establishClientConnectWithAllDependentServices() func() {
@@ -158,6 +169,7 @@ func (a *App) establishClientConnectWithAllDependentServices() func() {
 	hotelServiceConnCloseFunction := a.setupHotelServiceConnection(jwtTokenManager)
 	paymentServiceConnCloseFunction := a.setupPaymentServiceConnection(jwtTokenManager)
 	reservationServiceConnCloseFunction := a.setupReservationServiceConnection(jwtTokenManager)
+	statServiceConnCloseFunction := a.setupStatServiceConnection(jwtTokenManager)
 
 	return func() {
 		userLoyaltyServiceConnCloseFunction()
@@ -165,6 +177,7 @@ func (a *App) establishClientConnectWithAllDependentServices() func() {
 		hotelServiceConnCloseFunction()
 		paymentServiceConnCloseFunction()
 		reservationServiceConnCloseFunction()
+		statServiceConnCloseFunction()
 	}
 }
 
@@ -304,6 +317,34 @@ func (a *App) setupReservationServiceConnection(jwtTokenManager *jwtManager.JWTM
 	authInterceptor.GrpcServiceClient = client
 
 	a.ReservationClient = client
+
+	return func() { conn.Close() }
+}
+
+func (a *App) setupStatServiceConnection(jwtTokenManager *jwtManager.JWTManager) func() {
+	authInterceptor := interceptors.NewClientAuthInterceptor(
+		a.conf.StatService.Credentials,
+		jwtTokenManager,
+		interceptors.MethodsRoleMapToSet(stat_service.AccessibleStatServicePaths()),
+		logrus.New(),
+	)
+
+	conn, err := grpc.Dial(
+		fmt.Sprintf(a.conf.StatService.Url),
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(authInterceptor.Unary()),
+	)
+	if err != nil {
+		a.logger.Fatalf("Failed to make User Stat Service grpc client: %v", err)
+	}
+
+	// Create specific client out of connection
+	client := stat_proto.NewStatServiceClient(conn)
+
+	// Add client GetToken API to auth interceptor
+	authInterceptor.GrpcServiceClient = client
+
+	a.StatClient = client
 
 	return func() { conn.Close() }
 }

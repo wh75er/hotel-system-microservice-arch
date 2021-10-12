@@ -10,6 +10,7 @@ import "internal/pkg/delivery/grpc/hotel-service/proto/scheme.proto";
 import "internal/pkg/delivery/grpc/loyalty-service/proto/scheme.proto";
 import "internal/pkg/delivery/grpc/payment-service/proto/scheme.proto";
 import "internal/pkg/delivery/grpc/reservation-service/proto/scheme.proto";
+import "internal/pkg/delivery/grpc/stat-service/proto/scheme.proto";
 
 service GatewayService {
   rpc AddReservation (proto.Reservation) returns (common.UUID) {}
@@ -37,4 +38,6 @@ service GatewayService {
   rpc GetDiscount (common.UUID) returns (proto.Loyalty) {}
 
   rpc GetPayment (common.UUID) returns (proto.Payment) {}
+
+  rpc GetStat (common.Empty) returns (proto.Stat) {}
 }

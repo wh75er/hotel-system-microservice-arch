@@ -3,10 +3,13 @@ package hotel_service
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	hotelServer "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service"
 	pb "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	"hotel-booking-system/internal/pkg/delivery/grpc/interceptors"
+	stat_service "hotel-booking-system/internal/pkg/delivery/grpc/stat-service"
+	stat_proto "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto"
 	jwtManager "hotel-booking-system/internal/pkg/jwt-manager"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/repository/postgres"
@@ -21,6 +24,7 @@ type App struct {
 	conf       *config
 	configName string
 	server     *grpc.Server
+	StatClient       stat_proto.StatServiceClient
 	logger     logs.LoggerInterface
 }
 
@@ -30,6 +34,7 @@ func New() *App {
 		newConfig(),
 		"",
 		&grpc.Server{},
+		nil,
 		logs.NewLogrus(),
 	}
 }
@@ -38,6 +43,10 @@ func (a *App) Run(configFilename string) {
 	a.configName = configFilename
 	a.setupApp()
 	a.setupStorage()
+	connectionsCloseFunction := a.establishClientConnectWithAllDependentServices()
+	defer func() {
+		connectionsCloseFunction()
+	}()
 
 	jwtTokenManager := jwtManager.NewJWTManager(a.conf.Server.JWTSecret, a.conf.Server.TokenDuration.Duration)
 
@@ -55,7 +64,7 @@ func (a *App) Run(configFilename string) {
 	roomRepository := hotelRepositories.NewRoomRepository(a.db, a.logger)
 
 	hotelUsecase := hotelUsecases.NewHotelUsecase(hotelRepository, roomRepository, a.logger)
-	roomUsecase := hotelUsecases.NewRoomUsecase(hotelRepository, roomRepository, a.logger)
+	roomUsecase := hotelUsecases.NewRoomUsecase(hotelRepository, roomRepository, a.StatClient, a.logger)
 	adminCredsUsecase := usecase.NewAdminCredentialsUsecase(a.conf.AdminCredentials)
 
 	hotelS := hotelServer.NewHotelServer(
@@ -110,7 +119,50 @@ func (a *App) setupApp() {
 		a.logger.Fatal(err)
 	}
 
+	if err := a.conf.setStatServiceFromEnv(); err != nil {
+		a.logger.Fatal(err)
+	}
+
 	a.logger.Infof("Loaded JWT Key: %v***", a.conf.Server.JWTSecret[:2])
 	a.logger.Infof("Loaded Admin Id: %v", a.conf.AdminCredentials.Id)
 	a.logger.Infof("Loaded Admin Secret: %v***", a.conf.AdminCredentials.Secret[:2])
+	a.logger.Infof("Loaded Stat service data: %v", a.conf.StatService)
+}
+
+func (a *App) establishClientConnectWithAllDependentServices() func() {
+	jwtTokenManager := jwtManager.NewJWTManager("", 0)
+
+	statServiceConnCloseFunction := a.setupStatServiceConnection(jwtTokenManager)
+
+	return func() {
+		statServiceConnCloseFunction()
+	}
+}
+
+func (a *App) setupStatServiceConnection(jwtTokenManager *jwtManager.JWTManager) func() {
+	authInterceptor := interceptors.NewClientAuthInterceptor(
+		a.conf.StatService.Credentials,
+		jwtTokenManager,
+		interceptors.MethodsRoleMapToSet(stat_service.AccessibleStatServicePaths()),
+		logrus.New(),
+	)
+
+	conn, err := grpc.Dial(
+		fmt.Sprintf(a.conf.StatService.Url),
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(authInterceptor.Unary()),
+	)
+	if err != nil {
+		a.logger.Fatalf("Failed to make User Stat Service grpc client: %v", err)
+	}
+
+	// Create specific client out of connection
+	client := stat_proto.NewStatServiceClient(conn)
+
+	// Add client GetToken API to auth interceptor
+	authInterceptor.GrpcServiceClient = client
+
+	a.StatClient = client
+
+	return func() { conn.Close() }
 }

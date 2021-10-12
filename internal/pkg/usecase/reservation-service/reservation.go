@@ -10,6 +10,7 @@ import (
 	hotel_proto "hotel-booking-system/internal/pkg/delivery/grpc/hotel-service/proto"
 	loyalty_proto "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	payment_proto "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
+	stat_proto "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -21,6 +22,7 @@ type ReservationUsecase struct {
 	PaymentServiceClient     payment_proto.PaymentServiceClient
 	UserServiceClient        users_proto.AuthServiceClient
 	UserLoyaltyServiceClient loyalty_proto.LoyaltyServiceClient
+	StatServiceClient 		 stat_proto.StatServiceClient
 	Logger                   logs.LoggerInterface
 }
 
@@ -30,6 +32,7 @@ func NewReservationUsecase(
 	paymentClient payment_proto.PaymentServiceClient,
 	userClient users_proto.AuthServiceClient,
 	userLoyaltyClient loyalty_proto.LoyaltyServiceClient,
+	statServiceClient 		 stat_proto.StatServiceClient,
 	logger logs.LoggerInterface,
 ) models.ReservationUsecaseI {
 	return &ReservationUsecase{
@@ -38,6 +41,7 @@ func NewReservationUsecase(
 		paymentClient,
 		userClient,
 		userLoyaltyClient,
+		statServiceClient,
 		logger,
 	}
 }
@@ -158,6 +162,20 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 		r.PaymentUuid = validPaymentUuid
 	}
 
+	// add reservation to statistics
+
+	_, err = u.StatServiceClient.UpdateReservationsAmount(context.Background(), &stat_proto.Delta{ Value: 1 })
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.StatServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		serviceKind := errors.Kind(status.Code(err))
+		e = errors.E(opError, serviceKind)
+		return
+	}
+
 	r.ReservationUuid = reservationUuid
 	r.Status = models.ActiveReservationStatus
 
@@ -191,6 +209,18 @@ func (u *ReservationUsecase) CancelReservation(reservationUuid string) (e error)
 		}
 		e = errors.E(opError, errors.RepositoryReservationErr, err)
 		u.Logger.Error("Usecase error: ", e)
+		return
+	}
+
+	_, err = u.StatServiceClient.UpdateReservationsAmount(context.Background(), &stat_proto.Delta{ Value: -1 })
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.StatServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		serviceKind := errors.Kind(status.Code(err))
+		e = errors.E(opError, serviceKind)
 		return
 	}
 

@@ -24,6 +24,9 @@ const (
 	userServiceUrlEnv                = "USER_SERVICE_URL"
 	userServiceAdminIdEnv            = "USER_SERVICE_ADMIN_ID"
 	userServiceAdminSecretEnv        = "USER_SERVICE_ADMIN_SECRET"
+	statServiceUrlEnv         = "STAT_SERVICE_URL"
+	statServiceAdminIdEnv     = "STAT_SERVICE_ADMIN_ID"
+	statServiceAdminSecretEnv = "STAT_SERVICE_ADMIN_SECRET"
 	configDst                        = "configs/reservation-service/"
 )
 
@@ -43,6 +46,7 @@ type config struct {
 	UserLoyaltyService DependencyService
 	HotelService       DependencyService
 	PaymentService     DependencyService
+	StatService        DependencyService
 	UserService        DependencyService
 }
 
@@ -209,6 +213,31 @@ func (c *config) setUserServiceFromEnv() error {
 	}
 
 	c.UserService.Credentials.Secret = secret
+
+	return nil
+}
+
+func (c *config) setStatServiceFromEnv() error {
+	url, err := getEnvVariable(statServiceUrlEnv)
+	if err != nil {
+		return err
+	}
+
+	c.StatService.Url = url
+
+	id, err := getEnvVariable(statServiceAdminIdEnv)
+	if err != nil {
+		return err
+	}
+
+	c.StatService.Credentials.Id = id
+
+	secret, err := getEnvVariable(statServiceAdminSecretEnv)
+	if err != nil {
+		return err
+	}
+
+	c.StatService.Credentials.Secret = secret
 
 	return nil
 }

@@ -1,8 +1,11 @@
 package hotel_service
 
 import (
+	"context"
 	"github.com/aglyzov/go-patch"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/status"
+	stat_proto "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -12,11 +15,22 @@ import (
 type RoomUsecase struct {
 	HotelRepository models.HotelRepositoryI
 	RoomRepository  models.RoomRepositoryI
+	StatServiceClient stat_proto.StatServiceClient
 	Logger          logs.LoggerInterface
 }
 
-func NewRoomUsecase(hotelR models.HotelRepositoryI, roomR models.RoomRepositoryI, logger logs.LoggerInterface) models.RoomUsecaseI {
-	return &RoomUsecase{hotelR, roomR, logger}
+func NewRoomUsecase(
+	hotelR models.HotelRepositoryI,
+	roomR models.RoomRepositoryI,
+	statServiceClient stat_proto.StatServiceClient,
+	logger logs.LoggerInterface,
+) models.RoomUsecaseI {
+	return &RoomUsecase{
+		hotelR,
+		roomR,
+		statServiceClient,
+		logger,
+	}
 }
 
 func (u *RoomUsecase) GetRooms(hotelUuid string) (r []models.Room, e error) {
@@ -101,6 +115,20 @@ func (u *RoomUsecase) AddRoom(r *models.Room) (e error) {
 	r.RoomUuid = uuid.New()
 	r.CreationDate = time.Now()
 
+	// add room to statistics
+
+	_, err := u.StatServiceClient.UpdateRoomsAmount(context.Background(), &stat_proto.Delta{ Value: int64(r.Amount) })
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.StatServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		serviceKind := errors.Kind(status.Code(err))
+		e = errors.E(opError, serviceKind)
+		return
+	}
+
 	e = u.RoomRepository.AddRoom(r)
 	if e != nil {
 		e = errors.E(opError, errors.RepositoryRoomErr)
@@ -135,6 +163,22 @@ func (u *RoomUsecase) PatchRoom(r *models.Room) (e error) {
 	// reset unchangable fields
 	r.CreationDate = time.Time{}
 	r.HotelUuid = uuid.UUID{}
+
+	// change room amount in statistics
+
+	newAmount := r.Amount - currentRoom.Amount
+
+	_, err := u.StatServiceClient.UpdateRoomsAmount(context.Background(), &stat_proto.Delta{ Value: int64(newAmount) })
+	if err != nil {
+		if status.Code(err) < errors.MaxGrpcCodeValue {
+			e = errors.E(opError, errors.StatServiceUnavailable, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+		serviceKind := errors.Kind(status.Code(err))
+		e = errors.E(opError, serviceKind)
+		return
+	}
 
 	_, e = patch.Struct(&currentRoom, r)
 	if e != nil {

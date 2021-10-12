@@ -16,6 +16,9 @@ reservation-service:
 gateway-service:
 	go run cmd/gateway-service/main.go
 
+stat-service:
+	go run cmd/stat-service/main.go
+
 hotel-client:
 	go run cmd/hotel-client/main.go
 
@@ -53,6 +56,11 @@ gen-proto-gateway:
 	protoc --go_out=. --go_opt=paths=source_relative \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     internal/pkg/delivery/grpc/gateway-service/proto/scheme.proto
+
+gen-proto-stat:
+	protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    internal/pkg/delivery/grpc/stat-service/proto/scheme.proto
 
 gen-proto-frontend:
 	protoc --js_out=import_style=commonjs:./frontend/src/proto \

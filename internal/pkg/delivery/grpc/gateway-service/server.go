@@ -11,6 +11,7 @@ import (
 	proto3 "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	proto4 "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
 	proto5 "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto"
+	proto6 "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto"
 	"hotel-booking-system/internal/pkg/errors"
 	"hotel-booking-system/internal/pkg/logs"
 	"hotel-booking-system/internal/pkg/models"
@@ -24,6 +25,7 @@ type GatewayServer struct {
 	UserLoyaltyServiceClient proto3.LoyaltyServiceClient
 	PaymentServiceClient     proto4.PaymentServiceClient
 	ReservationServiceClient proto5.ReservationServiceClient
+	StatServiceClient 		 proto6.StatServiceClient
 	Logger                   logs.LoggerInterface
 }
 
@@ -34,6 +36,7 @@ func NewGatewayServer(
 	userLoyaltyClient proto3.LoyaltyServiceClient,
 	paymentClient proto4.PaymentServiceClient,
 	reservationClient proto5.ReservationServiceClient,
+	statServiceClient 		 proto6.StatServiceClient,
 	logger logs.LoggerInterface,
 ) proto.GatewayServiceServer {
 	return &GatewayServer{
@@ -43,6 +46,7 @@ func NewGatewayServer(
 		UserLoyaltyServiceClient: userLoyaltyClient,
 		PaymentServiceClient:     paymentClient,
 		ReservationServiceClient: reservationClient,
+		StatServiceClient: statServiceClient,
 		Logger:                   logger,
 	}
 }
@@ -285,4 +289,16 @@ func (s *GatewayServer) GetPayment(ctx context.Context, pu *commonProto.UUID) (*
 	}
 
 	return p, nil
+}
+
+func(s *GatewayServer) GetStat(ctx context.Context, p *commonProto.Empty) (*proto6.Stat, error) {
+	stat, err := s.StatServiceClient.GetStat(context.Background(), p)
+	if err != nil {
+		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
+		stat, _ := status.FromError(err)
+		err = status.Error(codes.Code(errors.GetHttpError(errors.E(errors.Kind(stat.Code())))), stat.Message())
+		return nil, err
+	}
+
+	return stat, nil
 }

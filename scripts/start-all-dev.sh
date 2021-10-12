@@ -17,5 +17,6 @@ make hotel-service&
 make payment-service&
 make loyalty-service&
 make reservation-service&
+make stat-service&
 
 wait

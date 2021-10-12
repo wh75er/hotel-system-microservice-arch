@@ -1,4 +1,4 @@
-package hotel_service
+package stat_service
 
 import (
 	"fmt"
@@ -12,25 +12,16 @@ const (
 	jwtSecretEnv   = "JWT_KEY"
 	adminIdEnv     = "ADMIN_ID"
 	adminSecretEnv = "ADMIN_SECRET"
-	statServiceUrlEnv         = "STAT_SERVICE_URL"
-	statServiceAdminIdEnv     = "STAT_SERVICE_ADMIN_ID"
-	statServiceAdminSecretEnv = "STAT_SERVICE_ADMIN_SECRET"
-	configDst      = "configs/hotel-service/"
+	configDst      = "configs/stat-service/"
 )
 
 type duration struct {
 	time.Duration
 }
 
-type DependencyService struct {
-	Url         string
-	Credentials models.Credentials
-}
-
 type config struct {
 	Server           Server
 	Storage          Storage
-	StatService      DependencyService
 	AdminCredentials models.Credentials
 }
 
@@ -47,14 +38,14 @@ type Storage struct {
 
 func newConfig() *config {
 	return &config{
-		Server: Server{
+		Server{
 			Port: 3000,
 		},
-		Storage: Storage{
-			Url: "postgresql://postgres:postgres@localhost:5432/postgres",
-			MaxPoolConn: 30,
+		Storage{
+			"postgresql://postgres:postgres@localhost:5432/postgres",
+			30,
 		},
-		AdminCredentials: models.Credentials{},
+		models.Credentials{},
 	}
 }
 
@@ -88,31 +79,6 @@ func (c *config) setAdminCredsFromEnv() error {
 	}
 
 	c.AdminCredentials.Secret = secret
-
-	return nil
-}
-
-func (c *config) setStatServiceFromEnv() error {
-	url, err := getEnvVariable(statServiceUrlEnv)
-	if err != nil {
-		return err
-	}
-
-	c.StatService.Url = url
-
-	id, err := getEnvVariable(statServiceAdminIdEnv)
-	if err != nil {
-		return err
-	}
-
-	c.StatService.Credentials.Id = id
-
-	secret, err := getEnvVariable(statServiceAdminSecretEnv)
-	if err != nil {
-		return err
-	}
-
-	c.StatService.Credentials.Secret = secret
 
 	return nil
 }

@@ -13,6 +13,7 @@ import (
 	proto3 "hotel-booking-system/internal/pkg/delivery/grpc/loyalty-service/proto"
 	proto4 "hotel-booking-system/internal/pkg/delivery/grpc/payment-service/proto"
 	proto "hotel-booking-system/internal/pkg/delivery/grpc/reservation-service/proto"
+	proto5 "hotel-booking-system/internal/pkg/delivery/grpc/stat-service/proto"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -44,6 +45,7 @@ type GatewayServiceClient interface {
 	DeleteRoom(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*commonProto.Empty, error)
 	GetDiscount(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*proto3.Loyalty, error)
 	GetPayment(ctx context.Context, in *commonProto.UUID, opts ...grpc.CallOption) (*proto4.Payment, error)
+	GetStat(ctx context.Context, in *commonProto.Empty, opts ...grpc.CallOption) (*proto5.Stat, error)
 }
 
 type gatewayServiceClient struct {
@@ -234,6 +236,15 @@ func (c *gatewayServiceClient) GetPayment(ctx context.Context, in *commonProto.U
 	return out, nil
 }
 
+func (c *gatewayServiceClient) GetStat(ctx context.Context, in *commonProto.Empty, opts ...grpc.CallOption) (*proto5.Stat, error) {
+	out := new(proto5.Stat)
+	err := c.cc.Invoke(ctx, "/proto.GatewayService/GetStat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GatewayServiceServer is the server API for GatewayService service.
 // All implementations must embed UnimplementedGatewayServiceServer
 // for forward compatibility
@@ -258,6 +269,7 @@ type GatewayServiceServer interface {
 	DeleteRoom(context.Context, *commonProto.UUID) (*commonProto.Empty, error)
 	GetDiscount(context.Context, *commonProto.UUID) (*proto3.Loyalty, error)
 	GetPayment(context.Context, *commonProto.UUID) (*proto4.Payment, error)
+	GetStat(context.Context, *commonProto.Empty) (*proto5.Stat, error)
 	mustEmbedUnimplementedGatewayServiceServer()
 }
 
@@ -324,6 +336,9 @@ func (UnimplementedGatewayServiceServer) GetDiscount(context.Context, *commonPro
 }
 func (UnimplementedGatewayServiceServer) GetPayment(context.Context, *commonProto.UUID) (*proto4.Payment, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPayment not implemented")
+}
+func (UnimplementedGatewayServiceServer) GetStat(context.Context, *commonProto.Empty) (*proto5.Stat, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStat not implemented")
 }
 func (UnimplementedGatewayServiceServer) mustEmbedUnimplementedGatewayServiceServer() {}
 
@@ -698,6 +713,24 @@ func _GatewayService_GetPayment_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GatewayService_GetStat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(commonProto.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).GetStat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.GatewayService/GetStat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).GetStat(ctx, req.(*commonProto.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GatewayService_ServiceDesc is the grpc.ServiceDesc for GatewayService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -784,6 +817,10 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPayment",
 			Handler:    _GatewayService_GetPayment_Handler,
+		},
+		{
+			MethodName: "GetStat",
+			Handler:    _GatewayService_GetStat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

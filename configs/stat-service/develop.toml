@@ -1,0 +1,7 @@
+[server]
+port = 3008
+tokenDuration = "30m"
+
+[storage]
+url = "postgresql://postgres:postgres@localhost:5432/statdb?sslmode=disable"
+maxPoolConn = 50
