@@ -51,7 +51,7 @@ jobs:
               ADMIN_SECRET=${{ secrets.USER_SERVICE_ADMIN_SECRET }} \
               USER_LOYALTY_SERVICE_URL=${{ secrets.USER_LOYALTY_SERVICE_URL }} \
               USER_LOYALTY_SERVICE_ADMIN_ID=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_ID }} \
-              USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }}
+              USER_LOYALTY_SERVICE_ADMIN_SECRET=${{ secrets.USER_LOYALTY_SERVICE_ADMIN_SECRET }} \
               AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
             env > envfile
             sudo docker-compose down
