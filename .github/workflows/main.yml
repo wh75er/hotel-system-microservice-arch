@@ -30,6 +30,30 @@ jobs:
             sudo docker-compose down
             sudo docker-compose build
             sudo docker-compose --env-file ./envfile run --service-ports -d loyalty-service
+            
+  Deploy-stat-service:
+    name: stat-service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy stat
+        uses: appleboy/ssh-action@master
+        with:
+          host: stat.bookinghotelservice.ru
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script_stop: true
+          script: |
+            cd ${{ secrets.PROJECT_DIR }}
+            git pull -f
+            export JWT_KEY=${{ secrets.STAT_JWT_KEY }} \
+              ADMIN_ID=${{ secrets.STAT_SERVICE_ADMIN_ID }} \
+              ADMIN_SECRET=${{ secrets.STAT_SERVICE_ADMIN_SECRET }} \
+              STAT_SERVICE_PORT=${{ secrets.STAT_SERVICE_PORT }}
+            env > envfile
+            sudo docker-compose down
+            sudo docker-compose build
+            sudo docker-compose --env-file ./envfile run --service-ports -d stat-service
 
   Deploy-auth-service:
     name: auth-service
@@ -76,6 +100,9 @@ jobs:
             export JWT_KEY=${{ secrets.HOTEL_JWT_KEY }} \
               ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }} \
               ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
+              STAT_SERVICE_URL=${{ secrets.STAT_SERVICE_URL }} \
+              STAT_SERVICE_ADMIN_ID=${{ secrets.STAT_SERVICE_ADMIN_ID }} \
+              STAT_SERVICE_ADMIN_SECRET=${{ secrets.STAT_SERVICE_ADMIN_SECRET }} \
               HOTEL_SERVICE_PORT=${{ secrets.HOTEL_SERVICE_PORT }}
             env > envfile
             sudo docker-compose down
@@ -142,6 +169,9 @@ jobs:
               HOTEL_SERVICE_URL=${{ secrets.HOTEL_SERVICE_URL }} \
               HOTEL_SERVICE_ADMIN_ID=${{ secrets.HOTEL_SERVICE_ADMIN_ID }} \
               HOTEL_SERVICE_ADMIN_SECRET=${{ secrets.HOTEL_SERVICE_ADMIN_SECRET }} \
+              STAT_SERVICE_URL=${{ secrets.STAT_SERVICE_URL }} \
+              STAT_SERVICE_ADMIN_ID=${{ secrets.STAT_SERVICE_ADMIN_ID }} \
+              STAT_SERVICE_ADMIN_SECRET=${{ secrets.STAT_SERVICE_ADMIN_SECRET }} \
               RESERVATION_SERVICE_PORT=${{ secrets.RESERVATION_SERVICE_PORT }}
             env > envfile
             sudo docker-compose down
@@ -181,6 +211,9 @@ jobs:
               RESERVATION_SERVICE_URL=${{ secrets.RESERVATION_SERVICE_URL }} \
               RESERVATION_SERVICE_ADMIN_ID=${{ secrets.RESERVATION_SERVICE_ADMIN_ID }} \
               RESERVATION_SERVICE_ADMIN_SECRET=${{ secrets.RESERVATION_SERVICE_ADMIN_SECRET }} \
+              STAT_SERVICE_URL=${{ secrets.STAT_SERVICE_URL }} \
+              STAT_SERVICE_ADMIN_ID=${{ secrets.STAT_SERVICE_ADMIN_ID }} \
+              STAT_SERVICE_ADMIN_SECRET=${{ secrets.STAT_SERVICE_ADMIN_SECRET }} \
               GATEWAY_ADDRESS=${{ secrets.GATEWAY_ADDRESS }} \
               GATEWAY_SERVICE_PORT=${{ secrets.GATEWAY_SERVICE_PORT }}
             env > envfile
