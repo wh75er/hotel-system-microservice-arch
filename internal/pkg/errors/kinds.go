@@ -133,15 +133,15 @@ func (k Kind) String() string {
 	case HotelUuidValidationErr:
 		return "Hotel UUID is not valid"
 	case HotelDescriptionValidationError:
-		return "Description length cannot be more than 1000 characters"
+		return "Description length cannot be null or more than 1000 characters"
 	case HotelCountryValidationError:
-		return "Country length cannot be more than 100 characters"
+		return "Country length cannot be null or more than 100 characters"
 	case HotelCityValidationError:
-		return "City length cannot be more than 100 characters"
+		return "City length cannot be null or more than 100 characters"
 	case HotelAddressValidationError:
-		return "Address length cannot be more than 250 characters"
+		return "Address length cannot be null or more than 250 characters"
 	case HotelNameValidationError:
-		return "Name length cannot be more than 250 characters"
+		return "Name length cannot be null or more than 250 characters"
 	case UserUuidValidationErr:
 		return "User UUID is not valid"
 	case UserExistsErr:
