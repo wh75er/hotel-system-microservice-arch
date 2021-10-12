@@ -29,10 +29,11 @@ class User {
 
     logout() {
         this.token = ''
-        for (const values in Object.entries(this.claims)) {
+        for (const values of Object.entries(this.claims)) {
             const key = values[0]
             this.claims[key] = ''
         }
+        console.log('User after logged out: ', this.claims, this.token)
         localStorage.removeItem(tokenLocalStorageKey)
         console.log('logged out')
     }
