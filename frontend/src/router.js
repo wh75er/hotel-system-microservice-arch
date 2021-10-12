@@ -8,6 +8,7 @@ import HotelForm from './components/HotelForm.vue'
 import RoomForm from './components/RoomForm.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import RoomEditForm from "@/components/RoomEditForm";
+import StatisticsCard from "@/components/StatisticsCard";
 
 const routes = [
     {
@@ -56,6 +57,10 @@ const routes = [
                 path: 'hotels/:id/rooms/:roomUuid/patch',
                 name: 'roomPatch',
                 component: RoomEditForm,
+            },
+            {
+                path: 'stats',
+                component: StatisticsCard,
             }
         ],
     },

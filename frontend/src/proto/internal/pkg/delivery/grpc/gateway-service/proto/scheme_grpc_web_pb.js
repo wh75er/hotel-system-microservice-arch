@@ -27,6 +27,8 @@ var internal_pkg_delivery_grpc_loyalty$service_proto_scheme_pb = require('../../
 var internal_pkg_delivery_grpc_payment$service_proto_scheme_pb = require('../../../../../../internal/pkg/delivery/grpc/payment-service/proto/scheme_pb.js')
 
 var internal_pkg_delivery_grpc_reservation$service_proto_scheme_pb = require('../../../../../../internal/pkg/delivery/grpc/reservation-service/proto/scheme_pb.js')
+
+var internal_pkg_delivery_grpc_stat$service_proto_scheme_pb = require('../../../../../../internal/pkg/delivery/grpc/stat-service/proto/scheme_pb.js')
 const proto = {};
 proto.proto = require('./scheme_pb.js');
 
@@ -1679,6 +1681,86 @@ proto.proto.GatewayServicePromiseClient.prototype.getPayment =
       request,
       metadata || {},
       methodDescriptor_GatewayService_GetPayment);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.common.Empty,
+ *   !proto.proto.Stat>}
+ */
+const methodDescriptor_GatewayService_GetStat = new grpc.web.MethodDescriptor(
+  '/proto.GatewayService/GetStat',
+  grpc.web.MethodType.UNARY,
+  internal_pkg_delivery_grpc_commonProto_common_pb.Empty,
+  internal_pkg_delivery_grpc_stat$service_proto_scheme_pb.Stat,
+  /**
+   * @param {!proto.common.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  internal_pkg_delivery_grpc_stat$service_proto_scheme_pb.Stat.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.common.Empty,
+ *   !proto.proto.Stat>}
+ */
+const methodInfo_GatewayService_GetStat = new grpc.web.AbstractClientBase.MethodInfo(
+  internal_pkg_delivery_grpc_stat$service_proto_scheme_pb.Stat,
+  /**
+   * @param {!proto.common.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  internal_pkg_delivery_grpc_stat$service_proto_scheme_pb.Stat.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.common.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.proto.Stat)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.proto.Stat>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.proto.GatewayServiceClient.prototype.getStat =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/proto.GatewayService/GetStat',
+      request,
+      metadata || {},
+      methodDescriptor_GatewayService_GetStat,
+      callback);
+};
+
+
+/**
+ * @param {!proto.common.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.proto.Stat>}
+ *     Promise that resolves to the response
+ */
+proto.proto.GatewayServicePromiseClient.prototype.getStat =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/proto.GatewayService/GetStat',
+      request,
+      metadata || {},
+      methodDescriptor_GatewayService_GetStat);
 };
 
 

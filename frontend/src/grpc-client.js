@@ -200,4 +200,11 @@ export default class GatewayClient {
 
         this.client.patchRoom(req, {"authorization": payload.token}, callback)
     }
+
+    getStats(token, callback) {
+        console.log('getStats token: ', token)
+        const req = new Empty()
+
+        this.client.getStat(req, {"authorization": token}, callback)
+    }
 }

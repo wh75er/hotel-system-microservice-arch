@@ -5,7 +5,10 @@
                    style="text-decoration: none; color: inherit;">
         <el-button class="hotels__buttons" round>Add Hotel</el-button>
       </router-link>
+      <router-link to="/stats"
+                   style="text-decoration: none; color: inherit;">
       <el-button class="hotels__buttons" type="info" round>Get statistics</el-button>
+      </router-link>
     </div>
     <div v-if="hotels.length === 0">There's nothing here yet</div>
     <HotelCard class="hotels__item"

@@ -21,5 +21,6 @@ func AccessibleGatewayServicePaths() map[string][]models.Role {
 		gatewayServicePath + "DeleteRoom":            {models.ADMIN},
 		gatewayServicePath + "GetDiscount":           {models.USER, models.ADMIN},
 		gatewayServicePath + "GetPayment":            {models.USER, models.ADMIN},
+		gatewayServicePath + "GetStat":               {models.ADMIN},
 	}
 }

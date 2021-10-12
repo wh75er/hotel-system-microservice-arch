@@ -84,6 +84,9 @@ gen-proto-frontend:
 	protoc --js_out=import_style=commonjs:./frontend/src/proto \
 	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
 	internal/pkg/delivery/grpc/commonProto/common.proto
+	protoc --js_out=import_style=commonjs:./frontend/src/proto \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:./frontend/src/proto \
+    internal/pkg/delivery/grpc/stat-service/proto/scheme.proto
 
 fmt:
 	go fmt ./internal/... && go fmt ./cmd/...

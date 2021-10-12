@@ -27,3 +27,5 @@ var internal_pkg_delivery_grpc_payment$service_proto_scheme_pb = require('../../
 goog.object.extend(proto, internal_pkg_delivery_grpc_payment$service_proto_scheme_pb);
 var internal_pkg_delivery_grpc_reservation$service_proto_scheme_pb = require('../../../../../../internal/pkg/delivery/grpc/reservation-service/proto/scheme_pb.js');
 goog.object.extend(proto, internal_pkg_delivery_grpc_reservation$service_proto_scheme_pb);
+var internal_pkg_delivery_grpc_stat$service_proto_scheme_pb = require('../../../../../../internal/pkg/delivery/grpc/stat-service/proto/scheme_pb.js');
+goog.object.extend(proto, internal_pkg_delivery_grpc_stat$service_proto_scheme_pb);
