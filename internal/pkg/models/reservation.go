@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"hotel-booking-system/internal/pkg/errors"
 	"time"
 )
@@ -24,10 +23,11 @@ type Reservation struct {
 }
 
 type ReservationRepositoryI interface {
-	CreateReservation(v *Reservation) (tx *sqlx.Tx, e error)
-	PatchReservation(v *Reservation) (tx *sqlx.Tx, e error)
+	CreateReservation(v *Reservation) (e error)
+	PatchReservation(v *Reservation) (e error)
 	GetReservation(reservationUuid uuid.UUID) (v Reservation, e error)
 	GetReservationsByUser(userUuid uuid.UUID) (v []Reservation, e error)
+	CountReservedRoomsForDate(roomUuid uuid.UUID, date time.Time) (count int, e error)
 }
 
 type ReservationUsecaseI interface {

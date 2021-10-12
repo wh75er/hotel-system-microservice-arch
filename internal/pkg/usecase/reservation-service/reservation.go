@@ -83,7 +83,23 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 		e = errors.E(opError, serviceKind)
 		return
 	}
-	if room.Amount < 1 {
+
+	// 	Instead of counter checking - count active reservations for specified date
+	// 	if it will be equal to room.Amount - Room is not available for that date else
+	// 	create reservation with payment or not
+
+	alreadyReservedCount, err := u.ReservationRepository.CountReservedRoomsForDate(r.RoomUuid, r.Date)
+	if err != nil {
+		if errors.GetKind(err) == errors.RepositoryNoRows {
+			e = nil
+		} else {
+			e = errors.E(opError, errors.RepositoryReservationErr, err)
+			u.Logger.Error("Usecase error: ", e)
+			return
+		}
+	}
+
+	if int64(alreadyReservedCount) >= room.Amount {
 		e = errors.E(opError, errors.RoomUnavailableErr)
 		u.Logger.Error("Usecase error: ", e)
 		return
@@ -146,39 +162,11 @@ func (u *ReservationUsecase) AddReservation(r *models.Reservation) (reservationU
 	r.Status = models.ActiveReservationStatus
 
 	// Add reservation to repository
-	tx, err := u.ReservationRepository.CreateReservation(r)
+	err = u.ReservationRepository.CreateReservation(r)
 	if err != nil {
 		e = errors.E(opError, errors.RepositoryReservationErr, err)
 		u.Logger.Error("Usecase error: ", e)
 		return
-	}
-
-	// Take one available room
-	_, err = u.HotelServiceClient.TakeRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
-	if err != nil {
-		_ = tx.Rollback()
-		if status.Code(err) < errors.MaxGrpcCodeValue {
-			e = errors.E(opError, errors.HotelServiceUnavailable, err)
-			u.Logger.Error("Usecase error: ", e)
-			return
-		}
-		serviceKind := errors.Kind(status.Code(err))
-		e = errors.E(opError, serviceKind)
-		return
-	}
-
-	var commitFailed bool
-	err = tx.Commit()
-	if err != nil {
-		commitFailed = true
-		e = errors.E(opError, errors.RepositoryReservationErr, err)
-		u.Logger.Error("Usecase error: ", e)
-	}
-
-	// If commit failed try to store room back to stock
-	//   If dismiss failed need to store request to queue and try it later
-	if commitFailed {
-		_, _ = u.HotelServiceClient.DismissRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
 	}
 
 	return
@@ -207,30 +195,7 @@ func (u *ReservationUsecase) CancelReservation(reservationUuid string) (e error)
 	}
 
 	r.Status = models.CanceledReservationStatus
-	tx, err := u.ReservationRepository.PatchReservation(&r)
-	if err != nil {
-		e = errors.E(opError, errors.RepositoryReservationErr, err)
-		u.Logger.Error("Usecase error: ", e)
-		return
-	}
-
-	_, err = u.HotelServiceClient.DismissRoom(context.Background(), &commonProto.UUID{Value: r.RoomUuid.String()})
-	if err != nil {
-		_ = tx.Rollback()
-		if status.Code(err) < errors.MaxGrpcCodeValue {
-			e = errors.E(opError, errors.HotelServiceUnavailable, err)
-			u.Logger.Error("Usecase error: ", e)
-			return
-		}
-		serviceKind := errors.Kind(status.Code(err))
-		e = errors.E(opError, serviceKind)
-		return
-	}
-
-	// Try to commit, if commit failed we're *. Need to add some queue to patch db later when it's up
-	//   Taking room back from the stock is pointless, there's no syncing between patching and dismissing operations so
-	// 	 someone could potentially take the dismissed room
-	err = tx.Commit()
+	err = u.ReservationRepository.PatchReservation(&r)
 	if err != nil {
 		e = errors.E(opError, errors.RepositoryReservationErr, err)
 		u.Logger.Error("Usecase error: ", e)
@@ -382,18 +347,12 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 
 	r.PaymentUuid = paymentUuid
 
-	tx, err := u.ReservationRepository.PatchReservation(&r)
-	if err != nil {
-		e = errors.E(opError, errors.RepositoryReservationErr, err)
-		u.Logger.Error("Usecase error: ", e)
-		return
-	}
-
 	// If failed to commit we can just return
 	//   to that request later. In payment service
 	// 	 there will be idle useless payment instance
 	//   but nothing critical
-	err = tx.Commit()
+
+	err = u.ReservationRepository.PatchReservation(&r)
 	if err != nil {
 		e = errors.E(opError, errors.RepositoryReservationErr, err)
 		u.Logger.Error("Usecase error: ", e)
