@@ -63,7 +63,7 @@ services:
       context: .
       dockerfile: ./build/auth.Dockerfile
     ports:
-      - "${AUTH_SERVICE_PORT-3002}:3000"
+      - "${AUTH_SERVICE_PORT-3000}:3000"
     restart: on-failure
     depends_on:
       - db
