@@ -16,18 +16,18 @@
     <el-table-column prop="Date" label="Date" width="100" />
     <el-table-column width="75" >
       <template #default="scope">
-        <el-button
-          type="text"
-          size="small"
-          v-if="reservations[scope.$index] && reservations[scope.$index].Payment && reservations[scope.$index].Payment.Status === 'New' && reservations[scope.$index].Status !== 'canceled'"
-          @click.prevent="payClicked(scope.$index, reservations)"
-        >
-          Pay
-        </el-button>
+        <iframe v-if="reservations[scope.$index] && reservations[scope.$index].Payment && reservations[scope.$index].Payment.Status && reservations[scope.$index].Payment.Status === 'New' && reservations[scope.$index].Status && reservations[scope.$index].Status !== 'canceled'"
+            :src="'https://yoomoney.ru/quickpay/button-widget?targets=Pay%20for%20reservation&default-sum=' + reservations[scope.$index].Payment.Price +'&label=' + reservations[scope.$index].Payment.PaymentUuid + '&button-text=11&any-card-payment-type=on&button-size=s&button-color=orange&successURL=http%3A%2F%2Fbookinghotelservice.ru&quickpay=small&account=4100117213941944'"
+            width="127"
+            height="25"
+            frameborder="0"
+            allowtransparency="true"
+            scrolling="no">
+        </iframe>
         <el-button
             type="text"
             size="small"
-            v-else-if="reservations[scope.$index] && reservations[scope.$index].Status && reservations[scope.$index].Status !== 'canceled'"
+            v-else-if="reservations[scope.$index] && reservations[scope.$index].Status && reservations[scope.$index].Status !== 'canceled' && reservations[scope.$index].Payment && reservations[scope.$index].Payment.Status && reservations[scope.$index].Payment.Status !== 'Paid'"
             @click.prevent="createPaymentClicked(scope.$index, reservations)"
         >
             create<br>paycheck
