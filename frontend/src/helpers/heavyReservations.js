@@ -1,4 +1,5 @@
 import {ElNotification} from "element-plus";
+import formatFloat from './formatFloat';
 
 export default function getHeavyReservations(payload, gatewayClient, reservations, updateCallback) {
     gatewayClient.getReservations(payload, function(error, response) {
@@ -46,7 +47,7 @@ function getRoomAndHotel(gatewayClient, currentReservation, updateCallback) {
                 RoomType: response.getRoomtype(),
                 Beds: response.getBeds(),
                 Offers: response.getOffersList(),
-                Price: response.getNightprice(),
+                Price: formatFloat(response.getNightprice()),
             }
             Object.assign(currentReservation, {Room: room})
 
@@ -86,7 +87,7 @@ export function getPayment(gatewayClient, currentReservation, token, updateCallb
                 PaymentUuid: response.getPaymentuuid().getValue(),
                 UserUuid: response.getUseruuid().getValue(),
                 Status: response.getStatus(),
-                Price: response.getPrice(),
+                Price: formatFloat(response.getPrice()),
             }
             Object.assign(currentReservation, {Payment: payment})
             updateCallback()

@@ -10,6 +10,7 @@ import HotelInfo from './HotelInfo.vue'
 import RoomCard from './RoomCard.vue'
 import { ref } from 'vue'
 import {ElNotification} from "element-plus";
+import formatFloat from "@//helpers/formatFloat";
 
 export default {
   name: "HotelView",
@@ -53,7 +54,7 @@ export default {
                 Amount: rh.getAmount(),
                 Beds: rh.getBeds(),
                 Offers: rh.getOffersList(),
-                Price: rh.getNightprice(),
+                Price: formatFloat(rh.getNightprice()),
               })
             }
             console.log('result of rooms: ', this.rooms)
