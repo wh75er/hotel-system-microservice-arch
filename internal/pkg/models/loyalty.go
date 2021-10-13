@@ -18,7 +18,7 @@ const (
 )
 
 const (
-	BronzeDiscount = 5
+	BronzeDiscount = 0
 	SilverDiscount = 10
 	GoldDiscount   = 12
 )
