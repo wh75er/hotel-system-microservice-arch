@@ -151,7 +151,7 @@ proto.proto.Room.toObject = function(includeInstance, msg) {
     roomuuid: jspb.Message.getFieldWithDefault(msg, 5, ""),
     creationdate: jspb.Message.getFieldWithDefault(msg, 6, 0),
     offersList: (f = jspb.Message.getRepeatedField(msg, 7)) == null ? undefined : f,
-    nightprice: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    nightprice: jspb.Message.getFloatingPointFieldWithDefault(msg, 8, 0.0)
   };
 
   if (includeInstance) {
@@ -217,7 +217,7 @@ proto.proto.Room.deserializeBinaryFromReader = function(msg, reader) {
       msg.addOffers(value);
       break;
     case 8:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readFloat());
       msg.setNightprice(value);
       break;
     default:
@@ -299,8 +299,8 @@ proto.proto.Room.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getNightprice();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeFloat(
       8,
       f
     );
@@ -454,11 +454,11 @@ proto.proto.Room.prototype.clearOffersList = function() {
 
 
 /**
- * optional int64 NightPrice = 8;
+ * optional float NightPrice = 8;
  * @return {number}
  */
 proto.proto.Room.prototype.getNightprice = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 8, 0.0));
 };
 
 
@@ -467,7 +467,7 @@ proto.proto.Room.prototype.getNightprice = function() {
  * @return {!proto.proto.Room} returns this
  */
 proto.proto.Room.prototype.setNightprice = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
+  return jspb.Message.setProto3FloatField(this, 8, value);
 };
 
 

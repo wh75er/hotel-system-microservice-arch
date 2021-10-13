@@ -94,7 +94,7 @@ proto.proto.UpdateDiscountRequest.prototype.toObject = function(opt_includeInsta
 proto.proto.UpdateDiscountRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     useruid: (f = msg.getUseruid()) && internal_pkg_delivery_grpc_commonProto_common_pb.UUID.toObject(includeInstance, f),
-    contribution: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    contribution: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0)
   };
 
   if (includeInstance) {
@@ -137,7 +137,7 @@ proto.proto.UpdateDiscountRequest.deserializeBinaryFromReader = function(msg, re
       msg.setUseruid(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readFloat());
       msg.setContribution(value);
       break;
     default:
@@ -178,8 +178,8 @@ proto.proto.UpdateDiscountRequest.serializeBinaryToWriter = function(message, wr
     );
   }
   f = message.getContribution();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeFloat(
       2,
       f
     );
@@ -225,11 +225,11 @@ proto.proto.UpdateDiscountRequest.prototype.hasUseruid = function() {
 
 
 /**
- * optional int64 contribution = 2;
+ * optional float contribution = 2;
  * @return {number}
  */
 proto.proto.UpdateDiscountRequest.prototype.getContribution = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
 };
 
 
@@ -238,7 +238,7 @@ proto.proto.UpdateDiscountRequest.prototype.getContribution = function() {
  * @return {!proto.proto.UpdateDiscountRequest} returns this
  */
 proto.proto.UpdateDiscountRequest.prototype.setContribution = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3FloatField(this, 2, value);
 };
 
 
@@ -277,7 +277,7 @@ proto.proto.Loyalty.toObject = function(includeInstance, msg) {
     useruuid: (f = msg.getUseruuid()) && internal_pkg_delivery_grpc_commonProto_common_pb.UUID.toObject(includeInstance, f),
     status: jspb.Message.getFieldWithDefault(msg, 2, ""),
     discount: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    contributionamount: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    contributionamount: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0)
   };
 
   if (includeInstance) {
@@ -328,7 +328,7 @@ proto.proto.Loyalty.deserializeBinaryFromReader = function(msg, reader) {
       msg.setDiscount(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readFloat());
       msg.setContributionamount(value);
       break;
     default:
@@ -383,8 +383,8 @@ proto.proto.Loyalty.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getContributionamount();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeFloat(
       4,
       f
     );
@@ -466,11 +466,11 @@ proto.proto.Loyalty.prototype.setDiscount = function(value) {
 
 
 /**
- * optional int64 ContributionAmount = 4;
+ * optional float ContributionAmount = 4;
  * @return {number}
  */
 proto.proto.Loyalty.prototype.getContributionamount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
 };
 
 
@@ -479,7 +479,7 @@ proto.proto.Loyalty.prototype.getContributionamount = function() {
  * @return {!proto.proto.Loyalty} returns this
  */
 proto.proto.Loyalty.prototype.setContributionamount = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3FloatField(this, 4, value);
 };
 
 

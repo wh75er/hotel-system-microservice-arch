@@ -217,7 +217,7 @@ proto.proto.CreatePaymentRequest.prototype.toObject = function(opt_includeInstan
 proto.proto.CreatePaymentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     useruuid: (f = msg.getUseruuid()) && internal_pkg_delivery_grpc_commonProto_common_pb.UUID.toObject(includeInstance, f),
-    value: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    value: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0)
   };
 
   if (includeInstance) {
@@ -260,7 +260,7 @@ proto.proto.CreatePaymentRequest.deserializeBinaryFromReader = function(msg, rea
       msg.setUseruuid(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readFloat());
       msg.setValue(value);
       break;
     default:
@@ -301,8 +301,8 @@ proto.proto.CreatePaymentRequest.serializeBinaryToWriter = function(message, wri
     );
   }
   f = message.getValue();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeFloat(
       2,
       f
     );
@@ -348,11 +348,11 @@ proto.proto.CreatePaymentRequest.prototype.hasUseruuid = function() {
 
 
 /**
- * optional int64 Value = 2;
+ * optional float Value = 2;
  * @return {number}
  */
 proto.proto.CreatePaymentRequest.prototype.getValue = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
 };
 
 
@@ -361,7 +361,7 @@ proto.proto.CreatePaymentRequest.prototype.getValue = function() {
  * @return {!proto.proto.CreatePaymentRequest} returns this
  */
 proto.proto.CreatePaymentRequest.prototype.setValue = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3FloatField(this, 2, value);
 };
 
 
@@ -400,7 +400,7 @@ proto.proto.Payment.toObject = function(includeInstance, msg) {
     paymentuuid: (f = msg.getPaymentuuid()) && internal_pkg_delivery_grpc_commonProto_common_pb.UUID.toObject(includeInstance, f),
     useruuid: (f = msg.getUseruuid()) && internal_pkg_delivery_grpc_commonProto_common_pb.UUID.toObject(includeInstance, f),
     status: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    price: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    price: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
     timeupdated: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
@@ -453,7 +453,7 @@ proto.proto.Payment.deserializeBinaryFromReader = function(msg, reader) {
       msg.setStatus(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readFloat());
       msg.setPrice(value);
       break;
     case 5:
@@ -513,8 +513,8 @@ proto.proto.Payment.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getPrice();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeFloat(
       4,
       f
     );
@@ -622,11 +622,11 @@ proto.proto.Payment.prototype.setStatus = function(value) {
 
 
 /**
- * optional int64 Price = 4;
+ * optional float Price = 4;
  * @return {number}
  */
 proto.proto.Payment.prototype.getPrice = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
 };
 
 
@@ -635,7 +635,7 @@ proto.proto.Payment.prototype.getPrice = function() {
  * @return {!proto.proto.Payment} returns this
  */
 proto.proto.Payment.prototype.setPrice = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3FloatField(this, 4, value);
 };
 
 
