@@ -82,7 +82,7 @@ func (s *LoyaltyServer) AddUser(ctx context.Context, pu *commonProto.UUID) (*com
 
 func (s *LoyaltyServer) UpdateDiscount(ctx context.Context, pr *proto.UpdateDiscountRequest) (*commonProto.Empty, error) {
 	uuid, contribution := ProtoToUpdatedDiscountRequest(pr)
-	err := s.LoyaltyUsecase.UpdateDiscount(uuid, int(contribution))
+	err := s.LoyaltyUsecase.UpdateDiscount(uuid, contribution)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())

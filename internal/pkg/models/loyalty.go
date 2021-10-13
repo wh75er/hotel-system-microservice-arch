@@ -27,7 +27,7 @@ type Loyalty struct {
 	UserUuid           uuid.UUID
 	Status             LoyaltyStatus
 	Discount           int
-	ContributionAmount int
+	ContributionAmount float32
 }
 
 type LoyaltyRepositoryI interface {
@@ -39,7 +39,7 @@ type LoyaltyRepositoryI interface {
 type LoyaltyUsecaseI interface {
 	GetDiscount(userUid string) (l *Loyalty, e error)
 	AddUser(userUid string) (e error)
-	UpdateDiscount(userUid string, contribution int) (e error)
+	UpdateDiscount(userUid string, contribution float32) (e error)
 }
 
 func (l *Loyalty) setBronzeStatus() {

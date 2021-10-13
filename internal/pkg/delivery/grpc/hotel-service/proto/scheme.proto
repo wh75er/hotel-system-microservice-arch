@@ -32,7 +32,7 @@ message Room {
   string roomUuid = 5;
   int64 CreationDate = 6;
   repeated string Offers = 7;
-  int64 NightPrice = 8;
+  float NightPrice = 8;
 }
 
 message Hotel {

@@ -18,13 +18,13 @@ message Price {
 
 message CreatePaymentRequest {
   common.UUID UserUuid = 1;
-  int64 Value = 2;
+  float Value = 2;
 }
 
 message Payment {
   common.UUID PaymentUuid = 1;
   common.UUID UserUuid = 2;
   string Status = 3;
-  int64 Price = 4;
+  float Price = 4;
   int64 TimeUpdated = 5;
 }

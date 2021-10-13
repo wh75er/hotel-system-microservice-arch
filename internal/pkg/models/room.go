@@ -13,7 +13,7 @@ type Room struct {
 	RoomUuid     uuid.UUID
 	CreationDate time.Time
 	Offers       []string
-	NightPrice   int
+	NightPrice   float32
 }
 
 type RoomRepositoryI interface {

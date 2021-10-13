@@ -18,7 +18,7 @@ type Payment struct {
 	PaymentUuid uuid.UUID
 	UserUuid    uuid.UUID
 	Status      PaymentStatus
-	Price       int
+	Price       float32
 	TimeUpdated time.Time
 }
 
@@ -29,7 +29,7 @@ type PaymentRepositoryI interface {
 }
 
 type PaymentUsecaseI interface {
-	CreatePayment(price int, userUuid string) (paymentUid uuid.UUID, e error)
+	CreatePayment(price float32, userUuid string) (paymentUid uuid.UUID, e error)
 	MakePayment(paymentUuid string) (e error)
 	GetPayment(paymentUuid string) (p *Payment, e error)
 }

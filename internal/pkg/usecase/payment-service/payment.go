@@ -34,7 +34,7 @@ func NewPaymentUsecase(
 	}
 }
 
-func (u *PaymentUsecase) CreatePayment(price int, userUuid string) (paymentUuid uuid.UUID, e error) {
+func (u *PaymentUsecase) CreatePayment(price float32, userUuid string) (paymentUuid uuid.UUID, e error) {
 	var opError errors.Op = "usecase.CreatePayment"
 
 	validUserUuid, err := uuid.Parse(userUuid)
@@ -119,7 +119,7 @@ func (u *PaymentUsecase) MakePayment(paymentUuid string) (e error) {
 	// make call to UserLoyaltyService to update user's discount
 	_, err = u.UserLoyaltyServiceClient.UpdateDiscount(context.Background(), &loyalty_proto.UpdateDiscountRequest{
 		UserUid:      &commonProto.UUID{Value: p.UserUuid.String()},
-		Contribution: int64(p.Price),
+		Contribution: p.Price,
 	})
 	if err != nil {
 		if status.Code(err) < errors.MaxGrpcCodeValue {

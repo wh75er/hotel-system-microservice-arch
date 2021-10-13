@@ -91,7 +91,7 @@ func (u *LoyaltyUsecase) AddUser(userUid string) (e error) {
 	return
 }
 
-func (u *LoyaltyUsecase) UpdateDiscount(userUid string, contribution int) (e error) {
+func (u *LoyaltyUsecase) UpdateDiscount(userUid string, contribution float32) (e error) {
 	var opError errors.Op = "auth-usecase.UpdateDiscount"
 
 	validUserUuid, err := uuid.Parse(userUid)

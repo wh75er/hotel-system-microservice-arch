@@ -11,11 +11,11 @@ func LoyaltyToProto(l *models.Loyalty) *proto.Loyalty {
 		UserUuid:           &commonProto.UUID{Value: l.UserUuid.String()},
 		Status:             string(l.Status),
 		Discount:           int64(l.Discount),
-		ContributionAmount: int64(l.ContributionAmount),
+		ContributionAmount: l.ContributionAmount,
 	}
 }
 
-func ProtoToUpdatedDiscountRequest(p *proto.UpdateDiscountRequest) (uuid string, contribution int64) {
+func ProtoToUpdatedDiscountRequest(p *proto.UpdateDiscountRequest) (uuid string, contribution float32) {
 	if p == nil {
 		return
 	}

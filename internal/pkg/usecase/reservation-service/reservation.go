@@ -392,6 +392,6 @@ func (u *ReservationUsecase) CreatePayment(reservationUuid string) (paymentUuid 
 	return
 }
 
-func (u *ReservationUsecase) calculatePriceWithDiscount(price int64, discount int64) int64 {
-	return price - (price * discount / 100)
+func (u *ReservationUsecase) calculatePriceWithDiscount(price float32, discount int64) float32 {
+	return price - (price * float32(discount) / 100)
 }

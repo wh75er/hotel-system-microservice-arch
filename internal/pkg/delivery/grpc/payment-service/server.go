@@ -58,7 +58,7 @@ func (s *PaymentServer) GetToken(ctx context.Context, pc *commonProto.Credential
 
 func (s *PaymentServer) CreatePayment(ctx context.Context, pr *proto.CreatePaymentRequest) (*commonProto.UUID, error) {
 	uuid, value := ProtoToCreatePaymentRequest(pr)
-	paymentUuid, err := s.PaymentUsecase.CreatePayment(int(value), uuid)
+	paymentUuid, err := s.PaymentUsecase.CreatePayment(value, uuid)
 	if err != nil {
 		s.Logger.Errorf("Grpc error: %v - %v {%v}", err, errors.SourceDetails(err), errors.Ops(err))
 		err = status.Error(codes.Code(errors.GetKind(err)), err.Error())

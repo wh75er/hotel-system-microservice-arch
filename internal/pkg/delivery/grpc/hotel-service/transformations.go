@@ -17,7 +17,7 @@ func RoomToProto(r *models.Room) *proto.Room {
 		RoomUuid:     r.RoomUuid.String(),
 		CreationDate: r.CreationDate.Unix(),
 		Offers:       r.Offers,
-		NightPrice:   int64(r.NightPrice),
+		NightPrice:   r.NightPrice,
 	}
 }
 
@@ -77,7 +77,7 @@ func ProtoToRoom(pr *proto.Room) (r *models.Room, e error) {
 		RoomUuid:     validRoomUuid,
 		CreationDate: time.Unix(pr.CreationDate, 0),
 		Offers:       pr.Offers,
-		NightPrice:   int(pr.NightPrice),
+		NightPrice:   pr.NightPrice,
 	}
 
 	return

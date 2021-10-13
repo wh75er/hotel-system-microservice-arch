@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS payments(
     paymentUuid UUID UNIQUE NOT NULL,
     userUuid UUID NOT NULL,
     status VARCHAR(250) NOT NULL,
-    price INTEGER NOT NULL,
+    price REAL NOT NULL,
     timeUpdated DATE NOT NULL
 );

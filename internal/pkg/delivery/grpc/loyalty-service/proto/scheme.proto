@@ -16,12 +16,12 @@ service LoyaltyService {
 
 message UpdateDiscountRequest {
   common.UUID userUid = 1;
-  int64 contribution = 2;
+  float contribution = 2;
 }
 
 message Loyalty {
   common.UUID UserUuid = 1;
   string Status = 2;
   int64 Discount = 3;
-  int64 ContributionAmount = 4;
+  float ContributionAmount = 4;
 }
