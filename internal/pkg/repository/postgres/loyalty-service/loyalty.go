@@ -66,8 +66,8 @@ func (r *LoyaltyRepository) UpdateLoyalty(l *models.Loyalty) (e error) {
 	var opError errors.Op = "postgres.UpdateLoyalty"
 
 	_, err := r.Db.Exec(
-		"UPDATE loyalty SET status = $1, discount = $2, contributionAmount = $3 WHERE userUuid = $8",
-		l.Status, l.Discount, l.ContributionAmount,
+		"UPDATE loyalty SET status = $1, discount = $2, contributionAmount = $3 WHERE userUuid = $4",
+		l.Status, l.Discount, l.ContributionAmount, l.UserUuid,
 	)
 	if err == sql.ErrConnDone {
 		e = errors.E(opError, errors.RepositoryDownErr, err)
