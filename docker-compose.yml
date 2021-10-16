@@ -144,8 +144,6 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=authdb,hoteldb,loyaltydb,paymentdb,reservationdb, statdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5433:5432"
     restart: on-failure
   envoy:
     image: envoyproxy/envoy:v1.20-latest
