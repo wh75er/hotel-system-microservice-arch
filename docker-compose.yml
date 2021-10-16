@@ -145,7 +145,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     restart: on-failure
   envoy:
     image: envoyproxy/envoy:v1.20-latest
